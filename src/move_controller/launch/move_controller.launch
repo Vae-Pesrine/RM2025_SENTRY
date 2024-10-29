@@ -1,0 +1,16 @@
+<launch>
+
+    <node pkg="move_base" type="move_base" name="move_base" output="screen"  respawn="false">
+        <rosparam file="$(find move_controller)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find move_controller)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find move_controller)/config/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find move_controller)/config/global_costmap_params.yaml" command="load" />
+        <rosparam file="$(find move_controller)/config/teb_local_planner_params.yaml" command="load" />
+
+        <rosparam file="$(find move_controller)/config/prohibition_areas.yaml" command="load" ns="global_costmap/costmap_prohibition_layer" />
+        <rosparam file="$(find move_controller)/config/prohibition_areas.yaml" command="load" ns="local_costmap/costmap_prohibition_layer" />
+        <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+        <param name="controller_frequency" value="10.0" />
+		<param name="controller_patience" value="15.0" />
+    </node>
+</launch>

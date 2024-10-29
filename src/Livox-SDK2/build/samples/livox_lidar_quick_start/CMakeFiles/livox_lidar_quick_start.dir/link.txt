@@ -1,0 +1,1 @@
+/usr/bin/c++  -pthread -pthread -rdynamic CMakeFiles/livox_lidar_quick_start.dir/main.cpp.o -o livox_lidar_quick_start  ../../sdk_core/liblivox_lidar_sdk_static.a 

@@ -1,0 +1,47 @@
+<launch>
+
+    <!-- gazebo -->
+    <arg name="paused" default="false"/>
+    <arg name="use_sim_time" default="true"/>
+    <arg name="gui" default="true"/>
+    <arg name="headless" default="false"/>
+    <arg name="debug" default="false"/>
+    <arg name="verbose" default="true"/>
+    <arg name="origin_x" default="7.401661" />
+    <arg name="origin_y" default="5.841537" />
+    <arg name="origin_z" default="0.492678" />
+    <arg name="origin_roll" default="0.000001" />
+    <arg name="origin_pitch" default="0.000001" />
+    <arg name="origin_yaw" default="1.577204" />
+
+    <!-- 加载机器人模型参数 -->
+    <param name="robot_description" command="$(find xacro)/xacro  $(find sentry_simulation)/urdf/sentry.urdf.xacro" />
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_robot" args="-urdf -param /robot_description -model robot 
+          -x $(arg origin_x) -y $(arg origin_y) -z $(arg origin_z) -R $(arg origin_roll) -P $(arg origin_pitch) -Y $(arg origin_yaw)" />
+
+    <env name="GAZEBO_MODEL_PATH" value="${GAZEBO_MODEL_PATH}:$(find sentry_simulation)/mesh" />
+    <env name="GAZEBO_RESOURCE_PATH" value="${GAZEBO_RESOURCE_PATH}:$(find sentry_simulation)/mesh" />
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="gui" value="$(arg gui)" />
+        <arg name="debug" value="$(arg debug)" />
+        <arg name="paused" value="$(arg paused)" />
+        <arg name="verbose" value="$(arg verbose)"/>
+        <arg name="headless" value="$(arg headless)"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+        <arg name="world_name" value="$(find sentry_simulation)/world/RMUC2024.world" />
+    </include>
+      
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="sentry_joint_publisher" output="screen" />    
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="sentry_tf_publisher" output="screen" />
+
+    <node pkg="sentry_simulation" type="key_control" name="key_control" output="screen">
+        <param name="linear_speed" value="1.5" />
+        <param name="angular_speed" value="3.2" />
+    </node>
+
+    <include file="$(find sentry_localization)/launch/livox_repub.launch" />
+    
+    <include file="$(find sentry_navigation)/launch/livox_turn.launch" />
+
+</launch>

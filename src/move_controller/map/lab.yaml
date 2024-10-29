@@ -1,0 +1,7 @@
+image: /home/tjurm/mid_360_ws/src/move_controller/map/lab.pgm
+resolution: 0.050000
+origin: [-15.350000, -6.250000, nan]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
+

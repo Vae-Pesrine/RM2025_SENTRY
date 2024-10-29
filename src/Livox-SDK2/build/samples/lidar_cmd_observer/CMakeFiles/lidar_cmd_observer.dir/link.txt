@@ -1,0 +1,1 @@
+/usr/bin/c++  -pthread -pthread -rdynamic CMakeFiles/lidar_cmd_observer.dir/main.cpp.o -o lidar_cmd_observer  ../../sdk_core/liblivox_lidar_sdk_static.a 

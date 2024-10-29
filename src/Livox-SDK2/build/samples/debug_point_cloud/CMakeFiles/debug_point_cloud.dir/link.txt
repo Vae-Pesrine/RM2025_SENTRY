@@ -1,0 +1,1 @@
+/usr/bin/c++  -pthread -pthread -rdynamic CMakeFiles/debug_point_cloud.dir/main.cpp.o -o debug_point_cloud  ../../sdk_core/liblivox_lidar_sdk_static.a 

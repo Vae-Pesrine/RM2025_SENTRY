@@ -1,0 +1,36 @@
+downsample_resolution_globalmap: 0.1  
+pcd_map: /home/jgy/RMUC_simulation/src/sentry_localization/map/RMUC.pcd
+
+
+if_debug: true
+odom_frame: "odom"
+base_frame: "base_link"
+# lidar_frame: "base_link"
+
+variance_x: 0.2
+variance_y: 0.2
+variance_yaw: 0.1
+
+# GICP
+score_thre: 0.13
+dist_thre: 0.01
+angle_thre: 0.01
+agnle_speed_thre: 10 
+angle_upper_thre: 10
+point_num_thre: 180
+localization_iterations_thre: 5
+
+voxelremoval_resolution: 0.1
+obstacle_distance_thre: 1.0
+
+# relocalization
+relocalization_weight_score: 1
+relocalization_weight_distance: 1
+relocalization_weight_yaw: 1
+
+relocalization_iterations_thre: 80
+loss_num_thre: 0
+relocalization_score_thre: 0.8
+
+odom_queue_length: 300
+

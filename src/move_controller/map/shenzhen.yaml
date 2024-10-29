@@ -1,0 +1,7 @@
+image: /home/tjurm/mid_360_ws/src/move_controller/map/shenzhen.pgm
+resolution: 0.050000
+origin: [-20.750000, -8.850000, 0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
+

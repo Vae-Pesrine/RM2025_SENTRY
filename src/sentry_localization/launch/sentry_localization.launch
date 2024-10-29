@@ -1,0 +1,21 @@
+<launch>
+    <!-- <node name="laser2baselink" pkg="tf2_ros" type="static_transform_publisher" args="0.175 0 0.46 0 0 0 /base_link /livox_frame" /> -->
+
+    <node pkg="sentry_localization" type="livox_to_point" name="livox_to_point" output="screen" />
+
+    <node pkg="sentry_localization" type="global_localization_node" name="global_localization_node" output="screen">
+        <rosparam file="$(find sentry_localization)/config/bbs_params.yaml" command="load" />
+        <rosparam file="$(find sentry_localization)/config/engine_params.yaml" command="load" />
+    </node>
+    
+    <node pkg="nodelet" type="nodelet" name="sentry_nodelet" args="manager" output="screen" />
+
+    <node pkg="nodelet" type="nodelet" name="test1" args="load sentry_localization/GlobalmapServerNodelet sentry_nodelet">
+        <rosparam file="$(find sentry_localization)/config/globalmap_params.yaml" command="load" />
+    </node>
+
+    <node pkg="nodelet" type="nodelet" name="test2" args="load sentry_localization/SentryLocalizationNodelet sentry_nodelet">
+        <rosparam file="$(find sentry_localization)/config/sentry_localization_params.yaml" command="load" />
+    </node>
+
+</launch>

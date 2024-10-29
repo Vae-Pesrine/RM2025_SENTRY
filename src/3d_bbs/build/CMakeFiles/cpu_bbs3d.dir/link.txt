@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC  -fopenmp -O3 -DNDEBUG -shared -Wl,-soname,libcpu_bbs3d.so -o libcpu_bbs3d.so CMakeFiles/cpu_bbs3d.dir/bbs3d/src/cpu_bbs3d/bbs3d.cpp.o CMakeFiles/cpu_bbs3d.dir/bbs3d/src/cpu_bbs3d/voxelmaps.cpp.o CMakeFiles/cpu_bbs3d.dir/bbs3d/src/cpu_bbs3d/voxelmaps_io.cpp.o 

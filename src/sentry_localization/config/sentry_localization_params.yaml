@@ -1,0 +1,21 @@
+topic_imu: /imu
+topic_lidar: /lidar_points
+
+voxelGridFilterSize: 0.05
+
+global_localization_switch: true
+ndt_resolution: 1.0
+odom_frame_id: odom
+base_frame_id: livox_frame
+time_duration: 2.0
+
+origin_pose_x: 7.401661
+origin_pose_y: 5.841537
+origin_pose_z: 0.492678
+origin_ori_x: 7e-7
+origin_ori_y: 7e-7
+origin_ori_z: 0.7093686
+origin_ori_w: 0.7048377
+max_correspondence_distance: 0.5
+max_valid_point_dist: 25.0
+

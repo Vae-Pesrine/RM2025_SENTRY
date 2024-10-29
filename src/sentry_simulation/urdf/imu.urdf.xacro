@@ -1,0 +1,62 @@
+<robot name="sentry_imu" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:property name="always_on" value="true" />
+    <xacro:property name="update_rate" value="100" />
+    <xacro:property name="visualize" value="true" />
+    <xacro:property name="imu_topic" value="imu" />
+    <xacro:property name="body_name" value="imu_link" />
+    <xacro:property name="update_RateHZ" value="100.0" />
+    <xacro:property name="gaussian_noise" value="0.0" />
+    <xacro:property name="frame_name" value="imu_link" />
+    <xacro:property name="queueSize" value="100" />
+    <xacro:property name="PI" value="3.1415926"/>
+
+    <link name="imu_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="0.05 0.05 0.05" />
+            </geometry>
+            <material name="Red" />
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="0.05 0.05 0.05" />
+            </geometry>
+            <material name="Red" />
+        </collision>
+        <xacro:inertial_matrix mass="0.05" />
+    </link>
+
+    <joint name="imu_joint" type="fixed">
+        <axis xyz="0 1 0" />
+        <parent link="base_link" />
+        <child link="imu_link" />
+        <origin xyz="0.125  0 0.2" rpy="${PI} 0 0" />
+    </joint>
+
+    <!-- //////////////////////////////// imu control ////////////////////////////////// -->
+    <gazebo reference="imu_link">
+        <material>Gazebo/Red</material>
+        <pose>0 0 0 0 0 0</pose>
+        <gravity>true</gravity>
+        <sensor name="imu_sensor" type="imu">
+            <always_on>${always_on}</always_on>
+            <update_rate>${update_rate}</update_rate>
+            <visualize>${visualize}</visualize>
+            <topic>_default_topic_</topic>
+            <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+                <topicName>${imu_topic}</topicName>
+                <bodyName>${body_name}</bodyName>
+                <updateRateHZ>${update_RateHZ}</updateRateHZ>
+                <gaussianNoise>${gaussian_noise}</gaussianNoise>
+                <frameName>${frame_name}</frameName>
+                <xyzOffset>0 0 0</xyzOffset>
+                <rpyOffset>0 0 0</rpyOffset>
+                <queueSize>${queueSize}</queueSize>
+            </plugin>
+            <pose>0 0 0 0 0 0</pose>
+        </sensor>
+    </gazebo>
+</robot>

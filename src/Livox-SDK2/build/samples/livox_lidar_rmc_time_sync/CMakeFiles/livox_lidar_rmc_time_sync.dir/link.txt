@@ -1,0 +1,1 @@
+/usr/bin/c++  -pthread -pthread -rdynamic CMakeFiles/livox_lidar_rmc_time_sync.dir/main.cpp.o CMakeFiles/livox_lidar_rmc_time_sync.dir/linux/synchro.cpp.o -o livox_lidar_rmc_time_sync  ../../sdk_core/liblivox_lidar_sdk_static.a 

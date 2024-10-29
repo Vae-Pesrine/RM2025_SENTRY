@@ -1,0 +1,7 @@
+/home/jgy/RMUC_simulation/src/3d_bbs/build/CMakeFiles/cpu_bbs3d.dir
+/home/jgy/RMUC_simulation/src/3d_bbs/build/CMakeFiles/edit_cache.dir
+/home/jgy/RMUC_simulation/src/3d_bbs/build/CMakeFiles/rebuild_cache.dir
+/home/jgy/RMUC_simulation/src/3d_bbs/build/CMakeFiles/list_install_components.dir
+/home/jgy/RMUC_simulation/src/3d_bbs/build/CMakeFiles/install.dir
+/home/jgy/RMUC_simulation/src/3d_bbs/build/CMakeFiles/install/local.dir
+/home/jgy/RMUC_simulation/src/3d_bbs/build/CMakeFiles/install/strip.dir

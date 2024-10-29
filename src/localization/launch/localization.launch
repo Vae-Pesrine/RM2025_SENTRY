@@ -1,0 +1,8 @@
+<launch>
+    <node pkg="localization" type="localization" name="localization" output="screen">
+        <rosparam file="$(find localization)/config/params.yaml" command="load" />
+    </node>
+
+    <!-- <node pkg="rviz" type="rviz" name="lo_rviz" args="-d $(find localization)/rviz/test.rviz" /> -->
+
+</launch>

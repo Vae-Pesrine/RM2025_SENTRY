@@ -1,0 +1,1 @@
+/usr/bin/c++  -pthread -pthread -rdynamic CMakeFiles/logger.dir/main.cpp.o -o logger  ../../sdk_core/liblivox_lidar_sdk_static.a 

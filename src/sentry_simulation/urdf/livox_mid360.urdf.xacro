@@ -1,0 +1,145 @@
+<robot name="livox_base" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+  <xacro:property name="PI" value="3.1415926"/>
+  <xacro:property name="livox_platform_radius" value="0.05" />
+  <xacro:property name="livox_platform_length" value="0.01" /> 
+  <xacro:property name="livox_platform_m" value="0.00001" /> 
+
+  <xacro:property name="visualize" value="true" />
+  <xacro:property name="update_rate" value="10" />
+  <xacro:property name="resolution" value="0.002" />
+  <xacro:property name="laser_min_range" value="0.1" />
+  <xacro:property name="laser_max_range" value="200.0" />
+  <xacro:property name="noise_mean" value="0.00" />
+  <xacro:property name="noise_stddev" value="0.00" />
+  <xacro:property name="samples" value="20000" />
+  <xacro:property name="downsample" value="1" />
+  <xacro:property name="ros_topic" value="livox_horizon_points" />
+  
+  <!-- Macro for inertia matrix -->
+  <xacro:macro name="sphere_inertial_matrix" params="m r">
+    <inertial>
+      <mass value="${m}" />
+        <inertia ixx="${2*m*r*r/5}" ixy="0" ixz="0" iyy="${2*m*r*r/5}" iyz="0" izz="${2*m*r*r/5}" />
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="cylinder_inertial_matrix" params="m r h">
+    <inertial>
+      <mass value="${m}" />
+        <inertia ixx="${m*(3*r*r+h*h)/12}" ixy = "0" ixz = "0" iyy="${m*(3*r*r+h*h)/12}" iyz = "0" izz="${m*r*r/2}" /> 
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="Box_inertial_matrix" params="m l w h">
+    <inertial>
+      <mass value="${m}" />
+        <inertia ixx="${m*(h*h + l*l)/12}" ixy = "0" ixz = "0" iyy="${m*(w*w + l*l)/12}" iyz= "0" izz="${m*(w*w + h*h)/12}" />
+    </inertial>
+  </xacro:macro>
+
+  <!-- //////////////////////////////// livox mid360 platform ////////////////////////////////// -->
+  <link name="livox_platform">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="${livox_platform_radius}" length="${livox_platform_length}" />
+      </geometry>
+      <material name="yellow">
+        <color rgba="0.5 0.3 0.0 0.5" />
+      </material>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="${livox_platform_radius}" length="${livox_platform_length}" />
+      </geometry>
+    </collision>
+    <xacro:cylinder_inertial_matrix m="${livox_platform_m}" r="${livox_platform_radius}" h="${livox_platform_length}" />
+  </link>
+
+  <joint name="livoxplatform_baselink" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="0.125 0 0.51" rpy="0 0 0" />
+    <parent link="base_link" />
+    <child link="livox_platform" />
+  </joint>
+
+  <gazebo reference="livox_platform">
+    <material>Gazebo/Yellow</material>
+    <pose>0 0 0 0 0 0</pose>
+  </gazebo>
+
+  <!-- //////////////////////////////// livox mid360 ////////////////////////////////// -->
+  <link name="livox_mid360">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://sentry_simulation/mesh/livox_mid360.dae">
+        </mesh>
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://sentry_simulation/mesh/livox_mid360.dae">
+        </mesh>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="livox_mid360_platform" type="fixed">
+    <origin xyz="0.05 0 -0.05" rpy="${PI} 0 0" />
+    <parent link="livox_platform" />
+    <child link="livox_mid360" />
+  </joint>
+
+  <gazebo reference="livox_mid360">
+    <sensor type="ray" name="livox_frame">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>${visualize}</visualize>
+      <update_rate>${update_rate}</update_rate>
+        <!-- This ray plugin is only for visualization. -->
+      <plugin name="gazebo_ros_laser_controller" filename="libsentry_simulation.so">
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>0</samples>
+              <resolution>1</resolution>
+              <min_angle>${0}</min_angle>
+              <max_angle>${2*PI}</max_angle>
+            </horizontal>
+
+            <vertical>
+              <samples>0</samples>
+              <resolution>1</resolution>
+              <min_angle>${-7.22/180*PI}</min_angle>
+              <max_angle>${55.22/180*PI}</max_angle>
+            </vertical>
+          </scan>
+
+          <range>
+            <min>${laser_min_range}</min>
+            <max>${laser_max_range}</max>
+            <resolution>${resolution}</resolution>
+          </range>
+
+          <noise>
+            <type>gaussian</type>
+            <mean>${noise_mean}</mean>
+            <stddev>${noise_stddev}</stddev>
+          </noise>
+        </ray>
+
+		    <samples>${samples}</samples>
+		    <downsample>${downsample}</downsample>
+		    <csv_file_name>package://sentry_simulation/scan_mode/mid360.csv</csv_file_name>
+		    <ros_topic>${ros_topic}</ros_topic>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+</robot>
