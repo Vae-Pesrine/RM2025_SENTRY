@@ -1,7 +1,3 @@
-//
-// Created by tony on 2022/9/27.
-//
-
 #include <cmath>
 #include <ros/ros.h>
 

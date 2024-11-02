@@ -2,7 +2,7 @@
     <xacro:property name="always_on" value="true" />
     <xacro:property name="update_rate" value="100" />
     <xacro:property name="visualize" value="true" />
-    <xacro:property name="imu_topic" value="imu" />
+    <xacro:property name="imu_topic" value="/livox/imu" />
     <xacro:property name="body_name" value="imu_link" />
     <xacro:property name="update_RateHZ" value="100.0" />
     <xacro:property name="gaussian_noise" value="0.0" />
@@ -26,7 +26,13 @@
             </geometry>
             <material name="Red" />
         </collision>
-        <xacro:inertial_matrix mass="0.05" />
+
+        <inertial>
+            <mass value="1e-2" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <inertia ixx="1e-6" ixy="0.0" ixz="0"
+                     iyy="0.0"  iyz="0.0" izz="1e-6" />
+        </inertial>
     </link>
 
     <joint name="imu_joint" type="fixed">

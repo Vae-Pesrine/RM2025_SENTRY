@@ -4,54 +4,56 @@
 #include <tf/transform_datatypes.h>
 #include <tf/transform_broadcaster.h>
 
-using namespace std;
-
 geometry_msgs::PoseWithCovarianceStamped InitialPose;
 geometry_msgs::Quaternion geoquat;
 double roll, pitch, yaw;
 double covariance[36];
+double pos_x, pos_y, pos_z, ori_x, ori_y, ori_z, ori_w;
 
 int main(int argc, char *argv[])
 {
-    /* code */
-    setlocale(LC_ALL, "");
     ros::init(argc, argv, "InitialPose");
     ros::NodeHandle nh;
-    ros::Publisher pub_InitialPose = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/initialpose_ori",5);
-    // ros::Subscriber sub_Odom = nh.subscribe<nav_msgs::Odometry>("/state_estimation", 10, odometryCallback);
-    // ros::Subscriber sub_refree = nh.subscribe<usr_fun::refree>("refree",100,refreeCallback);
+    ros::NodeHandle nh_pr("~");
+    ros::Publisher pub_initialPose = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/initialpose_ori", 5);
     ros::Rate rate(50);
     
-    InitialPose.header.frame_id="map";
-    
+    nh_pr.param<double>("position_x", pos_x, 0.0);
+    nh_pr.param<double>("position_y", pos_y, 0.0);
+    nh_pr.param<double>("position_z", pos_z, 0.0);
+    nh_pr.param<double>("orientation_x", ori_x, 0.0);
+    nh_pr.param<double>("orientation_y", ori_y, 0.0);
+    nh_pr.param<double>("orientation_z", ori_z, 0.0);
+    nh_pr.param<double>("orientation_w", ori_w, 0.0);
+
+    ROS_INFO_STREAM(pos_x);
+
+    InitialPose.pose.pose.position.x = pos_x;
+    InitialPose.pose.pose.position.y = pos_y;
+    InitialPose.pose.pose.position.z = pos_z;
+
+    InitialPose.pose.pose.orientation.x = ori_x;
+    InitialPose.pose.pose.orientation.y = ori_y;
+    InitialPose.pose.pose.orientation.z = ori_z;
+    InitialPose.pose.pose.orientation.w = ori_w;
+
     geoquat=tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, yaw);
     InitialPose.pose.pose.orientation = geoquat;
-    for(int i=0;i<36;i++)
+    for(int i = 0; i < 36; i++)
     {
-     InitialPose.pose.covariance[i]=covariance[i];
+     InitialPose.pose.covariance[i] = covariance[i];
     }
-    
-    // 2024 RMUC
-    InitialPose.pose.pose.position.z = 0.0;
-    InitialPose.pose.pose.position.y = 2.36;
-    InitialPose.pose.pose.position.x = 0.08332;
 
-    InitialPose.pose.pose.orientation.z = 0.86378;
-    InitialPose.pose.pose.orientation.y = 0.0;
-    InitialPose.pose.pose.orientation.x = 0.0;
-    InitialPose.pose.pose.orientation.w = 0.50386;
-
-    
-    bool flag = true;
     int count = 0;
     while(ros::ok())
     {
+        InitialPose.header.frame_id = "map";
         InitialPose.header.stamp = ros::Time();
         ros::spinOnce();
         rate.sleep();
         count++;
         if(count <= 250)
-        pub_InitialPose.publish(InitialPose);
+            pub_initialPose.publish(InitialPose);
     }
     
     return 0;

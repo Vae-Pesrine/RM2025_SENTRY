@@ -16,6 +16,10 @@
         <color rgba="1 0 0 1" />
     </material>
 
+    <material name="Green">
+        <color rgba="0 1 0 1" />
+    </material>
+
     <material name="Brown">
         <color rgba="0.647 0.165 0.165 1" />
     </material>
@@ -23,7 +27,7 @@
     <xacro:property name="PI" value="3.1415926" /> 
 	<xacro:property name="length_wheel" value="0.05" />
 	<xacro:property name="radius_wheel" value="0.06" />
-    <xacro:property name="mass_wheel" value="150" />
+    <xacro:property name="mass_wheel" value="50" />
     <xacro:property name="mass_baselink" value="250" />
 
     <!-- Inertial matrix  -->
@@ -31,8 +35,8 @@
         <inertial>
             <mass value="${mass}" />
             <origin xyz="0 0 0" rpy="0 0 0" />
-            <inertia ixx="2.3319" ixy="3.6592E-17" ixz="-4.7325E-18" 
-                     iyy="2.4738" iyz="-2.8587E-19" izz="4.7802" />
+            <inertia ixx="2.3319" ixy="0.0" ixz="0.0" 
+                     iyy="2.4738" iyz="0.0" izz="4.7802" />
         </inertial>
     </xacro:macro>
 
@@ -45,23 +49,6 @@
 
     <!-- //////////////////////////////// all base links of sentry ////////////////////////////////// -->
     <link name="dummy" />
-
-    <link name="base_footprint">
-        <visual>
-            <origin xyz="0 0 0" rpy="0 0 0" />
-            <geometry>
-                <box size="0.001 0.001 0.001" />
-            </geometry>
-            <material name="Blue" />
-        </visual>
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 0" />
-            <geometry>
-                <box size="0.1 0.1 0.1" />
-            </geometry>
-        </collision>
-        <xacro:inertial_matrix mass="0.000001"/>
-    </link>
 
     <link name="base_link">
         <visual>
@@ -152,14 +139,8 @@
     <joint name="dummy_joint" type="fixed">
         <origin xyz="0 0 0" />
         <parent link="dummy" />
-        <child link="base_footprint" />
+        <child link="base_link" />
     </joint>
-
-	<joint name="base_footprint_joint" type="fixed">
-		<origin xyz="0 0 0" />
-		<parent link="base_footprint" />
-		<child link="base_link" />
-	</joint>
 
     <joint name="base_to_wheel1" type="continuous">
         <axis xyz="0 0 1" />
@@ -198,34 +179,28 @@
     </joint>
 
     <!-- //////////////////////////////// gazebo ////////////////////////////////// -->
-    <xacro:gazebo_material ref="base_footprint"    color="White" />
     <xacro:gazebo_material ref="base_link"         color="Orange" />
     <xacro:gazebo_material ref="left_front_wheel"  color="Black" />
     <xacro:gazebo_material ref="right_front_wheel" color="Black" />
     <xacro:gazebo_material ref="left_rear_wheel"   color="Red" />
     <xacro:gazebo_material ref="right_rear_wheel"  color="Red" />   
 
-    <!-- //// ////////////////////////////// driver controller //////////////////////////////////  -->
+    <!-- //// ////////////////////////////// driver controller ///////////////////  -->
     <gazebo>
         <plugin name="mecanum_controller" filename="libgazebo_ros_planar_move.so">
-            <always_on>true</always_on>
-            <updateRate>100.0</updateRate>
             <robotNamespace>/</robotNamespace>
+
             <commandTopic>cmd_vel</commandTopic>
+
             <odometryTopic>odom</odometryTopic>
             <odometryFrame>odom</odometryFrame>
-            <leftFrontJoint>base_to_wheel1</leftFrontJoint>
-            <rightFrontJoint>base_to_wheel3</rightFrontJoint>
-            <leftRearJoint>base_to_wheel2</leftRearJoint>
-            <rightRearJoint>base_to_wheel4</rightRearJoint>
-            <wheelSeparation>0.26</wheelSeparation>
-            <wheelDiameter>0.12</wheelDiameter>
             <odometryRate>20.0</odometryRate>
-            <torque>2</torque>
-            <robotBaseFrame>base_footprint</robotBaseFrame>
+            <robotBaseFrame>base_link</robotBaseFrame>
+
+            <cmdTimeout>3.0</cmdTimeout>
+
             <publishOdomTF>false</publishOdomTF>
             <broadcastTF>false</broadcastTF>
-            <cmdTimeout>3.0</cmdTimeout>
         </plugin>
     </gazebo>
 

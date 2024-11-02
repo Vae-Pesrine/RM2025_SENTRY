@@ -15,7 +15,7 @@
   <xacro:property name="noise_stddev" value="0.00" />
   <xacro:property name="samples" value="20000" />
   <xacro:property name="downsample" value="1" />
-  <xacro:property name="ros_topic" value="livox_horizon_points" />
+  <xacro:property name="ros_topic" value="/livox/lidar" />
   
   <!-- Macro for inertia matrix -->
   <xacro:macro name="sphere_inertial_matrix" params="m r">
@@ -102,7 +102,8 @@
       <pose>0 0 0 0 0 0</pose>
       <visualize>${visualize}</visualize>
       <update_rate>${update_rate}</update_rate>
-        <!-- This ray plugin is only for visualization. -->
+      
+      <!-- This ray plugin is only for visualization. -->
       <plugin name="gazebo_ros_laser_controller" filename="libsentry_simulation.so">
         <ray>
           <scan>
