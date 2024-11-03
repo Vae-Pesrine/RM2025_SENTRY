@@ -92,7 +92,7 @@
   </link>
 
   <joint name="livox_mid360_platform" type="fixed">
-    <origin xyz="0.05 0 -0.05" rpy="${PI} 0 0" />
+    <origin xyz="0.05 0 -0.05" rpy="0 0 0" />
     <parent link="livox_platform" />
     <child link="livox_mid360" />
   </joint>
