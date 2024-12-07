@@ -38,15 +38,15 @@
     </node>
 
 
-    <node name="laser2baselink" pkg="tf2_ros" type="static_transform_publisher" args="0.175 0 0.46 0 0 0 /base_link /livox_mid360"/>
+    <!-- <node name="laser2baselink" pkg="tf2_ros" type="static_transform_publisher" args="0.175 0 0.46 0 0 0 /base_link /livox_mid360"/> -->
 
     <node pkg="sentry_simulation" type="key_control" name="key_control" output="screen">
         <param name="linear_speed" value="1.5" />
         <param name="angular_speed" value="3.2" />
     </node>
 
-    <include file="$(find sentry_localization)/launch/livox_repub.launch" />
+    <!-- <include file="$(find sentry_localization)/launch/livox_repub.launch" /> -->
     
-    <include file="$(find sentry_navigation)/launch/livox_turn.launch" />
+    <!-- <include file="$(find sentry_navigation)/launch/livox_turn.launch" /> -->
 
 </launch>

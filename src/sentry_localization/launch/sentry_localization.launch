@@ -1,21 +1,45 @@
 <launch>
-    <!-- <node name="laser2baselink" pkg="tf2_ros" type="static_transform_publisher" args="0.175 0 0.46 0 0 0 /base_link /livox_frame" /> -->
 
-    <node pkg="sentry_localization" type="livox_to_point" name="livox_to_point" output="screen" />
+    <!-- load the 2D grid map -->
+    <arg name="map" default="RMUC.yaml" />
+    <node pkg="map_server" type="map_server" name="map_server" args="$(find sentry_localization)/map/$(arg map)" />
 
-    <node pkg="sentry_localization" type="global_localization_node" name="global_localization_node" output="screen">
-        <rosparam file="$(find sentry_localization)/config/bbs_params.yaml" command="load" />
-        <rosparam file="$(find sentry_localization)/config/engine_params.yaml" command="load" />
+    <!-- transform of base_link and frame -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="laser_baselink" args="0 0 0.3 0 0 0 /base_link /livox_frame" />
+
+    <!-- turn the livox mid360 points to PointCloud2 points -->
+    <node pkg="sentry_localization" type="livox_lidar_to_points" name="livox_lidar_to_points_node" output="screen" >
+        <param name="livox_in_name" type="string" value="/livox/lidar" />
+        <param name="livox_out_name" type="string" value="/livox/points" />
     </node>
-    
-    <node pkg="nodelet" type="nodelet" name="sentry_nodelet" args="manager" output="screen" />
 
-    <node pkg="nodelet" type="nodelet" name="test1" args="load sentry_localization/GlobalmapServerNodelet sentry_nodelet">
-        <rosparam file="$(find sentry_localization)/config/globalmap_params.yaml" command="load" />
+    <!-- turn the PointCloud2 points to laserscan -->
+    <include file="$(find sentry_localization)/launch/pcl_to_scan.launch" />
+
+    <!-- amcl node -->
+    <include file="$(find sentry_localization)/launch/amcl.launch" />
+
+    <!-- publish the initialpose -->
+    <node pkg="sentry_localization" type="initialpose_node" name="initialpose_node" output="screen">
+        <rosparam file="$(find sentry_localization)/config/initialpose_params/initialpose_params.yaml" command="load" />
+    </node>  
+    <node pkg="sentry_localization" type="initialpose_relocation" name="initialpose_relocation" />
+
+    <!-- move base package -->
+    <node pkg="move_base" type="move_base" name="move_base" output="screen"  respawn="false">
+        <rosparam file="$(find sentry_localization)/config/costmap_params/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find sentry_localization)/config/costmap_params/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find sentry_localization)/config/costmap_params/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find sentry_localization)/config/costmap_params/global_costmap_params.yaml" command="load" />
+        
+        <rosparam file="$(find sentry_localization)/config/teb_local_planner_params.yaml" command="load" />
+        <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+        <param name="controller_frequency" value="10.0" />
+		<param name="controller_patience" value="15.0" />
     </node>
 
-    <node pkg="nodelet" type="nodelet" name="test2" args="load sentry_localization/SentryLocalizationNodelet sentry_nodelet">
-        <rosparam file="$(find sentry_localization)/config/sentry_localization_params.yaml" command="load" />
-    </node>
+    <!-- rviz -->
+    <node pkg="rviz" type="rviz" name="sentry_rviz" args="-d $(find sentry_localization)/rviz/sentry_localization.rviz" />
+
 
 </launch>
