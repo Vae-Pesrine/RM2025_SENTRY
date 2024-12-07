@@ -25,7 +25,7 @@
     </node>
 
     <node pkg="sentry_navigation" type="scan_to_scan_filter" name="scan_to_scan_filter_node" output="screen">
-        <remap from="scan" to="scan" />
+        <remap from="scan" to="/scan" />
         <rosparam file="$(find sentry_navigation)/config/box_filter.yaml" command="load" />
     </node>
 

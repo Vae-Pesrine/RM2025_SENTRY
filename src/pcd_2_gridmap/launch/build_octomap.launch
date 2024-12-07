@@ -1,0 +1,10 @@
+<launch>
+
+<node pkg="pcd_sdf" type="pcd_sdf_node" name="pcd_sdf" output="screen" />
+<rosparam file="$(find pcd_sdf)/config/graph.yaml" command="load"/>
+
+<include file="$(find pcd_sdf)/launch/map.launch" />
+
+<node name="rviz" pkg="rviz" type="rviz" args="-d $(find pcd_sdf)/launch/config1.rviz" />
+
+</launch>

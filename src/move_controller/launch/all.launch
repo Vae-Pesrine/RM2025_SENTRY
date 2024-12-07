@@ -1,12 +1,15 @@
 <launch>
-    <include file="$(find fast_lio)/launch/mapping_mid360.launch"/>
+    <!-- <include file="$(find fast_lio)/launch/mapping_mid360.launch"/> -->
     <node pkg="tf2_ros" type="static_transform_publisher" name="laser2baselink" args="0 0 0.3 0 0 0 /base_link /livox_frame"/>
     <include file="$(find move_controller)/launch/load_map.launch"/>
-    <!-- <include file="$(find move_controller)/launch/amcl.launch"/> -->
+    <include file="$(find move_controller)/launch/amcl.launch"/>
     <include file="$(find move_controller)/launch/move_controller.launch"/>
-    <node pkg="move_controller" type="InitialPose" name="InitialPose">
+
+    <!-- pub the initialpose -->
+    <node pkg="move_controller" type="initialPose_before" name="initialpose" output="screen">
         <rosparam file="$(find move_controller)/config/initialpose.yaml" command="load" />
-    </node> 
+    </node>  
     <node pkg="move_controller" type="relocation" name="relocation"/>
-    <node pkg="rviz" type="rviz" name="move_controller_rviz" args="-d $(find move_controller)/rviz/move_controller.rviz"/>
+
+    <node pkg="rviz" type="rviz" name="sentry_rviz" args="-d $(find move_controller)/rviz/move_controller.rviz"/>
 </launch>

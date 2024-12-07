@@ -1,0 +1,29 @@
+<launch>
+    
+    <!-- 加载地图 -->
+    <arg name="map" default="RMUC.yaml" />
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find sentry_navigation)/map/$(arg map)"/>
+
+    <!-- 2d定位 -->
+    <!-- <include file="$(find sentry_navigation)/launch/amcl.launch"/> -->
+
+    <!-- <node name="laser2baselink" pkg="tf2_ros" type="static_transform_publisher" args="0 0 0.3 0 0 0 /base_link /livox_frame"/> -->
+
+    <node pkg="move_base" type="move_base" name="move_base" output="screen"  respawn="false">
+        <rosparam file="$(find sentry_navigation)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find sentry_navigation)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find sentry_navigation)/config/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find sentry_navigation)/config/global_costmap_params.yaml" command="load" />
+
+        <!-- <rosparam file="$(find sentry_navigation)/config/teb_local_planner_params.yaml" command="load" />
+        <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+        <param name="controller_frequency" value="10.0" />
+		<param name="controller_patience" value="15.0" /> -->
+    </node>
+
+    <!-- <node pkg="sentry_navigation" type="InitialPose" name="InitialPose">
+        <rosparam file="$(find sentry_navigation)/config/initialpose.yaml" command="load" />
+    </node>  -->
+
+    <node pkg="rviz" type="rviz" name="sentry_rviz" args="-d $(find sentry_navigation)/rviz/sentry_navigation.rviz"/>
+</launch>

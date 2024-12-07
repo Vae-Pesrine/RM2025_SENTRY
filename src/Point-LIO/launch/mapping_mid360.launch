@@ -1,6 +1,6 @@
 <launch>
 
-	<arg name="rviz" default="false" />
+	<arg name="rviz" default="true" />
 
 	<node pkg="point_lio" type="pointlio_mapping" name="laserMapping" output="screen">
 		<rosparam command="load" file="$(find point_lio)/config/mid360.yaml" />

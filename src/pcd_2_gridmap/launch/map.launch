@@ -1,0 +1,36 @@
+<launch>
+
+
+  <!-- <node name="pointcloud_to_laserscan" pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node"> 
+	  <remap from="cloud_in" to="/velodyne_cloud_registered"/>
+     <rosparam>
+                angle_min: -3.1415926 # -M_PI
+                angle_max: 3.1415926 # M_PI
+                range_max: 100.0
+   </rosparam>
+  </node> -->
+
+
+  <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+ 
+    <!-- resolution in meters per pixel -->
+    <param name="resolution" value="0.05" />
+ 
+    <!-- name of the fixed frame, needs to be "/map" for SLAM -->
+    <param name="frame_id" type="string" value="/world" />
+ 
+    <!-- max range / depth resolution of the kinect in meter -->
+    <param name="sensor_model/max_range" value="500.0" />
+    <param name="latch" value="true" />
+ 
+    <!-- max/min height for occupancy map, should be in meters -->
+    <param name="pointcloud_max_z" value="0.4" />
+    <param name="pointcloud_min_z" value="0.1" />
+ 
+    <!-- topic from where pointcloud2 messages are subscribed -->
+    <remap from="cloud_in" to="/pcd" />
+    <remap from="/projected_map" to="/map" />
+ 
+  </node>
+ 
+</launch>

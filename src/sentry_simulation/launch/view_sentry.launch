@@ -15,8 +15,8 @@
     <arg name="origin_yaw" default="1.577204" />
 
     <!-- 加载机器人模型参数 -->
-    <param name="robot_description" command="$(find xacro)/xacro  $(find sentry_simulation)/urdf/sentry.urdf.xacro" />
-    <node pkg="gazebo_ros" type="spawn_model" name="spawn_robot" args="-urdf -param /robot_description -model robot 
+    <param name="robot_description" command="$(find xacro)/xacro  $(find sentry_simulation)/urdf/sentry_base.urdf.xacro" />
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_sentry_base" args="-urdf -param /robot_description -model robot 
           -x $(arg origin_x) -y $(arg origin_y) -z $(arg origin_z) -R $(arg origin_roll) -P $(arg origin_pitch) -Y $(arg origin_yaw)" />
 
     <env name="GAZEBO_MODEL_PATH" value="${GAZEBO_MODEL_PATH}:$(find sentry_simulation)/mesh" />
@@ -33,7 +33,12 @@
     </include>
       
     <node pkg="joint_state_publisher" type="joint_state_publisher" name="sentry_joint_publisher" output="screen" />    
-    <node pkg="robot_state_publisher" type="robot_state_publisher" name="sentry_tf_publisher" output="screen" />
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="sentry_tf_publisher" output="screen">
+        <!-- <param name="publish_frequency" value="20.0" /> -->
+    </node>
+
+
+    <node name="laser2baselink" pkg="tf2_ros" type="static_transform_publisher" args="0.175 0 0.46 0 0 0 /base_link /livox_mid360"/>
 
     <node pkg="sentry_simulation" type="key_control" name="key_control" output="screen">
         <param name="linear_speed" value="1.5" />

@@ -1,0 +1,15 @@
+initialpose:
+  position_z: 0.0
+  position_y: 0.0
+  position_x: 2.2
+
+  orientation_w: 0.0
+  orientation_z: 0.0
+  orientation_y: 0.0
+  orientation_x: 0.0
+
+relocation:
+  dist_range: 2.0
+  angle_range: 60.0 * 3.14 / 180.0
+  dist_resolution: 0.2
+  angle_resolution: 1.0 * 3.14 / 180.0

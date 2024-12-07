@@ -1,0 +1,9 @@
+<launch>
+
+<node pkg="pcd_sdf" type="pcd_sdf_node" name="pcd_sdf" output="screen" >
+    <remap from="/pcd" to="/globalmap"/>
+</node>    
+
+<rosparam file="$(find pcd_sdf)/config/graph.yaml" command="load"/>
+
+</launch>
