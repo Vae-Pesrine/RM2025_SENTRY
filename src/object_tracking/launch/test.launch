@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="object_tracking" type="ground" name="ground" output="screen">
+        <rosparam file="$(find object_tracking)/config/ground_remove.yaml" command="load" />
+    </node>
+</launch>

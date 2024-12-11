@@ -1,0 +1,3 @@
+cloud_topic: /livox/points
+filter_z_min: -1.0
+filter_z_max: 1.0
