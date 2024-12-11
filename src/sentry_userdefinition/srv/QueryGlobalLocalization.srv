@@ -1,9 +1,0 @@
-int64 max_num_candidates              #候选位姿最大数量
-sensor_msgs/PointCloud2 cloud         #原始点云
----
-std_msgs/Header header                #消息头
-std_msgs/Header globalmap_header
-
-float64[] inlier_fractions            #内点比例
-float64[] errors                      #估计的误差
-geometry_msgs/Pose[] poses              #候选位姿的姿态 

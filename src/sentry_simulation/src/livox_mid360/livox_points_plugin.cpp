@@ -1,4 +1,3 @@
-#include "sentry_simulation/livox_points_plugin.h"
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud.h>
 #include <gazebo/physics/Model.hh>
@@ -9,9 +8,11 @@
 #include <gazebo/transport/Node.hh>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/point_cloud.h>
-#include "sentry_simulation/csv_reader.hpp"
-#include "sentry_simulation/livox_ode_multiray_shape.h"
 #include <livox_ros_driver2/CustomMsg.h>
+
+#include "livox_mid360/csv_reader.hpp"
+#include "livox_mid360/livox_ode_multiray_shape.h"
+#include "livox_mid360/livox_points_plugin.h"
 
 namespace gazebo {
 

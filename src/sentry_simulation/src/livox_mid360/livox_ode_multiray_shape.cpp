@@ -7,8 +7,9 @@
 #include <gazebo/physics/ode/ODEPhysics.hh>
 #include <gazebo/physics/ode/ODERayShape.hh>
 #include <gazebo/physics/ode/ODEMultiRayShape.hh>
-#include "sentry_simulation/livox_ode_multiray_shape.h"
 #include <ignition/math4/ignition/math.hh>
+#include "livox_mid360/livox_ode_multiray_shape.h"
+
 
 using namespace gazebo;
 using namespace physics;

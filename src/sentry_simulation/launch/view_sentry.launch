@@ -7,6 +7,7 @@
     <arg name="headless" default="false"/>
     <arg name="debug" default="false"/>
     <arg name="verbose" default="true"/>
+    <!-- the original pose of sentry in the gazebo world-->
     <arg name="origin_x" default="7.401661" />
     <arg name="origin_y" default="5.841537" />
     <arg name="origin_z" default="0.492678" />
@@ -15,7 +16,7 @@
     <arg name="origin_yaw" default="1.577204" />
 
     <!-- 加载机器人模型参数 -->
-    <param name="robot_description" command="$(find xacro)/xacro  $(find sentry_simulation)/urdf/sentry_base.urdf.xacro" />
+    <param name="robot_description" command="$(find xacro)/xacro  $(find sentry_simulation)/urdf/sentry.urdf.xacro" />
     <node pkg="gazebo_ros" type="spawn_model" name="spawn_sentry_base" args="-urdf -param /robot_description -model robot 
           -x $(arg origin_x) -y $(arg origin_y) -z $(arg origin_z) -R $(arg origin_roll) -P $(arg origin_pitch) -Y $(arg origin_yaw)" />
 
@@ -37,16 +38,9 @@
         <!-- <param name="publish_frequency" value="20.0" /> -->
     </node>
 
-
-    <!-- <node name="laser2baselink" pkg="tf2_ros" type="static_transform_publisher" args="0.175 0 0.46 0 0 0 /base_link /livox_mid360"/> -->
-
     <node pkg="sentry_simulation" type="key_control" name="key_control" output="screen">
         <param name="linear_speed" value="1.5" />
         <param name="angular_speed" value="3.2" />
     </node>
-
-    <!-- <include file="$(find sentry_localization)/launch/livox_repub.launch" /> -->
-    
-    <!-- <include file="$(find sentry_navigation)/launch/livox_turn.launch" /> -->
 
 </launch>
