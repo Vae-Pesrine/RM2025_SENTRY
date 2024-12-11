@@ -2,5 +2,5 @@ devel/*
 build/*
 .vscode/*
 src/FAST_LIO/PCD/*
-src/3d_bbs/build/*
+src/Livox-SDK2/build/*
 
