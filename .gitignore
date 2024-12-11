@@ -1,6 +1,5 @@
 devel/*
-build/*
+**/build/** 
 .vscode/*
 src/FAST_LIO/PCD/*
-src/Livox-SDK2/build/*
 
