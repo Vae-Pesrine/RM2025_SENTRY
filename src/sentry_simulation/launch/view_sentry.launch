@@ -16,7 +16,7 @@
     <arg name="origin_yaw" default="1.577204" />
 
     <!-- 加载机器人模型参数 -->
-    <param name="robot_description" command="$(find xacro)/xacro  $(find sentry_simulation)/urdf/sentry.urdf.xacro" />
+    <param name="robot_description" command="$(find xacro)/xacro  $(find sentry_simulation)/urdf/omni.urdf.xacro" />
     <node pkg="gazebo_ros" type="spawn_model" name="spawn_sentry_base" args="-urdf -param /robot_description -model robot 
           -x $(arg origin_x) -y $(arg origin_y) -z $(arg origin_z) -R $(arg origin_roll) -P $(arg origin_pitch) -Y $(arg origin_yaw)" />
 
