@@ -42,14 +42,14 @@
             </collision>
 
 	    	<inertial>
-	    		<mass value="0.00113845" />
+	    		<mass value="3.7948" />
 	    		<inertia
-	    			ixx="2.53776e-08"
+	    			ixx="0.84592e-04"
 	    			ixy="0"
 	    			ixz="0"
-	    			iyy="2.53776e-08"
+	    			iyy="0.84592e-04"
 	    			iyz="0"
-	    			izz="1.47666e-08"
+	    			izz="0.49222e-04"
 	    		/>
 	    	</inertial>
         </link>
@@ -91,14 +91,14 @@
         </collision>
 
         <inertial>
-            <mass value="0.07862944645" />
+            <mass value="262.098154" />
             <inertia 
-                ixx="0.00002035985530754"
+                ixx="0.067866"
                 ixy="0.0"
                 ixz="0.0"
-                iyy="0.00002035985530754"
+                iyy="0.067886"
                 iyz="0.0"
-                izz="0.00003945961663220"            
+                izz="0.131532"            
             />
         </inertial>
     </link>
@@ -120,14 +120,14 @@
 
         <inertial>
 			<origin xyz="0 0 -0.000343"/>
-			<mass value="0.00835758"/>
+			<mass value="41.7879"/>
 			<inertia
-				ixx="6.63684e-07"
+				ixx="3.31842e-03"
 				ixy="0"
 				ixz="0"
-				iyy="6.63684e-07"
+				iyy="3.31842e-03"
 				iyz="0"
-				izz="9.40333e-07"
+				izz="4.70166e-03"
 			/>
         </inertial>
     </link>
@@ -158,14 +158,14 @@
 
         <inertial>
 			<origin xyz="0 0 -0.000343"/>
-			<mass value="0.00835758"/>
+			<mass value="41.7879"/>
 			<inertia
-				ixx="6.63684e-07"
+				ixx="3.31842e-03"
 				ixy="0"
 				ixz="0"
-				iyy="6.63684e-07"
+				iyy="3.31842e-03"
 				iyz="0"
-				izz="9.40333e-07"
+				izz="4.70166e-03"
 			/>
         </inertial>
     </link>
@@ -196,14 +196,14 @@
 
         <inertial>
 			<origin xyz="0 0 -0.000343"/>
-			<mass value="0.00835758"/>
+			<mass value="41.7879"/>
 			<inertia
-				ixx="6.63684e-07"
+				ixx="3.31842e-03"
 				ixy="0"
 				ixz="0"
-				iyy="6.63684e-07"
+				iyy="3.31842e-03"
 				iyz="0"
-				izz="9.40333e-07"
+				izz="4.70166e-03"
 			/>
         </inertial>
     </link>
@@ -413,11 +413,11 @@
         <type>transmission_interface/SimpleTransmission</type>
         
         <joint name="left_wheel_joint">
-            <hardwareInterface>hardwareInterface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         
         <actuator name="left_motor">
-            <hardwareInterface>EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
@@ -426,11 +426,11 @@
         <type>transmission_interface/SimpleTransmission</type>
         
         <joint name="right_wheel_joint">
-            <hardwareInterface>hardwareInterface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         
         <actuator name="right_motor">
-            <hardwareInterface>EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
@@ -439,20 +439,22 @@
         <type>transmission_interface/SimpleTransmission</type>
         
         <joint name="rear_wheel_joint">
-            <hardwareInterface>hardwareInterface/EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         
         <actuator name="rear_motor">
-            <hardwareInterface>EffortJointInterface</hardwareInterface>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
 
     <!-- //////////////////////////////// gazebo ////////////////////////////////// -->
     <xacro:gazebo_material ref="base_link"           color="White" />
+    
     <xacro:gazebo_material ref="left_wheel_link"     color="Red" />
     <xacro:gazebo_material ref="right_wheel_link"    color="Blue" />
     <xacro:gazebo_material ref="rear_wheel_link"     color="Green" />
+    
     <xacro:gazebo_material ref="left_roller_e_link"  color="Black" />
     <xacro:gazebo_material ref="left_roller_ne_link" color="Black" />
     <xacro:gazebo_material ref="left_roller_n_link"  color="Black" />
@@ -481,9 +483,8 @@
     <xacro:gazebo_material ref="rear_roller_se_link" color="Black" />
 
     <gazebo>
-        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-            <!-- <robotNamespace><robotNamespace> -->
-        </plugin>
+        <!-- filename使用绝对路径，这里相对路径会有编辑器或插件的提示 -->
+        <plugin name='omni_plugin' filename='/home/jgy/RMUC_simulation/src/sentry_simulation/plugin/build/libmain.so'/>
     </gazebo>
 
 </robot>

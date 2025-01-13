@@ -8,12 +8,12 @@
     <arg name="debug" default="false"/>
     <arg name="verbose" default="true"/>
     <!-- the original pose of sentry in the gazebo world-->
-    <arg name="origin_x" default="7.401661" />
-    <arg name="origin_y" default="5.841537" />
-    <arg name="origin_z" default="0.492678" />
-    <arg name="origin_roll" default="0.000001" />
-    <arg name="origin_pitch" default="0.000001" />
-    <arg name="origin_yaw" default="1.577204" />
+    <arg name="origin_x" default="8.300177" />
+    <arg name="origin_y" default="4.582030" />
+    <arg name="origin_z" default="0.018392" />
+    <arg name="origin_roll" default="0.0" />
+    <arg name="origin_pitch" default="0.0" />
+    <arg name="origin_yaw" default="-1.839898" />
 
     <!-- 加载机器人模型参数 -->
     <param name="robot_description" command="$(find xacro)/xacro  $(find sentry_simulation)/urdf/omni.urdf.xacro" />
@@ -30,7 +30,7 @@
         <arg name="verbose" value="$(arg verbose)"/>
         <arg name="headless" value="$(arg headless)"/>
         <arg name="use_sim_time" value="$(arg use_sim_time)"/>
-        <arg name="world_name" value="$(find sentry_simulation)/world/RMUC2024.world" />
+        <arg name="world_name" value="$(find sentry_simulation)/world/RMUC2025.world" />
     </include>
       
     <node pkg="joint_state_publisher" type="joint_state_publisher" name="sentry_joint_publisher" output="screen" />    
