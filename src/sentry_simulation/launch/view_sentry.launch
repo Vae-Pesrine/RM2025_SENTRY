@@ -16,7 +16,7 @@
     <arg name="origin_yaw" default="-1.839898" />
 
     <!-- 加载机器人模型参数 -->
-    <param name="robot_description" command="$(find xacro)/xacro  $(find sentry_simulation)/urdf/omni.urdf.xacro" />
+    <param name="robot_description" command="$(find xacro)/xacro  $(find sentry_simulation)/urdf/sentry_acker.urdf.xacro" />
     <node pkg="gazebo_ros" type="spawn_model" name="spawn_sentry_base" args="-urdf -param /robot_description -model robot 
           -x $(arg origin_x) -y $(arg origin_y) -z $(arg origin_z) -R $(arg origin_roll) -P $(arg origin_pitch) -Y $(arg origin_yaw)" />
 
@@ -30,7 +30,7 @@
         <arg name="verbose" value="$(arg verbose)"/>
         <arg name="headless" value="$(arg headless)"/>
         <arg name="use_sim_time" value="$(arg use_sim_time)"/>
-        <arg name="world_name" value="$(find sentry_simulation)/world/RMUC2025.world" />
+        <arg name="world_name" value="$(find sentry_simulation)/world/RMUC2024.world" />
     </include>
       
     <node pkg="joint_state_publisher" type="joint_state_publisher" name="sentry_joint_publisher" output="screen" />    
@@ -38,9 +38,5 @@
         <!-- <param name="publish_frequency" value="20.0" /> -->
     </node>
 
-    <node pkg="sentry_simulation" type="key_control" name="key_control" output="screen">
-        <param name="linear_speed" value="1.5" />
-        <param name="angular_speed" value="3.2" />
-    </node>
-
+    <node pkg="rviz" type="rviz" name="sentry_view_rviz" args="-d $(find sentry_simulation)/rviz/sentry_omni.rviz"/>
 </launch>

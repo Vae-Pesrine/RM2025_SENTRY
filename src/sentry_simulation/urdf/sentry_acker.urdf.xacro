@@ -1,0 +1,351 @@
+<robot name="sentry" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- Defining the colors used in this robot  -->
+    <material name="Black">
+        <color rgba="0 0 0 1" />
+    </material>
+
+    <material name="White">
+        <color rgba="1 1 1 1" />
+    </material>
+
+    <material name="Blue">
+        <color rgba="0 0 1 1" />
+    </material>
+
+    <material name="Red">
+        <color rgba="1 0 0 1" />
+    </material>
+
+    <material name="Green">
+        <color rgba="0 1 0 1" />
+    </material>
+
+    <material name="Brown">
+        <color rgba="0.647 0.165 0.165 1" />
+    </material>
+
+    <xacro:property name="PI" value="3.1415926" /> 
+	<xacro:property name="length_wheel" value="0.05" />
+	<xacro:property name="radius_wheel" value="0.06" />
+    <xacro:property name="mass_wheel" value="50" />
+    <xacro:property name="mass_baselink" value="250" />
+
+    <!-- //////////////////////////////// imu ////////////////////////////////// -->
+    <xacro:property name="always_on" value="true" />
+    <xacro:property name="update_rate" value="100" />
+    <xacro:property name="visualize" value="true" />
+    <xacro:property name="body_name" value="imu_link" />
+    <xacro:property name="update_RateHZ" value="100.0" />
+    <xacro:property name="gaussian_noise" value="0.0" />
+    <xacro:property name="frame_name" value="imu_link" />
+    <xacro:property name="queueSize" value="100" />
+    <xacro:property name="PI" value="3.1415926"/>
+    <xacro:property name="imu_topic" value="/livox/imu" />
+
+    <!-- //////////////////////////////// lidar ////////////////////////////////// -->
+    <xacro:property name="visualize" value="true" />
+    <xacro:property name="update_rate" value="10" />
+    <xacro:property name="resolution" value="0.002" />
+    <xacro:property name="laser_min_range" value="0.1" />
+    <xacro:property name="laser_max_range" value="200.0" />
+    <xacro:property name="noise_mean" value="0.00" />
+    <xacro:property name="noise_stddev" value="0.00" />
+    <xacro:property name="samples" value="20000" />
+    <xacro:property name="downsample" value="1" />
+    <xacro:property name="ros_topic" value="/livox/lidar" />
+
+    <!-- Inertial matrix  -->
+    <xacro:macro name="inertial_matrix" params="mass">
+        <inertial>
+            <mass value="${mass}" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <inertia ixx="2.3319" ixy="0.0" ixz="0.0" 
+                     iyy="2.4738" iyz="0.0" izz="4.7802" />
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="gazebo_material" params="ref color">
+        <gazebo reference="${ref}">
+            <pose>0 0 0 0 0 0</pose>
+            <material>Gazebo/${color}</material>
+        </gazebo>
+    </xacro:macro>
+
+    <!-- //////////////////////////////// all base links of sentry ////////////////////////////////// -->
+    <link name="base_link">
+        <visual>
+            <origin xyz="0 0 0.05" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.2 0.3 0.1"/>
+            </geometry>
+            <material name="White" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0.05" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.3 0.2 0.15"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_matrix mass="${mass_baselink}" />
+    </link>
+
+    <link name="left_front_wheel">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder radius="${radius_wheel}" length="${length_wheel}" />
+            </geometry>
+            <material name="Black" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder radius="${radius_wheel}" length="${length_wheel}" />
+            </geometry>
+        </collision>
+        <xacro:inertial_matrix mass="${mass_wheel}" />
+    </link>
+
+    <link name="right_front_wheel">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder radius="${radius_wheel}" length="${length_wheel}" />
+            </geometry>
+            <material name="Black" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder radius="${radius_wheel}" length="${length_wheel}" />
+            </geometry>
+        </collision>
+        <xacro:inertial_matrix mass="${mass_wheel}" />
+    </link>
+
+    <link name="left_rear_wheel">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder radius="${radius_wheel}" length="${length_wheel}" />
+            </geometry>
+            <material name="Red" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder radius="${radius_wheel}" length="${length_wheel}" />
+            </geometry>
+        </collision>
+        <xacro:inertial_matrix mass="${mass_wheel}" />
+    </link>
+
+    <link name="right_rear_wheel">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder radius="${radius_wheel}" length="${length_wheel}" />
+            </geometry>
+            <material name="Red" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder radius="${radius_wheel}" length="${length_wheel}" />
+            </geometry>
+        </collision>
+        <xacro:inertial_matrix mass="${mass_wheel}" />
+    </link>
+
+    <link name="imu_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="0.05 0.05 0.05" />
+            </geometry>
+            <material name="Red" />
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="0.05 0.05 0.05" />
+            </geometry>
+            <material name="Red" />
+        </collision>
+
+        <inertial>
+            <mass value="1e-2" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <inertia ixx="1e-6" ixy="0.0" ixz="0"
+                     iyy="0.0"  iyz="0.0" izz="1e-6" />
+        </inertial>
+    </link>
+
+    <link name="livox_mid360">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://sentry_simulation/mesh/livox_mid360.dae">
+                </mesh>
+            </geometry>
+       </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://sentry_simulation/mesh/livox_mid360.dae">
+                </mesh>
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- //////////////////////////////// all joints ////////////////////////////////// -->
+    <joint name="base_to_wheel1" type="continuous">
+        <axis xyz="0 0 1" />
+        <anchor xyz="0 0 0" />
+        <limit effort="100" velocity="100" />
+        <parent link="base_link"/>
+        <child link="left_front_wheel"/>
+        <origin rpy="${-PI/2} 0 0" xyz="0.1 0.13 0"/>
+    </joint>
+
+    <joint name="base_to_wheel2" type="continuous">
+        <axis xyz="0 0 1" />
+        <anchor xyz="0 0 0" />
+        <limit effort="100" velocity="100" />
+        <parent link="base_link"/>
+        <child link="left_rear_wheel"/>
+        <origin rpy="${-PI/2} 0 0" xyz="-0.1 0.13 0"/>
+    </joint>
+
+    <joint name="base_to_wheel3" type="continuous">
+        <axis xyz="0 0 1" />
+        <anchor xyz="0 0 0" />
+        <limit effort="100" velocity="100" />
+        <parent link="base_link"/>
+        <child link="right_front_wheel"/>
+        <origin rpy="${-PI/2} 0 0" xyz="0.1 -0.13 0"/>
+    </joint>
+
+    <joint name="base_to_wheel4" type="continuous">
+        <axis xyz="0 0 1" />
+        <anchor xyz="0 0 0" />
+        <limit effort="100" velocity="100" />
+        <parent link="base_link"/>
+        <child link="right_rear_wheel"/>
+        <origin rpy="${-PI/2} 0 0" xyz="-0.1 -0.13 0"/>
+    </joint>
+
+    <joint name="imu_joint" type="fixed">
+        <axis xyz="0 1 0" />
+        <parent link="base_link" />
+        <child link="imu_link" />
+        <origin xyz="0.125  0 0.2" rpy="0 0 0" />
+    </joint>
+
+    <joint name="base_lidar" type="fixed">
+        <origin xyz="0.175 0 0.46" rpy="0 0 0" />
+        <parent link="base_link" />
+        <child link="livox_mid360" />
+    </joint>
+
+    <!-- //////////////////////////////// gazebo ////////////////////////////////// -->
+    <xacro:gazebo_material ref="base_link"         color="Orange" />
+    <xacro:gazebo_material ref="left_front_wheel"  color="Black" />
+    <xacro:gazebo_material ref="right_front_wheel" color="Black" />
+    <xacro:gazebo_material ref="left_rear_wheel"   color="Red" />
+    <xacro:gazebo_material ref="right_rear_wheel"  color="Red" />   
+
+    <!-- //// ////////////////////////////// driver controller ///////////////////  -->
+    <gazebo>
+        <plugin name="mecanum_controller" filename="libgazebo_ros_planar_move.so">
+            <robotNamespace>/</robotNamespace>
+
+            <commandTopic>cmd_vel</commandTopic>
+
+            <odometryTopic>odom</odometryTopic>
+            <odometryFrame>odom</odometryFrame>
+            <odometryRate>10.0</odometryRate>
+            <robotBaseFrame>base_link</robotBaseFrame>
+
+            <cmdTimeout>3.0</cmdTimeout>
+
+            <publishOdomTF>False</publishOdomTF>
+            <broadcastTF>False</broadcastTF>
+        </plugin>
+    </gazebo>
+
+    <!-- //////////////////////////////// imu control ////////////////////////////////// -->
+    <gazebo reference="imu_link">
+        <material>Gazebo/Red</material>
+        <pose>0 0 0 0 0 0</pose>
+        <gravity>true</gravity>
+        <sensor name="imu_sensor" type="imu">
+            <always_on>${always_on}</always_on>
+            <update_rate>${update_rate}</update_rate>
+            <visualize>${visualize}</visualize>
+            <topic>_default_topic_</topic>
+            <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+                <topicName>${imu_topic}</topicName>
+                <bodyName>${body_name}</bodyName>
+                <updateRateHZ>${update_RateHZ}</updateRateHZ>
+                <gaussianNoise>${gaussian_noise}</gaussianNoise>
+                <frameName>${frame_name}</frameName>
+                <xyzOffset>0 0 0</xyzOffset>
+                <rpyOffset>0 0 0</rpyOffset>
+                <queueSize>${queueSize}</queueSize>
+            </plugin>
+            <pose>0 0 0 0 0 0</pose>
+        </sensor>
+    </gazebo>
+
+    <!-- //////////////////////////////// lidar control ////////////////////////////////// -->
+    <gazebo reference="livox_mid360">
+      <sensor type="ray" name="livox_mid360">
+        <pose>0 0 0 0 0 0</pose>
+        <visualize>${visualize}</visualize>
+        <update_rate>${update_rate}</update_rate>
+
+        <!-- This ray plugin is only for visualization. -->
+        <plugin name="gazebo_ros_laser_controller" filename="liblivox_laser_simulation.so">
+            <ray>
+                <scan>
+                  <horizontal>
+                    <samples>0</samples>
+                    <resolution>1</resolution>
+                    <min_angle>${0}</min_angle>
+                    <max_angle>${2*PI}</max_angle>
+                  </horizontal>
+
+                  <vertical>
+                    <samples>0</samples>
+                    <resolution>1</resolution>
+                    <min_angle>${-7.22/180*PI}</min_angle>
+                    <max_angle>${55.22/180*PI}</max_angle>
+                  </vertical>
+                </scan>
+
+                <range>
+                  <min>${laser_min_range}</min>
+                  <max>${laser_max_range}</max>
+                  <resolution>${resolution}</resolution>
+                </range>
+
+                <noise>
+                  <type>gaussian</type>
+                  <mean>${noise_mean}</mean>
+                  <stddev>${noise_stddev}</stddev>
+                </noise>
+            </ray>
+    	
+            <samples>${samples}</samples>
+    	    <downsample>${downsample}</downsample>
+    	    <csv_file_name>mid360.csv</csv_file_name>
+    	    <ros_topic>${ros_topic}</ros_topic>
+            <broadcastTF>false</broadcastTF>
+        </plugin>
+      </sensor>
+    </gazebo>
+
+</robot>
