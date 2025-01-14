@@ -31,18 +31,20 @@ include_directories(
 )
 
 catkin_package(
-        INCLUDE_DIRS include
+        INCLUDE_DIRS 
         LIBRARIES sentry_simulation
         CATKIN_DEPENDS tf
         pcl_ros
 )
 
-add_library(sentry_simulation SHARED src/livox_mid360/livox_points_plugin.cpp src/livox_mid360/livox_ode_multiray_shape.cpp)
-target_link_libraries(sentry_simulation ${catkin_LIBRARIES} ${PCL_LIBRARIES} RayPlugin)
-target_link_libraries(sentry_simulation libprotobuf.so.9)
-
 add_executable(telelop_keyboard_ctrl src/telelop_keyboard_ctrl.cpp)
 add_dependencies(telelop_keyboard_ctrl ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(telelop_keyboard_ctrl 
+${catkin_LIBRARIES}
+)
+
+add_executable(key_control src/key_control.cpp)
+add_dependencies(key_control ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(key_control 
 ${catkin_LIBRARIES}
 )

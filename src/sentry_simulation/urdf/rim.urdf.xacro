@@ -33,8 +33,7 @@
 				<geometry>
 					<mesh filename="package://sentry_simulation/mesh/omni/wheel.stl"/>
 				</geometry>
-			</collision>
-			
+			</collision>			
 		</link>
 
 		<joint

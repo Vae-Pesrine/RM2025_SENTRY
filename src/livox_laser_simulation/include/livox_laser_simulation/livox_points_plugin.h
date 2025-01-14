@@ -79,7 +79,7 @@ class LivoxPointsPlugin : public RayPlugin {
         SENSOR_MSG_POINT_CLOUD = 0,
         SENSOR_MSG_POINT_CLOUD2_POINTXYZ = 1,
         SENSOR_MSG_POINT_CLOUD2_LIVOXPOINTXYZRTLT = 2,
-        livox_laser_simulation_CUSTOM_MSG = 3,
+        livox_ros_driver2_CUSTOM_MSG = 3,
     };
 
     void InitializeRays(std::vector<std::pair<int, AviaRotateInfo>>& points_pair,

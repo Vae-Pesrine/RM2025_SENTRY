@@ -31,28 +31,6 @@
     <xacro:property name="mass_baselink" value="250" />
 
     <!-- //////////////////////////////// imu ////////////////////////////////// -->
-    <xacro:property name="always_on" value="true" />
-    <xacro:property name="update_rate" value="100" />
-    <xacro:property name="visualize" value="true" />
-    <xacro:property name="body_name" value="imu_link" />
-    <xacro:property name="update_RateHZ" value="100.0" />
-    <xacro:property name="gaussian_noise" value="0.0" />
-    <xacro:property name="frame_name" value="imu_link" />
-    <xacro:property name="queueSize" value="100" />
-    <xacro:property name="PI" value="3.1415926"/>
-    <xacro:property name="imu_topic" value="/livox/imu" />
-
-    <!-- //////////////////////////////// lidar ////////////////////////////////// -->
-    <xacro:property name="visualize" value="true" />
-    <xacro:property name="update_rate" value="10" />
-    <xacro:property name="resolution" value="0.002" />
-    <xacro:property name="laser_min_range" value="0.1" />
-    <xacro:property name="laser_max_range" value="200.0" />
-    <xacro:property name="noise_mean" value="0.00" />
-    <xacro:property name="noise_stddev" value="0.00" />
-    <xacro:property name="samples" value="20000" />
-    <xacro:property name="downsample" value="1" />
-    <xacro:property name="ros_topic" value="/livox/lidar" />
 
     <!-- Inertial matrix  -->
     <xacro:macro name="inertial_matrix" params="mass">
@@ -186,7 +164,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://sentry_simulation/mesh/livox_mid360.dae">
+                <mesh filename="package://sentry_simulation/mesh/mid360.stl">
                 </mesh>
             </geometry>
        </visual>
@@ -194,7 +172,7 @@
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://sentry_simulation/mesh/livox_mid360.dae">
+                <mesh filename="package://sentry_simulation/mesh/mid360.stl">
                 </mesh>
             </geometry>
         </collision>
@@ -245,7 +223,7 @@
     </joint>
 
     <joint name="base_lidar" type="fixed">
-        <origin xyz="0.175 0 0.46" rpy="0 0 0" />
+        <origin xyz="0.135 0 0.23" rpy="0 0 3.1415926" />
         <parent link="base_link" />
         <child link="livox_mid360" />
     </joint>
@@ -264,13 +242,13 @@
 
             <commandTopic>cmd_vel</commandTopic>
 
+            <!-- 因为关闭发布odom的tf没有效果，所以此处把parent link改为gazebo_odom,child link改为gazebo_base_link
+            仍可以通过cmd_vel话题来控制小车的运动，同时可以跑其他里程计算法，避免干扰 -->
             <odometryTopic>odom</odometryTopic>
-            <odometryFrame>odom</odometryFrame>
             <odometryRate>10.0</odometryRate>
-            <robotBaseFrame>base_link</robotBaseFrame>
-
+            <odometryFrame>gazebo_odom</odometryFrame>
+            <robotBaseFrame>gazebo_base_link</robotBaseFrame>
             <cmdTimeout>3.0</cmdTimeout>
-
             <publishOdomTF>False</publishOdomTF>
             <broadcastTF>False</broadcastTF>
         </plugin>
@@ -282,19 +260,19 @@
         <pose>0 0 0 0 0 0</pose>
         <gravity>true</gravity>
         <sensor name="imu_sensor" type="imu">
-            <always_on>${always_on}</always_on>
-            <update_rate>${update_rate}</update_rate>
-            <visualize>${visualize}</visualize>
+            <always_on>true</always_on>
+            <update_rate>100</update_rate>
+            <visualize>true</visualize>
             <topic>_default_topic_</topic>
             <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
-                <topicName>${imu_topic}</topicName>
-                <bodyName>${body_name}</bodyName>
-                <updateRateHZ>${update_RateHZ}</updateRateHZ>
-                <gaussianNoise>${gaussian_noise}</gaussianNoise>
-                <frameName>${frame_name}</frameName>
+                <topicName>/livox/imu</topicName>
+                <bodyName>imu_link</bodyName>
+                <updateRateHZ>100.0</updateRateHZ>
+                <gaussianNoise>0.0</gaussianNoise>
+                <frameName>imu_link</frameName>
                 <xyzOffset>0 0 0</xyzOffset>
                 <rpyOffset>0 0 0</rpyOffset>
-                <queueSize>${queueSize}</queueSize>
+                <queueSize>100</queueSize>
             </plugin>
             <pose>0 0 0 0 0 0</pose>
         </sensor>
@@ -304,45 +282,47 @@
     <gazebo reference="livox_mid360">
       <sensor type="ray" name="livox_mid360">
         <pose>0 0 0 0 0 0</pose>
-        <visualize>${visualize}</visualize>
-        <update_rate>${update_rate}</update_rate>
+        <visualize>false</visualize>
+        <update_rate>10</update_rate>
 
         <!-- This ray plugin is only for visualization. -->
         <plugin name="gazebo_ros_laser_controller" filename="liblivox_laser_simulation.so">
             <ray>
                 <scan>
                   <horizontal>
-                    <samples>0</samples>
+                    <samples>100</samples>
                     <resolution>1</resolution>
-                    <min_angle>${0}</min_angle>
-                    <max_angle>${2*PI}</max_angle>
+                    <min_angle>${-PI}</min_angle>
+                    <max_angle>${PI}</max_angle>
                   </horizontal>
 
                   <vertical>
-                    <samples>0</samples>
+                    <samples>50</samples>
                     <resolution>1</resolution>
-                    <min_angle>${-7.22/180*PI}</min_angle>
-                    <max_angle>${55.22/180*PI}</max_angle>
+                    <min_angle>${-PI}</min_angle>
+                    <max_angle>${PI}</max_angle>
                   </vertical>
                 </scan>
 
                 <range>
-                  <min>${laser_min_range}</min>
-                  <max>${laser_max_range}</max>
-                  <resolution>${resolution}</resolution>
+                  <min>0.1</min>
+                  <max>40</max>
+                  <resolution>1</resolution>
                 </range>
 
                 <noise>
                   <type>gaussian</type>
-                  <mean>${noise_mean}</mean>
-                  <stddev>${noise_stddev}</stddev>
+                  <mean>0.0</mean>
+                  <stddev>0.0</stddev>
                 </noise>
             </ray>
-    	
-            <samples>${samples}</samples>
-    	    <downsample>${downsample}</downsample>
+
+            <visualize>True</visualize>
+            <samples>20000</samples>
+    	    <downsample>1</downsample>
     	    <csv_file_name>mid360.csv</csv_file_name>
-    	    <ros_topic>${ros_topic}</ros_topic>
+    	    <ros_topic>/livox/lidar</ros_topic>
+            <publish_pointcloud_type>3</publish_pointcloud_type>
             <broadcastTF>false</broadcastTF>
         </plugin>
       </sensor>

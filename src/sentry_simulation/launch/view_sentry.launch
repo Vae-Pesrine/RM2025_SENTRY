@@ -10,7 +10,10 @@
     <!-- the original pose of sentry in the gazebo world-->
     <arg name="origin_x" default="8.300177" />
     <arg name="origin_y" default="4.582030" />
-    <arg name="origin_z" default="0.018392" />
+    <!-- ackerman -->
+    <arg name="origin_z" default="0.466572" />
+    <!-- omni -->
+    <!-- <arg name="origin_z" default="0.018392" /> -->
     <arg name="origin_roll" default="0.0" />
     <arg name="origin_pitch" default="0.0" />
     <arg name="origin_yaw" default="-1.839898" />
@@ -36,6 +39,16 @@
     <node pkg="joint_state_publisher" type="joint_state_publisher" name="sentry_joint_publisher" output="screen" />    
     <node pkg="robot_state_publisher" type="robot_state_publisher" name="sentry_tf_publisher" output="screen">
         <!-- <param name="publish_frequency" value="20.0" /> -->
+    </node>
+
+    <!-- 重映射 odom 话题到一个不存在的话题 -->
+    <node name="close_odom" pkg="gazebo_ros" type="gzserver" output="screen">
+        <remap from="odom" to="odom_disabled"/>
+    </node>
+    
+    <node pkg="sentry_simulation" type="key_control" name="key_control" output="screen">
+        <param name="linear_speed" value="1.5" />
+        <param name="angular_speed" value="3.2" />
     </node>
 
     <node pkg="rviz" type="rviz" name="sentry_view_rviz" args="-d $(find sentry_simulation)/rviz/sentry_omni.rviz"/>

@@ -10,21 +10,17 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   sensor_msgs
   std_msgs
-  message_generation
+  livox_ros_driver2
 )
 
 find_package(gazebo REQUIRED)
 find_package(PCL REQUIRED)
 include_directories(${GAZEBO_INCLUDE_DIRS})
-add_message_files(FILES
-    CustomPoint.msg
-    CustomMsg.msg
-  #   Message2.msg
-  )
 
-generate_messages(DEPENDENCIES
-  std_msgs
-)
+
+# generate_messages(DEPENDENCIES
+#   std_msgs
+# )
 #To solve the error which gazebo does not handle the include file well, we must add this line.
 include_directories(/usr/include/)
 
