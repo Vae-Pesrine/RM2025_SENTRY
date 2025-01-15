@@ -391,16 +391,13 @@ int main(int argc, char** argv)
             ("/cloud_registered", 1000);
     ros::Publisher pubLaserCloudFullRes_body = nh.advertise<sensor_msgs::PointCloud2>
             ("/cloud_registered_body", 1000);
-    // ros::Publisher pubLaserCloudEffect  = nh.advertise<sensor_msgs::PointCloud2>
-            // ("/cloud_effected", 1000);
+
     ros::Publisher pubLaserCloudMap = nh.advertise<sensor_msgs::PointCloud2>
             ("/Laser_map", 1000);
     ros::Publisher pubOdomAftMapped = nh.advertise<nav_msgs::Odometry> 
-            ("/aft_mapped_to_init", 1000);
+            ("/odom", 1000);
     ros::Publisher pubPath          = nh.advertise<nav_msgs::Path> 
             ("/path", 1000);
-    // ros::Publisher plane_pub = nh.advertise<visualization_msgs::Marker>
-            // ("/planner_normal", 1000);
 //------------------------------------------------------------------------------------------------------
     signal(SIGINT, SigHandle);
     ros::Rate loop_rate(500);

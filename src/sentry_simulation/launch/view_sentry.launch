@@ -8,15 +8,15 @@
     <arg name="debug" default="false"/>
     <arg name="verbose" default="true"/>
     <!-- the original pose of sentry in the gazebo world-->
-    <arg name="origin_x" default="8.300177" />
-    <arg name="origin_y" default="4.582030" />
+    <arg name="origin_x" default="7.647644" />
+    <arg name="origin_y" default="5.864258" />
     <!-- ackerman -->
-    <arg name="origin_z" default="0.466572" />
+    <arg name="origin_z" default="0.463000" />
     <!-- omni -->
     <!-- <arg name="origin_z" default="0.018392" /> -->
-    <arg name="origin_roll" default="0.0" />
+    <arg name="origin_roll"  default="0.0" />
     <arg name="origin_pitch" default="0.0" />
-    <arg name="origin_yaw" default="-1.839898" />
+    <arg name="origin_yaw"   default="1.617099" />
 
     <!-- 加载机器人模型参数 -->
     <param name="robot_description" command="$(find xacro)/xacro  $(find sentry_simulation)/urdf/sentry_acker.urdf.xacro" />

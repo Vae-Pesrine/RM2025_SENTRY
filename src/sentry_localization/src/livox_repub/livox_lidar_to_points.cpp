@@ -38,7 +38,7 @@ void livox_in_callback(livox_ros_driver2::CustomMsgConstPtr lidar_msg)
     sensor_msgs::PointCloud2 pcd_msg;
     pcl::toROSMsg(*raw_cloud_,pcd_msg);
     pcd_msg.header.stamp = lidar_msg->header.stamp;
-    pcd_msg.header.frame_id = "livox_frame";
+    pcd_msg.header.frame_id = "livox_mid360";
 
     pub_livox.publish(pcd_msg);  
 }
