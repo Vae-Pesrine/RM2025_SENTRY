@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.0.2)
 project(sentry_localization)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(catkin REQUIRED COMPONENTS
   map_server
@@ -18,9 +19,10 @@ find_package(catkin REQUIRED COMPONENTS
   nodelet
 )
 
-find_package(
-  costmap_2d REQUIRED
-)
+find_package(costmap_2d REQUIRED)
+find_package(OpenMP REQUIRED)
+find_package(PCL 1.12 REQUIRED)
+find_package(Boost REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include 
@@ -37,8 +39,11 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
   include
+  # /usr/include/pcl-pcl-1.12.0/common/include
   ${catkin_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
 )
+link_directories(${PCL_LIBRARY_DIRS})
 
 
 add_executable(initialpose_relocation src/initialpose/initialpose_relocation.cpp)
@@ -73,6 +78,12 @@ ${catkin_LIBRARIES}
 add_executable(pointcloud_to_laserscan_node src/livox_repub/pointcloud_to_laserscan.cpp)
 add_dependencies(pointcloud_to_laserscan_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(pointcloud_to_laserscan_node pointcloud_to_laserscan 
+${catkin_LIBRARIES}
+)
+
+add_executable(small_gicp_relocalization src/small_gicp/small_gicp_relocalization.cpp)
+add_dependencies(small_gicp_relocalization ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(small_gicp_relocalization pointcloud_to_laserscan 
 ${catkin_LIBRARIES}
 )
 

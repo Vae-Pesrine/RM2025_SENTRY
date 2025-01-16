@@ -1,0 +1,166 @@
+#include <small_gicp/small_gicp_relocalization.hpp>
+
+SmallGicpRelocalization::SmallGicpRelocalization(): 
+    result_t_(Eigen::Isometry3d::Identity()), prior_result_t_(Eigen::Isometry3d::Identity())
+{
+    this->param<int>("num_threads", num_threads_, 4);
+    this->param<int>("num_neighbors", num_neighbors_, 20);
+    this->param<float>("global_leaf_size", global_leaf_size_, 0.25);
+    this->param<float>("max_dist_sq", max_dist_sq_, 1.0);
+    this->param<std::string>("map_frame", map_frame_, "map");
+    this->param<std::string>("odom_frame", odom_frame_, "odom");
+    this->param<std::string>("base_frame", base_frame_, "base_link");
+    this->param<std::string>("lidar_frame", lidar_frame_, "");
+    this->param<std::string>("prior_pcd_file", prior_pcd_file_, "");
+
+    registered_scan_ = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
+    global_map_ = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
+    register_ = std::make_shared<small_gicp::Registration<small_gicp::GICPFactor, small_gicp::ParallelReductionOMP>>();
+
+    tf_buffer_ = std::make_unique<tf2_ros::Buffer>();
+    tf_listener_ = std::make_unique<tf2_ros::TransformListener>(*tf_buffer_);
+    tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>();
+
+    loadGlobalMap(prior_pcd_file_);
+
+    target_ = small_gicp::voxelgrid_sampling_omp<pcl::PointCloud<pcl::PointXYZ>, pcl::PointCloud<pcl::PointCovariance>>
+              (*global_map_, global_leaf_size_);
+
+    small_gicp::estimate_covariances_omp(*target_, num_neighbors_, num_threads_);
+
+    target_tree_ = std::make_shared<small_gicp::KdTree<pcl::PointCloud<pcl::PointCovariance>>>(target_, small_gicp::KdTreeBuilderOMP(num_threads_));
+
+    sub_pcd_ = nh_.subscribe<sensor_msgs::PointCloud2>("/registered_scan", 10, &SmallGicpRelocalization::registerPcdCallback, this);
+
+    sub_initialpose_ = nh_.subscribe<geometry_msgs::PoseWithCovarianceStamped>("initialpose", 10, &SmallGicpRelocalization::initialPoseCallback, this);
+
+    // register_timer_ = this->createWallTimer(ros::WallDuration(0.5), std::bind(&SmallGicpRelocalization::runRegistration, this));
+    register_timer_ = this->createWallTimer(ros::WallDuration(0.5), &SmallGicpRelocalization::runRegistration, this, false, true);
+    transform_timer_ = this->createWallTimer(ros::WallDuration(0.05), &SmallGicpRelocalization::publishTransform, this, false, true);
+}
+
+SmallGicpRelocalization::~SmallGicpRelocalization()
+{
+
+}
+
+void SmallGicpRelocalization::loadGlobalMap(const std::string& file_name)
+{
+    if(pcl::io::loadPCDFile<pcl::PointXYZ>(file_name, *global_map_) == -1){
+        ROS_ERROR_STREAM("Couldn't read PCD file: " << file_name.c_str());
+        return;
+    }
+    ROS_INFO_STREAM("Loaded global map with " << global_map_->points.size() << " points.");
+
+    Eigen::Affine3d odom_to_lidar;
+    while (true)
+    {
+        try{
+            auto tf_stamped = tf_buffer_->lookupTransform(base_frame_, lidar_frame_, ros::Time(0), ros::Duration(1.0));
+            odom_to_lidar = tf2::transformToEigen(tf_stamped.transform);
+            ROS_INFO_STREAM("odom_to_lidar: translation = " << odom_to_lidar.translation().transpose() << ", rpy = " 
+                                                            << odom_to_lidar.rotation().eulerAngles(0, 1, 2).transpose());
+            break;
+        } catch(tf2::TransformException& ex){
+            ROS_WARN_STREAM("TF lookup failed: " << ex.what() << " Retrying...");
+            ros::Duration(1.0).sleep();
+        }
+    }
+    pcl::transformPointCloud(*global_map_, *global_map_, odom_to_lidar);
+}
+
+void SmallGicpRelocalization::registerPcdCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
+{
+    last_scam_time_ = msg->header.stamp;
+
+    pcl::fromROSMsg(*msg, *registered_scan_);
+
+    //downsample registered points and convert them into pcl::PointCloud<pcl::PointCovariance>
+    source_ = small_gicp::voxelgrid_sampling_omp<pcl::PointCloud<pcl::PointXYZ>, pcl::PointCloud<pcl::PointCovariance>>(*registered_scan_, registered_leaf_size_);
+
+    //estimate covariances of points
+    small_gicp::estimate_covariances_omp(*source_, num_neighbors_, num_threads_);
+
+    source_tree_ = std::make_shared<small_gicp::KdTree<pcl::PointCloud<pcl::PointCovariance>>>(source_, small_gicp::KdTreeBuilderOMP(num_threads_));
+}
+
+void SmallGicpRelocalization::runRegistration(const ros::WallTimerEvent& event)
+{
+    if(!source_ || !source_tree_){
+        return;
+    }
+    
+    register_->reduction.num_threads = num_threads_;
+    register_->rejector.max_dist_sq = max_dist_sq_;
+
+    auto result = register_->align(*target_, *source_, *target_tree_, prior_result_t_);
+    if(!result.converged){
+        ROS_WARN_STREAM("The small gicp didn't converge");
+        return;
+    }
+    result_t_ = result.T_target_source;
+    prior_result_t_ = result.T_target_source;
+}
+
+void SmallGicpRelocalization::publishTransform(const ros::WallTimerEvent& event)
+{
+    if(result_t_.matrix().isZero()){
+        return;
+    }
+
+    geometry_msgs::TransformStamped tf_stamped;
+    tf_stamped.header.stamp = last_scam_time_ + ros::Duration(0.1);
+    tf_stamped.header.frame_id = map_frame_;
+    tf_stamped.child_frame_id = odom_frame_;
+
+    const Eigen::Vector3d translation = result_t_.translation();
+    const Eigen::Quaterniond rotation(result_t_.rotation());
+
+    tf_stamped.transform.translation.x = translation.x();
+    tf_stamped.transform.translation.y = translation.y();
+    tf_stamped.transform.translation.z = translation.z();
+    tf_stamped.transform.rotation.x = rotation.x();
+    tf_stamped.transform.rotation.y = rotation.y();
+    tf_stamped.transform.rotation.z = rotation.z();
+    tf_stamped.transform.rotation.w = rotation.w();
+
+    tf_broadcaster_->sendTransform(tf_stamped);
+}
+
+
+void SmallGicpRelocalization::initialPoseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr & msg)
+{
+    ROS_INFO_STREAM("Received initialpose: " << "x: " << msg->pose.pose.position.x << std::endl
+                                             << "y; " << msg->pose.pose.position.y << std::endl
+                                             << "y; " << msg->pose.pose.position.y << std::endl);
+    Eigen::Isometry3d map_to_base = Eigen::Isometry3d::Identity();
+    map_to_base.translation() << msg->pose.pose.position.x, msg->pose.pose.position.y, msg->pose.pose.position.z;
+    map_to_base.linear() = Eigen::Quaterniond(msg->pose.pose.orientation.w, msg->pose.pose.orientation.x,
+                                               msg->pose.pose.orientation.y, msg->pose.pose.orientation.z)
+                                               .toRotationMatrix();
+    while(true){
+        try{
+            auto transform = tf_buffer_->lookupTransform(base_frame_, registered_scan_->header.frame_id, ros::Time(0), ros::Duration(1.0));
+            Eigen::Isometry3d base_to_odom = tf2::transformToEigen(transform.transform);
+            Eigen::Isometry3d map_to_odom = map_to_base * base_to_odom;
+            prior_result_t_ = map_to_odom;
+            result_t_ = map_to_odom;
+            break;
+        }catch (tf2::TransformException & ex){
+            ROS_WARN_STREAM("Could not transform initial pose from" << base_frame_.c_str() << " to " << registered_scan_->header.frame_id.c_str() << ex.what());
+            ros::Duration(1.0).sleep();    
+        }
+    }
+}
+
+int main(int argc, char *argv[])
+{
+    ros::init(argc, argv, "small_gicp_relocalization");
+    SmallGicpRelocalization small_gicp_relocalization;
+
+    // two threads
+    ros::MultiThreadedSpinner spinner(2);
+    spinner.spin();
+
+    return 0;
+}

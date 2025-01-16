@@ -1,12 +1,14 @@
 #include "ros/ros.h"
-#include "lidar_data.h"
-#include <iostream>
-#include <geometry_msgs/PoseWithCovarianceStamped.h>
-#include <livox_ros_driver2/CustomMsg.h>
-// PCL specific includes
+#include "livox_repub/lidar_data.h"
+
 #include <sensor_msgs/PointCloud2.h>
+#include <livox_ros_driver2/CustomMsg.h>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
+
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/filters/crop_box.h>
+
+#include <iostream>
 #include <Eigen/Dense>
 
 ros::Subscriber sub_livox;
@@ -55,7 +57,7 @@ int main(int argc, char** argv)
     std::string livox_out_name;
     nh_pr.param<std::string>("livox_out_name", livox_out_name, "/livox/points");
 
-    raw_cloud_ = boost::make_shared<pcl::PointCloud<PointXYZIRT>>();
+    raw_cloud_ = std::make_shared<pcl::PointCloud<PointXYZIRT>>();
     
     pub_livox = nh.advertise<sensor_msgs::PointCloud2>(livox_out_name.c_str(), 10);
     sub_livox = nh.subscribe(livox_in_name.c_str(), 1000, livox_in_callback);
