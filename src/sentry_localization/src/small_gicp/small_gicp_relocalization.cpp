@@ -1,17 +1,23 @@
 #include <small_gicp/small_gicp_relocalization.hpp>
 
 SmallGicpRelocalization::SmallGicpRelocalization(): 
+    pr_nh_("~"),
     result_t_(Eigen::Isometry3d::Identity()), prior_result_t_(Eigen::Isometry3d::Identity())
 {
-    this->param<int>("num_threads", num_threads_, 4);
-    this->param<int>("num_neighbors", num_neighbors_, 20);
-    this->param<float>("global_leaf_size", global_leaf_size_, 0.25);
-    this->param<float>("max_dist_sq", max_dist_sq_, 1.0);
-    this->param<std::string>("map_frame", map_frame_, "map");
-    this->param<std::string>("odom_frame", odom_frame_, "odom");
-    this->param<std::string>("base_frame", base_frame_, "base_link");
-    this->param<std::string>("lidar_frame", lidar_frame_, "");
-    this->param<std::string>("prior_pcd_file", prior_pcd_file_, "");
+    
+
+    pr_nh_.param<int>("small_gicp/num_threads", num_threads_, 4);
+    pr_nh_.param<int>("small_gicp/num_neighbors", num_neighbors_, 20);
+    pr_nh_.param<float>("small_gicp/global_leaf_size", global_leaf_size_, 0.25);
+    pr_nh_.param<float>("small_gicp/registered_leaf_size", registered_leaf_size_, 1.0);
+    pr_nh_.param<float>("small_gicp/max_dist_sq", max_dist_sq_, 1.0);
+    pr_nh_.param<std::string>("small_gicp/map_frame", map_frame_, "");
+    pr_nh_.param<std::string>("small_gicp/odom_frame", odom_frame_, "");
+    pr_nh_.param<std::string>("small_gicp/base_frame", base_frame_, "");
+    pr_nh_.param<std::string>("small_gicp/lidar_frame", lidar_frame_, "");
+    pr_nh_.param<std::string>("small_gicp/pcd_in_topic", pcd_in_topic_, "");
+    pr_nh_.param<std::string>("small_gicp/prior_pcd_file", prior_pcd_file_, "");
+    pr_nh_.param<std::string>("small_gicp/initialpose_topic", initialpose_topic_, "");
 
     registered_scan_ = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
     global_map_ = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
@@ -25,16 +31,17 @@ SmallGicpRelocalization::SmallGicpRelocalization():
 
     target_ = small_gicp::voxelgrid_sampling_omp<pcl::PointCloud<pcl::PointXYZ>, pcl::PointCloud<pcl::PointCovariance>>
               (*global_map_, global_leaf_size_);
+    
+    ROS_INFO_STREAM("global map points size is: " << target_->size() << " frame: " << target_->header.frame_id);
 
     small_gicp::estimate_covariances_omp(*target_, num_neighbors_, num_threads_);
 
     target_tree_ = std::make_shared<small_gicp::KdTree<pcl::PointCloud<pcl::PointCovariance>>>(target_, small_gicp::KdTreeBuilderOMP(num_threads_));
 
-    sub_pcd_ = nh_.subscribe<sensor_msgs::PointCloud2>("/registered_scan", 10, &SmallGicpRelocalization::registerPcdCallback, this);
+    sub_pcd_ = nh_.subscribe<sensor_msgs::PointCloud2>(pcd_in_topic_.c_str(), 10, &SmallGicpRelocalization::registerPcdCallback, this);
 
-    sub_initialpose_ = nh_.subscribe<geometry_msgs::PoseWithCovarianceStamped>("initialpose", 10, &SmallGicpRelocalization::initialPoseCallback, this);
+    sub_initialpose_ = nh_.subscribe<geometry_msgs::PoseWithCovarianceStamped>(initialpose_topic_.c_str(), 10, &SmallGicpRelocalization::initialPoseCallback, this);
 
-    // register_timer_ = this->createWallTimer(ros::WallDuration(0.5), std::bind(&SmallGicpRelocalization::runRegistration, this));
     register_timer_ = this->createWallTimer(ros::WallDuration(0.5), &SmallGicpRelocalization::runRegistration, this, false, true);
     transform_timer_ = this->createWallTimer(ros::WallDuration(0.05), &SmallGicpRelocalization::publishTransform, this, false, true);
 }
@@ -43,11 +50,11 @@ SmallGicpRelocalization::~SmallGicpRelocalization()
 {
 
 }
-
+ 
 void SmallGicpRelocalization::loadGlobalMap(const std::string& file_name)
 {
     if(pcl::io::loadPCDFile<pcl::PointXYZ>(file_name, *global_map_) == -1){
-        ROS_ERROR_STREAM("Couldn't read PCD file: " << file_name.c_str());
+        ROS_ERROR_STREAM("Couldn't read PCD file: " << file_name.c_str() << " !");
         return;
     }
     ROS_INFO_STREAM("Loaded global map with " << global_map_->points.size() << " points.");
@@ -77,7 +84,7 @@ void SmallGicpRelocalization::registerPcdCallback(const sensor_msgs::PointCloud2
 
     //downsample registered points and convert them into pcl::PointCloud<pcl::PointCovariance>
     source_ = small_gicp::voxelgrid_sampling_omp<pcl::PointCloud<pcl::PointXYZ>, pcl::PointCloud<pcl::PointCovariance>>(*registered_scan_, registered_leaf_size_);
-
+    ROS_INFO_STREAM("registered points size is " << source_->size() << " source frame: " << source_->header.frame_id);
     //estimate covariances of points
     small_gicp::estimate_covariances_omp(*source_, num_neighbors_, num_threads_);
 
@@ -130,9 +137,9 @@ void SmallGicpRelocalization::publishTransform(const ros::WallTimerEvent& event)
 
 void SmallGicpRelocalization::initialPoseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr & msg)
 {
-    ROS_INFO_STREAM("Received initialpose: " << "x: " << msg->pose.pose.position.x << std::endl
-                                             << "y; " << msg->pose.pose.position.y << std::endl
-                                             << "y; " << msg->pose.pose.position.y << std::endl);
+    ROS_INFO_STREAM("Received initialpose: " << "x: " << msg->pose.pose.position.x << " "
+                                             << "y; " << msg->pose.pose.position.y << " "
+                                             << "y; " << msg->pose.pose.position.y << " ");
     Eigen::Isometry3d map_to_base = Eigen::Isometry3d::Identity();
     map_to_base.translation() << msg->pose.pose.position.x, msg->pose.pose.position.y, msg->pose.pose.position.z;
     map_to_base.linear() = Eigen::Quaterniond(msg->pose.pose.orientation.w, msg->pose.pose.orientation.x,

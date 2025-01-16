@@ -50,6 +50,7 @@ private:
     void initialPoseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg);
 
     ros::NodeHandle nh_;
+    ros::NodeHandle pr_nh_;
     ros::Subscriber sub_pcd_;
     ros::Subscriber sub_initialpose_;
 
@@ -64,6 +65,8 @@ private:
     std::string base_frame_;
     std::string lidar_frame_;
     std::string prior_pcd_file_;
+    std::string pcd_in_topic_;
+    std::string initialpose_topic_;
 
     ros::Time last_scam_time_;
     Eigen::Isometry3d result_t_;

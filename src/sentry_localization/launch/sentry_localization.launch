@@ -14,7 +14,7 @@
     <include file="$(find sentry_localization)/launch/pcl_to_scan.launch" />
 
     <!-- amcl node -->
-    <include file="$(find sentry_localization)/launch/amcl.launch" />
+    <!-- <include file="$(find sentry_localization)/launch/small_gicp.launch" /> -->
 
     <!-- publish the initialpose -->
     <node pkg="sentry_localization" type="initialpose_node" name="initialpose_node" output="screen">
@@ -29,7 +29,7 @@
         <rosparam file="$(find sentry_localization)/config/costmap_params/local_costmap_params.yaml" command="load" />
         <rosparam file="$(find sentry_localization)/config/costmap_params/global_costmap_params.yaml" command="load" />
         
-        <rosparam file="$(find sentry_localization)/config/teb_local_planner_params.yaml" command="load" />
+        <rosparam file="$(find sentry_localization)/config/planner/teb_local_planner_params.yaml" command="load" />
         <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
         <param name="controller_frequency" value="10.0" />
 		<param name="controller_patience" value="15.0" />

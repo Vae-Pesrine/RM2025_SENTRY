@@ -51,5 +51,5 @@
         <param name="angular_speed" value="3.2" />
     </node>
 
-    <node pkg="rviz" type="rviz" name="sentry_view_rviz" args="-d $(find sentry_simulation)/rviz/sentry_omni.rviz"/>
+    <!-- <node pkg="rviz" type="rviz" name="sentry_view_rviz" args="-d $(find sentry_simulation)/rviz/sentry_omni.rviz"/> -->
 </launch>

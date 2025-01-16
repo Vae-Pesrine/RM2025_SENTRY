@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="sentry_localization" type="small_gicp_relocalization" name="small_gicp_relocalization" output="screen">
+        <rosparam file="$(find sentry_localization)/config/small_gicp/small_gicp_relocalization.yaml" command="load" />
+    </node>
+</launch>
