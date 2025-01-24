@@ -1,3 +1,4 @@
+#include "std_cout.h"
 #include <small_gicp/small_gicp_relocalization.hpp>
 
 SmallGicpRelocalization::SmallGicpRelocalization(): 
@@ -32,7 +33,7 @@ SmallGicpRelocalization::SmallGicpRelocalization():
     target_ = small_gicp::voxelgrid_sampling_omp<pcl::PointCloud<pcl::PointXYZ>, pcl::PointCloud<pcl::PointCovariance>>
               (*global_map_, global_leaf_size_);
     
-    ROS_INFO_STREAM("global map points size is: " << target_->size() << " frame: " << target_->header.frame_id);
+    ROS_INFO_STREAM(GREEN << "global map points size is: " << target_->size() << " frame: " << target_->header.frame_id << RESET);
 
     small_gicp::estimate_covariances_omp(*target_, num_neighbors_, num_threads_);
 
@@ -42,8 +43,10 @@ SmallGicpRelocalization::SmallGicpRelocalization():
 
     sub_initialpose_ = nh_.subscribe<geometry_msgs::PoseWithCovarianceStamped>(initialpose_topic_.c_str(), 10, &SmallGicpRelocalization::initialPoseCallback, this);
 
+    pub_pcd_ = nh_.advertise<sensor_msgs::PointCloud2>("/prior_pcd", 10, this);
+
     register_timer_ = this->createWallTimer(ros::WallDuration(0.5), &SmallGicpRelocalization::runRegistration, this, false, true);
-    transform_timer_ = this->createWallTimer(ros::WallDuration(0.05), &SmallGicpRelocalization::publishTransform, this, false, true);
+    transform_timer_ = this->createWallTimer(ros::WallDuration(0.5), &SmallGicpRelocalization::publishTransform, this, false, true);
 }
 
 SmallGicpRelocalization::~SmallGicpRelocalization()
@@ -51,6 +54,8 @@ SmallGicpRelocalization::~SmallGicpRelocalization()
 
 }
  
+//load the globalmap and convert to map
+
 void SmallGicpRelocalization::loadGlobalMap(const std::string& file_name)
 {
     if(pcl::io::loadPCDFile<pcl::PointXYZ>(file_name, *global_map_) == -1){
@@ -59,32 +64,21 @@ void SmallGicpRelocalization::loadGlobalMap(const std::string& file_name)
     }
     ROS_INFO_STREAM("Loaded global map with " << global_map_->points.size() << " points.");
 
-    Eigen::Affine3d odom_to_lidar;
-    while (true)
-    {
-        try{
-            auto tf_stamped = tf_buffer_->lookupTransform(base_frame_, lidar_frame_, ros::Time(0), ros::Duration(1.0));
-            odom_to_lidar = tf2::transformToEigen(tf_stamped.transform);
-            ROS_INFO_STREAM("odom_to_lidar: translation = " << odom_to_lidar.translation().transpose() << ", rpy = " 
-                                                            << odom_to_lidar.rotation().eulerAngles(0, 1, 2).transpose());
-            break;
-        } catch(tf2::TransformException& ex){
-            ROS_WARN_STREAM("TF lookup failed: " << ex.what() << " Retrying...");
-            ros::Duration(1.0).sleep();
-        }
-    }
-    pcl::transformPointCloud(*global_map_, *global_map_, odom_to_lidar);
 }
 
 void SmallGicpRelocalization::registerPcdCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
     last_scam_time_ = msg->header.stamp;
+    
+    pcl::toROSMsg(*global_map_, prior_pcd_msg);    
+    prior_pcd_msg.header.frame_id = map_frame_;
+    prior_pcd_msg.header.stamp = ros::Time().fromSec(msg->header.stamp.toSec());
+    pub_pcd_.publish(prior_pcd_msg);
 
     pcl::fromROSMsg(*msg, *registered_scan_);
-
     //downsample registered points and convert them into pcl::PointCloud<pcl::PointCovariance>
     source_ = small_gicp::voxelgrid_sampling_omp<pcl::PointCloud<pcl::PointXYZ>, pcl::PointCloud<pcl::PointCovariance>>(*registered_scan_, registered_leaf_size_);
-    ROS_INFO_STREAM("registered points size is " << source_->size() << " source frame: " << source_->header.frame_id);
+    ROS_INFO_STREAM(GREEN << "registered points size is " << source_->size() << " source frame: " << source_->header.frame_id << RESET);
     //estimate covariances of points
     small_gicp::estimate_covariances_omp(*source_, num_neighbors_, num_threads_);
 
@@ -96,7 +90,7 @@ void SmallGicpRelocalization::runRegistration(const ros::WallTimerEvent& event)
     if(!source_ || !source_tree_){
         return;
     }
-    
+
     register_->reduction.num_threads = num_threads_;
     register_->rejector.max_dist_sq = max_dist_sq_;
 

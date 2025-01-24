@@ -19,7 +19,7 @@
     <arg name="origin_yaw"   default="1.617099" />
 
     <!-- 加载机器人模型参数 -->
-    <param name="robot_description" command="$(find xacro)/xacro  $(find sentry_simulation)/urdf/sentry_acker.urdf.xacro" />
+    <param name="robot_description" command="$(find xacro)/xacro  $(find sentry_simulation)/urdf/main.urdf.xacro" />
     <node pkg="gazebo_ros" type="spawn_model" name="spawn_sentry_base" args="-urdf -param /robot_description -model robot 
           -x $(arg origin_x) -y $(arg origin_y) -z $(arg origin_z) -R $(arg origin_roll) -P $(arg origin_pitch) -Y $(arg origin_yaw)" />
 
@@ -51,5 +51,5 @@
         <param name="angular_speed" value="3.2" />
     </node>
 
-    <!-- <node pkg="rviz" type="rviz" name="sentry_view_rviz" args="-d $(find sentry_simulation)/rviz/sentry_omni.rviz"/> -->
+    <node pkg="rviz" type="rviz" name="sentry_view_rviz" args="-d $(find sentry_simulation)/rviz/sentry_omni.rviz"/>
 </launch>

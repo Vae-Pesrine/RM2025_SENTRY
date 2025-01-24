@@ -14,6 +14,8 @@
     <include file="$(find sentry_localization)/launch/pcl_to_scan.launch" />
 
     <!-- amcl node -->
+    <!-- <include file="$(find sentry_localization)/launch/amcl.launch" /> -->
+    
     <!-- <include file="$(find sentry_localization)/launch/small_gicp.launch" /> -->
 
     <!-- publish the initialpose -->
