@@ -1,0 +1,5 @@
+<library path="lib/libpath_planner">
+    <class name="path_planner/PathPlanner" type="path_planner::PathPlannerNode" base_class_type="nav_core::BaseGlobalPlanner">
+        <description>global path planner</description>
+    </class>
+</library>

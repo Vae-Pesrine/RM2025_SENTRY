@@ -26,5 +26,11 @@ double Curve::length(Points2d path)
     return length;
 }
 
+void Curve::setStep(double step)
+{
+    CHECK_GT(step, 0.0);
+    step_ = step;
+}
+
 } // namespace geometry
 } // namespace common

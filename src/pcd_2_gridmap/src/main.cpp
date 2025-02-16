@@ -1,7 +1,7 @@
 //my header
 #include "pcd_sdf/pcl_process.hpp"
 
-typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
+using PointCloud = pcl::PointCloud<pcl::PointXYZ>;
 ros::Publisher pcd_pub;
 ros::Timer estimate_update_timer;
 ros::Subscriber cloud_sub;

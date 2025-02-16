@@ -44,7 +44,7 @@ public:
 
     bool operator==(const Point2_& other)
     {
-        return (x_ == static_cast<T>(other.x())) && (y_ == static_cast<T>(other.y());
+        return (x_ == static_cast<T>(other.x())) && (y_ == static_cast<T>(other.y()));
     }
 
     bool operator!=(const Point2_& other)

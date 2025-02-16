@@ -47,7 +47,7 @@ template <typename T>
 T clamp(const T value, T bound1, T bound2)
 {
     if(bound1 > bound2){
-        std::warp(bound1, bound2);
+        std::swap(bound1, bound2);
     }
 
     if(value < bound1){

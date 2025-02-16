@@ -162,7 +162,7 @@ std::vector<double> BsplineCurve::knotGeneration(const std::vector<double> param
 Points2d BsplineCurve::interpolation(const Points2d points, const std::vector<double> param, const std::vector<double> knot)
 {
     size_t n = points.size();
-    Eigen::MatrixXd N = Eigen::MatrixXd::Zero();
+    Eigen::MatrixXd N = Eigen::MatrixXd::Zero(n, n);
     Eigen::MatrixXd D(n, 2);
 
     for(size_t i = 0; i < n; ++i){
@@ -235,7 +235,7 @@ Points2d BsplineCurve::approximation(const Points2d points, const std::vector<do
     Eigen::MatrixXd P = (N_.transpose() * N_).inverse() * Q;
 
     Points2d control_points(h);
-    control_points[o] = { D(0, 0), D(0, 1) };
+    control_points[0] = { D(0, 0), D(0, 1) };
     control_points[h - 1] = { D(n-1, 0), D(n-1, 1) };
     for(size_t i = 1; i < h - 1; ++i){
         control_points[i] = { P(i-1, 0), P(i-1, 1) };

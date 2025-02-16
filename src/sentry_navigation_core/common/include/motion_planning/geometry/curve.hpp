@@ -27,7 +27,7 @@ public:
      * @param path 输出的生成轨迹
      * @return 如果轨迹生成成功返回 true，否则返回 false
      */
-    virtual bool run(const Points2d& points, Points2d& path) = 0;
+    virtual bool run(const Points2d points, Points2d& path) = 0;
 
     /**
      * @brief 执行轨迹生成
@@ -35,7 +35,7 @@ public:
      * @param path 输出的生成轨迹
      * @return 如果轨迹生成成功返回 true，否则返回 false
      */
-    virtual bool run(const Points3d& points, Points3d& path) = 0;
+    virtual bool run(const Points3d points, Points2d& path) = 0;
 
     /**
      * @brief 计算给定路径的长度
@@ -43,6 +43,11 @@ public:
      * @return 路径的长度
      */
     double length(Points2d path);
+
+    void setStep(double step);
+
+private:
+    double step_;
 
 };
 } // namespace geometry
