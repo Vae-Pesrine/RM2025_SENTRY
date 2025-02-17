@@ -1,8 +1,7 @@
 <launch>
 
-    <!-- load the 2D grid map -->
-    <arg name="map" default="RMUC.yaml" />
-    <node pkg="map_server" type="map_server" name="map_server" args="$(find sentry_localization)/map/$(arg map)" />
+    <!-- point lio -->
+    <include file="$(find point_lio)/launch/mapping_mid360.launch" />
 
     <!-- turn the livox mid360 points to PointCloud2 points -->
     <node pkg="sentry_localization" type="livox_lidar_to_points" name="livox_lidar_to_points_node" output="screen" >
@@ -14,31 +13,15 @@
     <include file="$(find sentry_localization)/launch/pcl_to_scan.launch" />
 
     <!-- amcl node -->
-    <!-- <include file="$(find sentry_localization)/launch/amcl.launch" /> -->
+    <include file="$(find sentry_localization)/launch/amcl.launch" />
     
+    <!-- small gicp node -->
     <!-- <include file="$(find sentry_localization)/launch/small_gicp.launch" /> -->
 
     <!-- publish the initialpose -->
     <node pkg="sentry_localization" type="initialpose_node" name="initialpose_node" output="screen">
-        <rosparam file="$(find sentry_localization)/config/initialpose_params/initialpose_params.yaml" command="load" />
+        <rosparam file="$(find sentry_localization)/config/initialpose/initialpose_params.yaml" command="load" />
     </node>  
     <node pkg="sentry_localization" type="initialpose_relocation" name="initialpose_relocation" />
-
-    <!-- move base package -->
-    <node pkg="move_base" type="move_base" name="move_base" output="screen"  respawn="false">
-        <rosparam file="$(find sentry_localization)/config/costmap_params/costmap_common_params.yaml" command="load" ns="global_costmap" />
-        <rosparam file="$(find sentry_localization)/config/costmap_params/costmap_common_params.yaml" command="load" ns="local_costmap" />
-        <rosparam file="$(find sentry_localization)/config/costmap_params/local_costmap_params.yaml" command="load" />
-        <rosparam file="$(find sentry_localization)/config/costmap_params/global_costmap_params.yaml" command="load" />
-        
-        <rosparam file="$(find sentry_localization)/config/planner/teb_local_planner_params.yaml" command="load" />
-        <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
-        <param name="controller_frequency" value="10.0" />
-		<param name="controller_patience" value="15.0" />
-    </node>
-
-    <!-- rviz -->
-    <node pkg="rviz" type="rviz" name="sentry_rviz" args="-d $(find sentry_localization)/rviz/sentry_localization.rviz" />
-
 
 </launch>
