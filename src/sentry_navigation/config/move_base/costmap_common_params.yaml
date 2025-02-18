@@ -1,5 +1,4 @@
 robot_radius:     0.32             # 机器人的半径
-map_type: costmap                  # 地图种类
 
 obstacle_layer:
   enabled: true                    # 是否使能障碍层

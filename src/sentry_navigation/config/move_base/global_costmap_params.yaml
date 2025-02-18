@@ -6,7 +6,6 @@ global_costmap:
   publish_frequency: 0.5                # 全局代价地图发布频率, 设置的小一点, 不需要不断发布
   old_navfn_behavior: false             # 关闭旧的navfn行为
 
-  static_map: true                      # 使用map_server提供的地图进行初始化
   rolling_window: false                 # 关闭滚动窗口功能
   resolution: 0.05                      # 分辨率
   transform_tolerance: 0.5              # 坐标系间的转换可以忍受的最大延时
