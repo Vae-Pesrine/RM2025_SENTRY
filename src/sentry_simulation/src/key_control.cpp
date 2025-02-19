@@ -13,7 +13,7 @@ void scanAndPublish();
 ros::Publisher cmd_pub;
 int main(int argc, char* argv[]) {
     ros::init(argc, argv, "key_control");
-    ROS_INFO("key_control started");
+    // ROS_INFO("key_control started");
     ros::NodeHandle nh;
     ros::NodeHandle nh_private("~");
     nh_private.getParam("linear_speed", linear);
@@ -43,7 +43,7 @@ void scanKeyboard() {
 }
 
 void scanAndPublish() {
-    ROS_INFO_STREAM("\033[32mStart to scan keyboard" << "\033[32m");
+    // ROS_INFO_STREAM("\033[32mStart to scan keyboard" << "\033[32m");
     geometry_msgs::Twist cmd_vel;
     while (ros::ok()) {
         scanKeyboard();
@@ -71,6 +71,12 @@ void scanAndPublish() {
         case 'D':
             cmd_vel.angular.z = -angular;
             cmd_vel.linear.x = 0;
+            key_command = 0;
+            break;
+        case 'i':
+        case 'I':
+            cmd_vel.angular.z = 1.2;
+            cmd_vel.linear.x = 1.2;
             key_command = 0;
             break;
         case 'x':

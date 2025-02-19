@@ -3,13 +3,13 @@
 	 <rosparam file="$(find sentry_simulation)/config/joint_velocity.yaml" command="load"/> 
 
 	<!-- Controllers-->
-	<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="/open_base" 
+	<node pkg="controller_manager" type="spawner" name="controller_spawner" respawn="false" output="screen" ns="/open_base" 
 	      args="--namespace=/open_base
 	            joint_state_controller
-	            front_left_joint_velocity_controller
-	            front_right_joint_velocity_controller
-	            back_left_joint_velocity_controller
-                back_right_joint_velocity_controller"
+	            left_front_joint_velocity_controller
+	            right_front_joint_velocity_controller
+	            left_rear_joint_velocity_controller
+                right_rear_joint_velocity_controller"
     />
     
     <node name="teleop_keyboard_control" pkg="sentry_simulation" type="telelop_keyboard_ctrl" respawn="true" output="screen" />

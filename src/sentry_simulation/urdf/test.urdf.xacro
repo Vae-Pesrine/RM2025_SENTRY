@@ -1,491 +1,63 @@
-<robot name="omni_threewheel" xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <!-- Defining the colors used in this robot(only urdf)  -->
-    <material name="Black">
-        <color rgba="0.03 0.03 0.03 1" />
-    </material>
+<?xml version="1.0" ?>
+<robot name="sentry_omni" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <material name="White">
-        <color rgba="1 1 1 1" />
-    </material>
+<xacro:include filename="$(find sentry_simulation)/urdf/material_matrix.urdf.xacro" />
+<xacro:include filename="$(find sentry_simulation)/urdf/material_color.urdf.xacro" />
+<xacro:include filename="$(find sentry_simulation)/urdf/wheel.urdf.xacro" />
+<xacro:include filename="$(find sentry_simulation)/urdf/sensor.urdf.xacro" />
 
-    <material name="Blue">
-        <color rgba="0 0 1 1" />
-    </material>
-
-    <material name="Red">
-        <color rgba="0.3 0 0 1" />
-    </material>
-
-    <material name="Green">
-        <color rgba="0 0.3 0 1" />
-    </material>
-
-    <material name="Brown">
-        <color rgba="0.647 0.165 0.165 1" />
-    </material>
-    
-    <!-- Defining the roller link used in this robot -->
-    <xacro:macro name="roller_link" params="roller_link_name">
-        <link name="${roller_link_name}">
-            <visual>
-                <geometry>
-                    <mesh filename="package://sentry_simulation/mesh/omni/roller.stl" />
-                </geometry>
-                <material name="Black" />
-            </visual>
-
-            <collision>
-                <geometry>
-                    <mesh filename="package://sentry_simulation/mesh/omni/roller.stl" />
-                </geometry>
-                <material name="Black" />
-            </collision>
-
-	    	<inertial>
-	    		<mass value="3.7948" />
-	    		<inertia
-	    			ixx="0.84592e-04"
-	    			ixy="0"
-	    			ixz="0"
-	    			iyy="0.84592e-04"
-	    			iyz="0"
-	    			izz="0.49222e-04"
-	    		/>
-	    	</inertial>
-        </link>
-    </xacro:macro>
-
-    <!-- Defining the roller joint used in this robot -->
-    <xacro:macro name="roller_joint" params="roller_joint_name parent_link child_link x y z roll pitch yaw">
-        <joint name="${roller_joint_name}" type="continuous">
-            <parent link="${parent_link}" />
-            <child link="${child_link}" />
-            <axis xyz="0 0 1" />
-            <origin xyz="${x} ${y} ${z}" rpy="${roll} ${pitch} ${yaw}" />
-        </joint>
-    </xacro:macro>
-
-    <!-- Defining the link used in the gazebo world -->
-    <xacro:macro name="gazebo_material" params="ref color">
-        <gazebo reference="${ref}">
-            <pose>0 0 0 0 0 0</pose>
-            <material>Gazebo/${color}</material>
-        </gazebo>
-    </xacro:macro>
-
-    <!-- //////////////////////////////// all links of the sentry ////////////////////////////////// -->
     <link name="base_link">
         <visual>
-            <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://sentry_simulation/mesh/omni/base.stl" />
+                    <cylinder length="0.05" radius="0.18" />
             </geometry>
+            <origin rpy="0 0 1.57075" xyz="0 0 0.07" />
             <material name="White" />
         </visual>
-
         <collision>
-            <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://sentry_simulation/mesh/omni/base.stl" />
+                    <cylinder length="0.005" radius="0.15" />
             </geometry>
+            <origin rpy="0 0 1.57075" xyz="0 0 0.07" />
         </collision>
-
-        <inertial>
-            <mass value="262.098154" />
-            <inertia 
-                ixx="0.067866"
-                ixy="0.0"
-                ixz="0.0"
-                iyy="0.067886"
-                iyz="0.0"
-                izz="0.131532"            
-            />
-        </inertial>
+        <xacro:cylinder_inertial_matrix m="10" r="0.18" h="0.05" />
     </link>
 
-    <link name="left_wheel_link">
-        <visual>
-            <geometry>
-                <mesh filename="package://sentry_simulation/mesh/omni/wheel.stl" />
-            </geometry>
-            <material name="Red" />
-        </visual>
+    <gazebo reference="base_link">
+        <pose>0 0 0 0 0 0</pose>
+        <material>Gazebo/White</material>
+    </gazebo>
 
-         <collision>
-            <geometry>
-                <mesh filename="package://sentry_simulation/mesh/omni/wheel.stl" />
-            </geometry>
-            <material name="Red" />
-        </collision>       
+    <xacro:wheel_macro name="1" color="Red"
+                       xyz="0.2 -0.2 0.0326524329692152" 
+                       rpy="-1.5707963267949 -6.12303176911189E-17 -2.35619445" />
+    <xacro:wheel_macro name="2" color="Blue"
+                       xyz="-0.2 0.2 0.0326524329692152" 
+                       rpy="1.5707963267949 3.06151588454563E-17 0.78539815" />
+    <xacro:wheel_macro name="3" color="Black"
+                       xyz="0.2 0.2 0.0326524329692152" 
+                       rpy="1.57079632679490 3.06151588456647E-17 -0.78539815" />
+    <xacro:wheel_macro name="4" color="Green"
+                       xyz="-0.2 -0.2 0.0326524329692152" 
+                       rpy="1.5707963267949 3.06151588456647E-17 2.35619445" />
 
-        <inertial>
-			<origin xyz="0 0 -0.000343"/>
-			<mass value="41.7879"/>
-			<inertia
-				ixx="3.31842e-03"
-				ixy="0"
-				ixz="0"
-				iyy="3.31842e-03"
-				iyz="0"
-				izz="4.70166e-03"
-			/>
-        </inertial>
-    </link>
+    <!-- //// ////////////////////////////// driver controller ///////////////////  -->
+    <gazebo>
+        <plugin name="omni_controller" filename="libgazebo_ros_planar_move.so">
+            <robotNamespace>/</robotNamespace>
 
-    <xacro:roller_link roller_link_name="left_roller_e_link" />     <!--东-->
-    <xacro:roller_link roller_link_name="left_roller_ne_link" />    <!--东北-->
-    <xacro:roller_link roller_link_name="left_roller_n_link" />     <!--北-->
-    <xacro:roller_link roller_link_name="left_roller_nw_link" />    <!--西北-->
-    <xacro:roller_link roller_link_name="left_roller_w_link" />     <!--西-->
-    <xacro:roller_link roller_link_name="left_roller_sw_link" />    <!--西南-->
-    <xacro:roller_link roller_link_name="left_roller_s_link" />     <!--南-->
-    <xacro:roller_link roller_link_name="left_roller_se_link" />    <!--东南-->
+            <commandTopic>/cmd_vel</commandTopic>
 
-    <link name="rear_wheel_link">
-        <visual>
-            <geometry>
-                <mesh filename="package://sentry_simulation/mesh/omni/wheel.stl" />
-            </geometry>
-            <material name="Green" />
-        </visual>
-
-         <collision>
-            <geometry>
-                <mesh filename="package://sentry_simulation/mesh/omni/wheel.stl" />
-            </geometry>
-            <material name="Green" />
-        </collision>       
-
-        <inertial>
-			<origin xyz="0 0 -0.000343"/>
-			<mass value="41.7879"/>
-			<inertia
-				ixx="3.31842e-03"
-				ixy="0"
-				ixz="0"
-				iyy="3.31842e-03"
-				iyz="0"
-				izz="4.70166e-03"
-			/>
-        </inertial>
-    </link>
-
-    <xacro:roller_link roller_link_name="rear_roller_e_link" />     <!--东-->
-    <xacro:roller_link roller_link_name="rear_roller_ne_link" />    <!--东北-->
-    <xacro:roller_link roller_link_name="rear_roller_n_link" />     <!--北-->
-    <xacro:roller_link roller_link_name="rear_roller_nw_link" />    <!--西北-->
-    <xacro:roller_link roller_link_name="rear_roller_w_link" />     <!--西-->
-    <xacro:roller_link roller_link_name="rear_roller_sw_link" />    <!--西南-->
-    <xacro:roller_link roller_link_name="rear_roller_s_link" />     <!--南-->
-    <xacro:roller_link roller_link_name="rear_roller_se_link" />    <!--东南-->
-
-    <link name="right_wheel_link">
-        <visual>
-            <geometry>
-                <mesh filename="package://sentry_simulation/mesh/omni/wheel.stl" />
-            </geometry>
-            <material name="Black" />
-        </visual>
-
-         <collision>
-            <geometry>
-                <mesh filename="package://sentry_simulation/mesh/omni/wheel.stl" />
-            </geometry>
-            <material name="Black" />
-        </collision>       
-
-        <inertial>
-			<origin xyz="0 0 -0.000343"/>
-			<mass value="41.7879"/>
-			<inertia
-				ixx="3.31842e-03"
-				ixy="0"
-				ixz="0"
-				iyy="3.31842e-03"
-				iyz="0"
-				izz="4.70166e-03"
-			/>
-        </inertial>
-    </link>
-
-    <xacro:roller_link roller_link_name="right_roller_e_link" />     <!--东-->
-    <xacro:roller_link roller_link_name="right_roller_ne_link" />    <!--东北-->
-    <xacro:roller_link roller_link_name="right_roller_n_link" />     <!--北-->
-    <xacro:roller_link roller_link_name="right_roller_nw_link" />    <!--西北-->
-    <xacro:roller_link roller_link_name="right_roller_w_link" />     <!--西-->
-    <xacro:roller_link roller_link_name="right_roller_sw_link" />    <!--西南-->
-    <xacro:roller_link roller_link_name="right_roller_s_link" />     <!--南-->
-    <xacro:roller_link roller_link_name="right_roller_se_link" />    <!--东南-->
-
-
-    <!-- //////////////////////////////// all joints of the sentry ////////////////////////////////// -->
-    <joint name="left_wheel_joint" type="continuous">
-        <parent link="base_link" />
-        <child link="left_wheel_link" />
-        <axis xyz="0 0 1" />
-        <origin xyz="-0.03464101615 0.02 0" rpy="1.570796326794896 0 1.047197551196597" />
-    </joint>
-
-    <xacro:roller_joint roller_joint_name="left_roller_e_joint"
-                        parent_link="left_wheel_link"
-                        child_link="left_roller_e_link"
-                        x="0.01355" y="0.0" z="0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="0.0"
-    />
-
-    <xacro:roller_joint roller_joint_name="left_roller_ne_joint"
-                        parent_link="left_wheel_link"
-                        child_link="left_roller_ne_link"
-                        x="0.00958129689" y="0.00958129689" z="-0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="0.7853981633974483"
-    />
-    
-    <xacro:roller_joint roller_joint_name="left_roller_n_joint"
-                        parent_link="left_wheel_link"
-                        child_link="left_roller_n_link"
-                        x="0" y="0.01355" z="0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="1.570796326794896"
-    />
-
-    <xacro:roller_joint roller_joint_name="left_roller_nw_joint"
-                        parent_link="left_wheel_link"
-                        child_link="left_roller_nw_link"
-                        x="-0.00958129689" y="0.00958129689" z="-0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="2.356194490192345"
-    />
-
-    <xacro:roller_joint roller_joint_name="left_roller_w_joint"
-                        parent_link="left_wheel_link"
-                        child_link="left_roller_w_link"
-                        x="-0.01355" y="0.0" z="0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="3.141592653589793"
-    />
-
-    <xacro:roller_joint roller_joint_name="left_roller_sw_joint"
-                        parent_link="left_wheel_link"
-                        child_link="left_roller_sw_link"
-                        x="-0.00958129689" y="-0.00958129689" z="-0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="-2.356194490192345"
-    />
-
-    <xacro:roller_joint roller_joint_name="left_roller_s_joint"
-                        parent_link="left_wheel_link"
-                        child_link="left_roller_s_link"
-                        x="0.0" y="-0.01355" z="0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="-1.570796326794896"
-    />
-
-    <xacro:roller_joint roller_joint_name="left_roller_se_joint"
-                        parent_link="left_wheel_link"
-                        child_link="left_roller_se_link"
-                        x="0.00958129689" y="-0.00958129689" z="-0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="-0.7853981633974483"
-    />
-
-    <joint name="rear_wheel_joint" type="continuous">
-        <parent link="base_link" />
-        <child link="rear_wheel_link" />
-        <axis xyz="0 0 1" />
-        <origin xyz="0 -0.04 0" rpy="1.570796326794896 0 3.141592653589793" />
-    </joint>
-
-    <xacro:roller_joint roller_joint_name="rear_roller_e_joint"
-                        parent_link="rear_wheel_link"
-                        child_link="rear_roller_e_link"
-                        x="0.01355" y="0.0" z="0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="0.0"
-    />
-
-    <xacro:roller_joint roller_joint_name="rear_roller_ne_joint"
-                        parent_link="rear_wheel_link"
-                        child_link="rear_roller_ne_link"
-                        x="0.00958129689" y="0.00958129689" z="-0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="0.7853981633974483"
-    />
-    
-    <xacro:roller_joint roller_joint_name="rear_roller_n_joint"
-                        parent_link="rear_wheel_link"
-                        child_link="rear_roller_n_link"
-                        x="0" y="0.01355" z="0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="1.570796326794896"
-    />
-
-    <xacro:roller_joint roller_joint_name="rear_roller_nw_joint"
-                        parent_link="rear_wheel_link"
-                        child_link="rear_roller_nw_link"
-                        x="-0.00958129689" y="0.00958129689" z="-0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="2.356194490192345"
-    />
-
-    <xacro:roller_joint roller_joint_name="rear_roller_w_joint"
-                        parent_link="rear_wheel_link"
-                        child_link="rear_roller_w_link"
-                        x="-0.01355" y="0.0" z="0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="3.141592653589793"
-    />
-
-    <xacro:roller_joint roller_joint_name="rear_roller_sw_joint"
-                        parent_link="rear_wheel_link"
-                        child_link="rear_roller_sw_link"
-                        x="-0.00958129689" y="-0.00958129689" z="-0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="-2.356194490192345"
-    />
-
-    <xacro:roller_joint roller_joint_name="rear_roller_s_joint"
-                        parent_link="rear_wheel_link"
-                        child_link="rear_roller_s_link"
-                        x="0.0" y="-0.01355" z="0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="-1.570796326794896"
-    />
-
-    <xacro:roller_joint roller_joint_name="rear_roller_se_joint"
-                        parent_link="rear_wheel_link"
-                        child_link="rear_roller_se_link"
-                        x="0.00958129689" y="-0.00958129689" z="-0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="-0.7853981633974483"
-    />
-
-    <joint name="right_wheel_joint" type="continuous">
-        <parent link="base_link" />
-        <child link="right_wheel_link" />
-        <axis xyz="0 0 1" />
-        <origin xyz="0.03464101615 0.02 0.0" rpy="1.570796326794896 0 -1.047197551196597" />
-    </joint>
-
-    <xacro:roller_joint roller_joint_name="right_roller_e_joint"
-                        parent_link="right_wheel_link"
-                        child_link="right_roller_e_link"
-                        x="0.01355" y="0.0" z="0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="0.0"
-    />
-
-    <xacro:roller_joint roller_joint_name="right_roller_ne_joint"
-                        parent_link="right_wheel_link"
-                        child_link="right_roller_ne_link"
-                        x="0.00958129689" y="0.00958129689" z="-0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="0.7853981633974483"
-    />
-    
-    <xacro:roller_joint roller_joint_name="right_roller_n_joint"
-                        parent_link="right_wheel_link"
-                        child_link="right_roller_n_link"
-                        x="0" y="0.01355" z="0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="1.570796326794896"
-    />
-
-    <xacro:roller_joint roller_joint_name="right_roller_nw_joint"
-                        parent_link="right_wheel_link"
-                        child_link="right_roller_nw_link"
-                        x="-0.00958129689" y="0.00958129689" z="-0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="2.356194490192345"
-    />
-
-    <xacro:roller_joint roller_joint_name="right_roller_w_joint"
-                        parent_link="right_wheel_link"
-                        child_link="right_roller_w_link"
-                        x="-0.01355" y="0.0" z="0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="3.141592653589793"
-    />
-
-    <xacro:roller_joint roller_joint_name="right_roller_sw_joint"
-                        parent_link="right_wheel_link"
-                        child_link="right_roller_sw_link"
-                        x="-0.00958129689" y="-0.00958129689" z="-0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="-2.356194490192345"
-    />
-
-    <xacro:roller_joint roller_joint_name="right_roller_s_joint"
-                        parent_link="right_wheel_link"
-                        child_link="right_roller_s_link"
-                        x="0.0" y="-0.01355" z="0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="-1.570796326794896"
-    />
-
-    <xacro:roller_joint roller_joint_name="right_roller_se_joint"
-                        parent_link="right_wheel_link"
-                        child_link="right_roller_se_link"
-                        x="0.00958129689" y="-0.00958129689" z="-0.0055"
-                        roll="-1.570796326794896" pitch="0.0" yaw="-0.7853981633974483"
-    />
-
-    <!-- transmission used in this robot -->
-    <transmission name="left_transmission">
-        <type>transmission_interface/SimpleTransmission</type>
-        
-        <joint name="left_wheel_joint">
-            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
-        </joint>
-        
-        <actuator name="left_motor">
-            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-    </transmission>
-
-    <transmission name="right_transmission">
-        <type>transmission_interface/SimpleTransmission</type>
-        
-        <joint name="right_wheel_joint">
-            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
-        </joint>
-        
-        <actuator name="right_motor">
-            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-    </transmission>
-
-    <transmission name="rear_transmission">
-        <type>transmission_interface/SimpleTransmission</type>
-        
-        <joint name="rear_wheel_joint">
-            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
-        </joint>
-        
-        <actuator name="rear_motor">
-            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
-            <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-    </transmission>
-
-    <!-- //////////////////////////////// gazebo ////////////////////////////////// -->
-    <xacro:gazebo_material ref="base_link"           color="White" />
-    
-    <xacro:gazebo_material ref="left_wheel_link"     color="Red" />
-    <xacro:gazebo_material ref="right_wheel_link"    color="Blue" />
-    <xacro:gazebo_material ref="rear_wheel_link"     color="Green" />
-    
-    <xacro:gazebo_material ref="left_roller_e_link"  color="Black" />
-    <xacro:gazebo_material ref="left_roller_ne_link" color="Black" />
-    <xacro:gazebo_material ref="left_roller_n_link"  color="Black" />
-    <xacro:gazebo_material ref="left_roller_nw_link" color="Black" />
-    <xacro:gazebo_material ref="left_roller_w_link"  color="Black" />
-    <xacro:gazebo_material ref="left_roller_sw_link" color="Black" />
-    <xacro:gazebo_material ref="left_roller_s_link"  color="Black" />
-    <xacro:gazebo_material ref="left_roller_se_link" color="Black" />
-
-    <xacro:gazebo_material ref="right_roller_e_link"  color="Black" />
-    <xacro:gazebo_material ref="right_roller_ne_link" color="Black" />
-    <xacro:gazebo_material ref="right_roller_n_link"  color="Black" />
-    <xacro:gazebo_material ref="right_roller_nw_link" color="Black" />
-    <xacro:gazebo_material ref="right_roller_w_link"  color="Black" />
-    <xacro:gazebo_material ref="right_roller_sw_link" color="Black" />
-    <xacro:gazebo_material ref="right_roller_s_link"  color="Black" />
-    <xacro:gazebo_material ref="right_roller_se_link" color="Black" />
-
-    <xacro:gazebo_material ref="rear_roller_e_link"  color="Black" />
-    <xacro:gazebo_material ref="rear_roller_ne_link" color="Black" />
-    <xacro:gazebo_material ref="rear_roller_n_link"  color="Black" />
-    <xacro:gazebo_material ref="rear_roller_nw_link" color="Black" />
-    <xacro:gazebo_material ref="rear_roller_w_link"  color="Black" />
-    <xacro:gazebo_material ref="rear_roller_sw_link" color="Black" />
-    <xacro:gazebo_material ref="rear_roller_s_link"  color="Black" />
-    <xacro:gazebo_material ref="rear_roller_se_link" color="Black" />
-
-	<gazebo>
-		<plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-		<robotNamespace>/open_base</robotNamespace>
-		</plugin>
-	</gazebo>
+            <!-- 因为关闭发布odom的tf没有效果，所以此处把parent link改为gazebo_odom,child link改为gazebo_base_link
+            仍可以通过cmd_vel话题来控制小车的运动，同时可以跑其他里程计算法，避免干扰 -->
+            <odometryTopic>/gazebo_odom</odometryTopic>
+            <odometryRate>10.0</odometryRate>
+            <odometryFrame>gazebo_odom</odometryFrame>
+            <robotBaseFrame>gazebo_base_link</robotBaseFrame>
+            <cmdTimeout>3.0</cmdTimeout>
+            <publishOdomTF>False</publishOdomTF>
+            <broadcastTF>False</broadcastTF>
+        </plugin>
+    </gazebo>
 
 </robot>

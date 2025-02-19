@@ -42,6 +42,26 @@
         </inertial>
     </xacro:macro>
 
+    <!-- Defining the inertial matrix used for box -->
+    <xacro:macro name="Box_inertial_matrix" params="m l w h">
+       <inertial>
+               <mass value="${m}" />
+               <inertia ixx="${m*(h*h + l*l)/12}" ixy = "0" ixz = "0"
+                   iyy="${m*(w*w + l*l)/12}" iyz= "0"
+                   izz="${m*(w*w + h*h)/12}" />
+       </inertial>
+    </xacro:macro>
+
+    <!-- Defining the inertial matrix used for cylinder -->
+    <xacro:macro name="cylinder_inertial_matrix" params="m r h">
+        <inertial>
+            <mass value="${m}" />
+            <inertia ixx="${m*(3*r*r+h*h)/12}" ixy = "0" ixz = "0"
+                iyy="${m*(3*r*r+h*h)/12}" iyz = "0"
+                izz="${m*r*r/2}" /> 
+        </inertial>
+    </xacro:macro>
+
     <xacro:macro name="gazebo_material" params="ref color">
         <gazebo reference="${ref}">
             <pose>0 0 0 0 0 0</pose>
@@ -64,7 +84,7 @@
                 <box size="0.3 0.2 0.15"/>
             </geometry>
         </collision>
-        <xacro:inertial_matrix mass="${mass_baselink}" />
+        <xacro:Box_inertial_matrix m="${mass_baselink}" l="0.2" w="0.3" h="0.1" />
     </link>
 
     <link name="left_front_wheel">
@@ -81,7 +101,7 @@
                 <cylinder radius="${radius_wheel}" length="${length_wheel}" />
             </geometry>
         </collision>
-        <xacro:inertial_matrix mass="${mass_wheel}" />
+        <xacro:cylinder_inertial_matrix m="${mass_wheel}" r="${radius_wheel}" h="${length_wheel}" />
     </link>
 
     <link name="right_front_wheel">
@@ -98,7 +118,7 @@
                 <cylinder radius="${radius_wheel}" length="${length_wheel}" />
             </geometry>
         </collision>
-        <xacro:inertial_matrix mass="${mass_wheel}" />
+        <xacro:cylinder_inertial_matrix m="${mass_wheel}" r="${radius_wheel}" h="${length_wheel}" />
     </link>
 
     <link name="left_rear_wheel">
@@ -115,7 +135,7 @@
                 <cylinder radius="${radius_wheel}" length="${length_wheel}" />
             </geometry>
         </collision>
-        <xacro:inertial_matrix mass="${mass_wheel}" />
+        <xacro:cylinder_inertial_matrix m="${mass_wheel}" r="${radius_wheel}" h="${length_wheel}" />
     </link>
 
     <link name="right_rear_wheel">
@@ -132,51 +152,10 @@
                 <cylinder radius="${radius_wheel}" length="${length_wheel}" />
             </geometry>
         </collision>
-        <xacro:inertial_matrix mass="${mass_wheel}" />
+        <xacro:cylinder_inertial_matrix m="${mass_wheel}" r="${radius_wheel}" h="${length_wheel}" />
     </link>
 
-    <link name="imu_link">
-        <visual>
-            <origin xyz="0 0 0" rpy="0 0 0" />
-            <geometry>
-                <box size="0.05 0.05 0.05" />
-            </geometry>
-            <material name="Red" />
-        </visual>
 
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 0" />
-            <geometry>
-                <box size="0.05 0.05 0.05" />
-            </geometry>
-            <material name="Red" />
-        </collision>
-
-        <inertial>
-            <mass value="1e-2" />
-            <origin xyz="0 0 0" rpy="0 0 0" />
-            <inertia ixx="1e-6" ixy="0.0" ixz="0"
-                     iyy="0.0"  iyz="0.0" izz="1e-6" />
-        </inertial>
-    </link>
-
-    <link name="livox_mid360">
-        <visual>
-            <origin xyz="0 0 0" rpy="0 0 0" />
-            <geometry>
-                <mesh filename="package://sentry_simulation/mesh/mid360.stl">
-                </mesh>
-            </geometry>
-       </visual>
-
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 0" />
-            <geometry>
-                <mesh filename="package://sentry_simulation/mesh/mid360.stl">
-                </mesh>
-            </geometry>
-        </collision>
-    </link>
 
     <!-- //////////////////////////////// all joints ////////////////////////////////// -->
     <joint name="base_to_wheel1" type="continuous">

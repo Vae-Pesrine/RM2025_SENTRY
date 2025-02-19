@@ -18,8 +18,10 @@
     <arg name="origin_pitch" default="0.0" />
     <arg name="origin_yaw"   default="1.617099" />
 
+    <!-- <include file="$(find sentry_simulation)/launch/teleop_keyboard_ctrl.launch" /> -->
+
     <!-- 加载机器人模型参数 -->
-    <param name="robot_description" command="$(find xacro)/xacro  $(find sentry_simulation)/urdf/sentry_acker.urdf.xacro" />
+    <param name="robot_description" command="$(find xacro)/xacro  $(find sentry_simulation)/urdf/test.urdf.xacro" />
     <node pkg="gazebo_ros" type="spawn_model" name="spawn_sentry_base" args="-urdf -param /robot_description -model robot 
           -x $(arg origin_x) -y $(arg origin_y) -z $(arg origin_z) -R $(arg origin_roll) -P $(arg origin_pitch) -Y $(arg origin_yaw)" />
 
@@ -48,7 +50,7 @@
     
     <node pkg="sentry_simulation" type="key_control" name="key_control" output="screen">
         <param name="linear_speed" value="1.5" />
-        <param name="angular_speed" value="3.2" />
+        <param name="angular_speed" value="4.0" />
     </node>
 
     <!-- <node pkg="rviz" type="rviz" name="sentry_view_rviz" args="-d $(find sentry_simulation)/rviz/sentry_omni.rviz"/> -->
