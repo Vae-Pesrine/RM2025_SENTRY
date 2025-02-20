@@ -1,15 +1,15 @@
 small_gicp:
   num_threads: 4
-  num_neighbors: 10
-  global_leaf_size: 0.75
-  registered_leaf_size: 0.005
-  max_dist_sq: 2.0
+  num_neighbors: 20
+  global_leaf_size: 0.5
+  registered_leaf_size: 0.05
+  max_dist_sq: 4
 
   map_frame: map
   odom_frame: odom
   base_frame: base_link
   lidar_frame: livox_mid360
-  prior_pcd_file: /home/jgy/RMUC_simulation/src/sentry_localization/map/RMUC_1000000.pcd     #一定要在map目录下
+  prior_pcd_file: /home/jgy/RMUC_simulation/src/sentry_localization/map/Mesh.pcd     #一定要在map目录下
 
-  pcd_in_topic: /livox/points
+  pcd_in_topic: /cloud_registered
   initialpose_topic: /initialpose

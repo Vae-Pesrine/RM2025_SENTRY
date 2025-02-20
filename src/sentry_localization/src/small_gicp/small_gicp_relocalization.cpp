@@ -78,6 +78,25 @@ void SmallGicpRelocalization::registerPcdCallback(const sensor_msgs::PointCloud2
     pcl::fromROSMsg(*msg, *registered_scan_);
     //downsample registered points and convert them into pcl::PointCloud<pcl::PointCovariance>
     source_ = small_gicp::voxelgrid_sampling_omp<pcl::PointCloud<pcl::PointXYZ>, pcl::PointCloud<pcl::PointCovariance>>(*registered_scan_, registered_leaf_size_);
+    // 手动将 pcl::PointXYZ 转换为 pcl::PointCovariance
+    // source_ = std::make_shared<pcl::PointCloud<pcl::PointCovariance>>();
+    // source_->header = registered_scan_->header;
+    // source_->width = registered_scan_->width;
+    // source_->height = registered_scan_->height;
+    // source_->points.resize(registered_scan_->points.size());
+
+    // for (size_t i = 0; i < registered_scan_->points.size(); ++i)
+    // {
+    //     pcl::PointCovariance& cov_point = source_->points[i];
+    //     const pcl::PointXYZ& point = registered_scan_->points[i];
+
+    //     cov_point.x = point.x;
+    //     cov_point.y = point.y;
+    //     cov_point.z = point.z;
+
+    //     // // 初始化协方差矩阵为单位矩阵或其他默认值
+    //     // cov_point.cov = Eigen::Matrix3d::Identity();
+    // }    
     ROS_INFO_STREAM(GREEN << "registered points size is " << source_->size() << " source frame: " << source_->header.frame_id << RESET);
     //estimate covariances of points
     small_gicp::estimate_covariances_omp(*source_, num_neighbors_, num_threads_);

@@ -76,7 +76,7 @@ private:
     ros::WallTimer register_timer_;  
     ros::WallTimer transform_timer_;
 
-sensor_msgs::PointCloud2 prior_pcd_msg;
+    sensor_msgs::PointCloud2 prior_pcd_msg;
 
     std::shared_ptr<pcl::PointCloud<pcl::PointXYZ>> global_map_;
     std::shared_ptr<pcl::PointCloud<pcl::PointXYZ>> registered_scan_;
