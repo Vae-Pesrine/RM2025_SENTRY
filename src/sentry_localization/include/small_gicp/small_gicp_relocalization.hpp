@@ -61,6 +61,8 @@ private:
     float registered_leaf_size_;
     float max_dist_sq_;
 
+    double x_, y_, z_;
+    double yaw_, pitch_, roll_;
     std::string map_frame_;
     std::string odom_frame_;
     std::string base_frame_;

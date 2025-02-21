@@ -24,8 +24,8 @@
     <param name="latch" value="true" />
  
     <!-- max/min height for occupancy map, should be in meters -->
-    <param name="pointcloud_max_z" value="0.4" />
-    <param name="pointcloud_min_z" value="0.1" />
+    <param name="pointcloud_max_z" value="0.2" />
+    <param name="pointcloud_min_z" value="0.01" />
  
     <!-- topic from where pointcloud2 messages are subscribed -->
     <remap from="cloud_in" to="/pcd" />

@@ -8,15 +8,12 @@
     <arg name="debug" default="false"/>
     <arg name="verbose" default="true"/>
     <!-- the original pose of sentry in the gazebo world-->
-    <arg name="origin_x" default="7.647644" />
-    <arg name="origin_y" default="5.864258" />
-    <!-- ackerman -->
-    <arg name="origin_z" default="0.463000" />
-    <!-- omni -->
-    <!-- <arg name="origin_z" default="0.018392" /> -->
-    <arg name="origin_roll"  default="0.0" />
-    <arg name="origin_pitch" default="0.0" />
-    <arg name="origin_yaw"   default="1.617099" />
+    <arg name="origin_x" default="5.854596" />
+    <arg name="origin_y" default="7.997880" />
+    <arg name="origin_z" default="0.0" />
+    <arg name="origin_roll"  default="-0.000001" />
+    <arg name="origin_pitch" default="0.000022" />
+    <arg name="origin_yaw"   default="0.070276" />
 
     <!-- <include file="$(find sentry_simulation)/launch/teleop_keyboard_ctrl.launch" /> -->
 
@@ -49,8 +46,8 @@
     </node>
     
     <node pkg="sentry_simulation" type="key_control" name="key_control" output="screen">
-        <param name="linear_speed" value="1.5" />
-        <param name="angular_speed" value="4.0" />
+        <param name="linear_speed" value="0.8" />
+        <param name="angular_speed" value="0.8" />
     </node>
 
     <!-- <node pkg="rviz" type="rviz" name="sentry_view_rviz" args="-d $(find sentry_simulation)/rviz/sentry_omni.rviz"/> -->

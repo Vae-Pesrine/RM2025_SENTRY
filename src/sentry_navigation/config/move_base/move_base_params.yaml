@@ -12,8 +12,8 @@ oscillation_distance: 0.2            # 来回运动在多大距离之上不会�
 base_global_planner:  global_planner/GlobalPlanner
 base_local_planner:   teb_local_planner/TebLocalPlannerROS
 
-# 设置恢复行为
-recovery_behavior:
+# 设置恢复行为(自定义流程)
+recovery_behaviors:
   - name: 'rotate_recovery'
     type: 'rotate_recovery/RotateRecovery'
   - name: 'reset_recovery'

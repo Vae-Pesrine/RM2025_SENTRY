@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /PointCloud21
       Splitter Ratio: 0.5
     Tree Height: 550
   - Class: rviz/Selection
@@ -359,7 +360,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.05000000074505806
       Style: Flat Squares
-      Topic: /livox/points
+      Topic: /cloud_registered
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -420,7 +421,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 21.12891960144043
+      Distance: 41.704742431640625
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -428,17 +429,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 9.879888534545898
-        Y: 13.490432739257812
-        Z: 1.1322931051254272
+        X: 8.182162284851074
+        Y: 7.64457368850708
+        Z: -0.40513911843299866
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.3147965669631958
+      Pitch: 1.4297964572906494
       Target Frame: <Fixed Frame>
-      Yaw: 4.6954193115234375
+      Yaw: 3.680422067642212
     Saved: ~
 Window Geometry:
   Displays:
@@ -457,4 +458,4 @@ Window Geometry:
     collapsed: false
   Width: 1386
   X: 324
-  Y: 367
+  Y: 303

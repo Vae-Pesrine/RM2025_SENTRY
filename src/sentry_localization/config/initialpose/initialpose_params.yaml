@@ -5,6 +5,6 @@ initialpose:
 
   orientation_x: 0.0
   orientation_y: 0.0
-  orientation_z: 0.710400
-  orientation_w: 0.703798
+  orientation_z: 0.001
+  orientation_w: 1.00
     

@@ -20,6 +20,13 @@ SmallGicpRelocalization::SmallGicpRelocalization():
     pr_nh_.param<std::string>("small_gicp/prior_pcd_file", prior_pcd_file_, "");
     pr_nh_.param<std::string>("small_gicp/initialpose_topic", initialpose_topic_, "");
 
+    pr_nh_.param<double>("small_gicp/x", x_, 0.0);
+    pr_nh_.param<double>("small_gicp/y", y_, 0.0);
+    pr_nh_.param<double>("small_gicp/z", z_, 0.0);
+    pr_nh_.param<double>("small_gicp/yaw", yaw_, 0.0);
+    pr_nh_.param<double>("small_gicp/roll", roll_, 0.0);
+    pr_nh_.param<double>("small_gicp/pitch", pitch_, 0.0);
+
     registered_scan_ = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
     global_map_ = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
     register_ = std::make_shared<small_gicp::Registration<small_gicp::GICPFactor, small_gicp::ParallelReductionOMP>>();
@@ -45,8 +52,8 @@ SmallGicpRelocalization::SmallGicpRelocalization():
 
     pub_pcd_ = nh_.advertise<sensor_msgs::PointCloud2>("/prior_pcd", 10, this);
 
-    register_timer_ = this->createWallTimer(ros::WallDuration(0.5), &SmallGicpRelocalization::runRegistration, this, false, true);
-    transform_timer_ = this->createWallTimer(ros::WallDuration(0.5), &SmallGicpRelocalization::publishTransform, this, false, true);
+    register_timer_ = this->createWallTimer(ros::WallDuration(0.25), &SmallGicpRelocalization::runRegistration, this, false, true);
+    transform_timer_ = this->createWallTimer(ros::WallDuration(1.0), &SmallGicpRelocalization::publishTransform, this, false, true);
 }
 
 SmallGicpRelocalization::~SmallGicpRelocalization()
@@ -63,7 +70,26 @@ void SmallGicpRelocalization::loadGlobalMap(const std::string& file_name)
         return;
     }
     ROS_INFO_STREAM("Loaded global map with " << global_map_->points.size() << " points.");
-
+    Eigen::Affine3d transform = Eigen::Affine3d::Identity();
+    // double x = 5.854596, y = 7.997880, z = 0.0; 
+    // double roll = -0.000001, pitch = 0.000072, yaw = 0.070276;
+    transform.translation() = Eigen::Vector3d(x_, y_, z_);
+    Eigen::AngleAxisd roll_rotation(roll_, Eigen::Vector3d::UnitX());
+    Eigen::AngleAxisd pitch_rotation(pitch_, Eigen::Vector3d::UnitY());
+    Eigen::AngleAxisd yaw_rotation(yaw_, Eigen::Vector3d::UnitZ());
+    Eigen::Quaterniond q = yaw_rotation * pitch_rotation * roll_rotation;
+    transform.linear() = q.toRotationMatrix();
+    // while(ros::ok()){
+    //     try{
+    //         auto tf_stamped = tf_buffer_->lookupTransform(base_frame_, lidar_frame_, ros::Time(0.0), ros::Duration(1.0));
+    //         transform = tf2::transformToEigen(tf_stamped.transform);            
+    //         break;
+    //     }
+    //     catch(const tf2::TransformException& ex){
+    //         ROS_WARN_STREAM("TF lookup failed: Retrying..." << ex.what());
+    //     }
+    // }
+    pcl::transformPointCloud(*global_map_, *global_map_, transform);
 }
 
 void SmallGicpRelocalization::registerPcdCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
@@ -74,7 +100,6 @@ void SmallGicpRelocalization::registerPcdCallback(const sensor_msgs::PointCloud2
     prior_pcd_msg.header.frame_id = map_frame_;
     prior_pcd_msg.header.stamp = ros::Time().fromSec(msg->header.stamp.toSec());
     pub_pcd_.publish(prior_pcd_msg);
-
     pcl::fromROSMsg(*msg, *registered_scan_);
     //downsample registered points and convert them into pcl::PointCloud<pcl::PointCovariance>
     source_ = small_gicp::voxelgrid_sampling_omp<pcl::PointCloud<pcl::PointXYZ>, pcl::PointCloud<pcl::PointCovariance>>(*registered_scan_, registered_leaf_size_);
@@ -118,6 +143,7 @@ void SmallGicpRelocalization::runRegistration(const ros::WallTimerEvent& event)
         ROS_WARN_STREAM("The small gicp didn't converge");
         return;
     }
+
     result_t_ = result.T_target_source;
     prior_result_t_ = result.T_target_source;
 }
@@ -129,7 +155,9 @@ void SmallGicpRelocalization::publishTransform(const ros::WallTimerEvent& event)
     }
 
     geometry_msgs::TransformStamped tf_stamped;
-    tf_stamped.header.stamp = last_scam_time_ + ros::Duration(0.1);
+    // tf_stamped.header.stamp = last_scam_time_ + ros::Duration(0.1);
+    tf_stamped.header.stamp = last_scam_time_;
+
     tf_stamped.header.frame_id = map_frame_;
     tf_stamped.child_frame_id = odom_frame_;
 
@@ -150,9 +178,9 @@ void SmallGicpRelocalization::publishTransform(const ros::WallTimerEvent& event)
 
 void SmallGicpRelocalization::initialPoseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr & msg)
 {
-    ROS_INFO_STREAM("Received initialpose: " << "x: " << msg->pose.pose.position.x << " "
-                                             << "y; " << msg->pose.pose.position.y << " "
-                                             << "y; " << msg->pose.pose.position.y << " ");
+    // ROS_INFO_STREAM("Received initialpose: " << "x: " << msg->pose.pose.position.x << " "
+    //                                          << "y; " << msg->pose.pose.position.y << " "
+    //                                          << "y; " << msg->pose.pose.position.y << " ");
     Eigen::Isometry3d map_to_base = Eigen::Isometry3d::Identity();
     map_to_base.translation() << msg->pose.pose.position.x, msg->pose.pose.position.y, msg->pose.pose.position.z;
     map_to_base.linear() = Eigen::Quaterniond(msg->pose.pose.orientation.w, msg->pose.pose.orientation.x,
