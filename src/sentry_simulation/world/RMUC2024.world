@@ -40,8 +40,8 @@
             </contact>
             <friction>
               <ode>
-                <mu>100</mu>
-                <mu2>50</mu2>
+                <mu>0.1</mu>
+                <mu2>0.1</mu2>
               </ode>
               <torsional>
                 <ode/>
@@ -72,7 +72,7 @@
       </link>
     </model>
 
-    <gravity>0 0 -9.8</gravity>
+    <gravity>0 0 -400</gravity>
     
     <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>        
     
@@ -105,12 +105,12 @@
         <inertial>
           <mass>1</mass>
           <inertia>
-            <ixx>0.166667</ixx>
+            <ixx>0.570</ixx>
             <ixy>0</ixy>
             <ixz>0</ixz>
-            <iyy>0.166667</iyy>
+            <iyy>0.474</iyy>
             <iyz>0</iyz>
-            <izz>0.166667</izz>
+            <izz>0.391</izz>
           </inertia>
         </inertial>
         <pose>0 -0 0 0 -0 0</pose>
@@ -146,8 +146,8 @@
           <surface>
             <friction>
               <ode>
-                <mu>1</mu>
-                <mu2>1</mu2>
+                <mu>0.1</mu>
+                <mu2>0.1</mu2>
                 <fdir1>0 0 0</fdir1>
                 <slip1>0</slip1>
                 <slip2>0</slip2>

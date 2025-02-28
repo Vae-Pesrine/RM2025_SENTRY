@@ -2,8 +2,8 @@ global_costmap:
   global_frame: map                     # 地图坐标系
   robot_base_frame: base_link           # 机器人基坐标系
 
-  update_frequency: 1                   # 全局代价地图更新频率, 设置的小一点
-  publish_frequency: 0.5                # 全局代价地图发布频率, 设置的小一点, 不需要不断发布
+  update_frequency:  5.0                # 全局代价地图更新频率, 设置的小一点
+  publish_frequency: 2.0                # 全局代价地图发布频率, 设置的小一点, 不需要不断发布
   old_navfn_behavior: false             # 关闭旧的navfn行为
 
   rolling_window: false                 # 关闭滚动窗口功能

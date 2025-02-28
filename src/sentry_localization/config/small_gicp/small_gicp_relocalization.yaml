@@ -1,7 +1,9 @@
 small_gicp:
+  debug: false
+
   num_threads: 4
   num_neighbors: 10
-  global_leaf_size: 0.25          # 0.3 0.1 600000 slow
+  global_leaf_size: 0.25
   registered_leaf_size: 0.1
   max_dist_sq: 1.0
 
@@ -9,14 +11,20 @@ small_gicp:
   odom_frame: odom
   base_frame: base_link
   lidar_frame: livox_mid360
-  prior_pcd_file: /home/jgy/RMUC_simulation/src/sentry_localization/PCD/scans.pcd     #一定要在map目录下
 
+  prior_pcd_file: /home/jgy/RMUC_simulation/src/sentry_localization/PCD/rmuc_2024.pcd
   pcd_in_topic: /cloud_registered
   initialpose_topic: /initialpose
 
-  x: 5.854596
-  y: 7.997880
-  z: 0.0
-  roll: -0.000001
-  pitch: 0.000072
-  yaw: 0.35
+  # the transform between map and odom when mapping using lio
+  x:     6.881396
+  y:     6.052823
+  z:     0.140688
+  roll:  0.000000
+  pitch: 0.000000
+  yaw:   1.570796327
+
+  # 注意时间戳的问题, 目前还有问题， 虽然不会影响正常运动
+  transform_tolerance: 0.1      
+  registration_frequency: 10
+  pose_update_frequency: 4

@@ -55,6 +55,8 @@ private:
     ros::Subscriber sub_initialpose_;
     ros::Publisher pub_pcd_;
 
+    bool debug_;
+    
     int num_threads_;
     int num_neighbors_;
     float global_leaf_size_;
@@ -63,6 +65,14 @@ private:
 
     double x_, y_, z_;
     double yaw_, pitch_, roll_;
+
+    double registration_frequency_;
+    double pose_update_frequency_;
+
+    double transform_tolerance_;
+    double align_time_begin_;
+    double align_time_end_;
+
     std::string map_frame_;
     std::string odom_frame_;
     std::string base_frame_;
@@ -71,7 +81,7 @@ private:
     std::string pcd_in_topic_;
     std::string initialpose_topic_;
 
-    ros::Time last_scam_time_;
+    ros::Time last_scan_time_;
     Eigen::Isometry3d result_t_;
     Eigen::Isometry3d prior_result_t_;
 

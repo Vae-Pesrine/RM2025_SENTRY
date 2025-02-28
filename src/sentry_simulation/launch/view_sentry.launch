@@ -8,17 +8,17 @@
     <arg name="debug" default="false"/>
     <arg name="verbose" default="true"/>
     <!-- the original pose of sentry in the gazebo world-->
-    <arg name="origin_x" default="5.854596" />
-    <arg name="origin_y" default="7.997880" />
-    <arg name="origin_z" default="0.0" />
-    <arg name="origin_roll"  default="-0.000001" />
-    <arg name="origin_pitch" default="0.000022" />
-    <arg name="origin_yaw"   default="0.070276" />
+    <arg name="origin_x"     default="6.881396" />
+    <arg name="origin_y"     default="6.052823" />
+    <arg name="origin_z"     default="0.140688" />
+    <arg name="origin_roll"  default="0.000000" />
+    <arg name="origin_pitch" default="0.000000" />
+    <arg name="origin_yaw"   default="1.570796327" />
 
     <!-- <include file="$(find sentry_simulation)/launch/teleop_keyboard_ctrl.launch" /> -->
 
     <!-- 加载机器人模型参数 -->
-    <param name="robot_description" command="$(find xacro)/xacro  $(find sentry_simulation)/urdf/test.urdf.xacro" />
+    <param name="robot_description" command="$(find xacro)/xacro  $(find sentry_simulation)/urdf/main.urdf.xacro" />
     <node pkg="gazebo_ros" type="spawn_model" name="spawn_sentry_base" args="-urdf -param /robot_description -model robot 
           -x $(arg origin_x) -y $(arg origin_y) -z $(arg origin_z) -R $(arg origin_roll) -P $(arg origin_pitch) -Y $(arg origin_yaw)" />
 
@@ -36,18 +36,11 @@
     </include>
       
     <node pkg="joint_state_publisher" type="joint_state_publisher" name="sentry_joint_publisher" output="screen" />    
-    <node pkg="robot_state_publisher" type="robot_state_publisher" name="sentry_tf_publisher" output="screen">
-        <!-- <param name="publish_frequency" value="20.0" /> -->
-    </node>
-
-    <!-- 重映射 odom 话题到一个不存在的话题 -->
-    <node name="close_odom" pkg="gazebo_ros" type="gzserver" output="screen">
-        <remap from="odom" to="odom_disabled"/>
-    </node>
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="sentry_tf_publisher" output="screen" />
     
     <node pkg="sentry_simulation" type="key_control" name="key_control" output="screen">
-        <param name="linear_speed" value="0.8" />
-        <param name="angular_speed" value="0.8" />
+        <param name="linear_speed" value="1.0" />
+        <param name="angular_speed" value="1.6" />
     </node>
 
     <!-- <node pkg="rviz" type="rviz" name="sentry_view_rviz" args="-d $(find sentry_simulation)/rviz/sentry_omni.rviz"/> -->

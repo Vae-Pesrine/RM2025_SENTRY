@@ -1,7 +1,8 @@
 <launch>
 
     <!-- point lio -->
-    <include file="$(find fast_lio)/launch/mapping_mid360.launch" />
+    <!-- <include file="$(find fast_lio)/launch/mapping_mid360.launch" /> -->
+    <!-- <include file="$(find point_lio)/launch/mapping_mid360.launch" /> -->
 
     <!-- turn the livox mid360 points to PointCloud2 points -->
     <node pkg="sentry_localization" type="livox_lidar_to_points" name="livox_lidar_to_points_node" output="screen" >
@@ -16,7 +17,7 @@
     <!-- <include file="$(find sentry_localization)/launch/amcl.launch" /> -->
     
     <!-- small gicp node -->
-    <!-- <include file="$(find sentry_localization)/launch/small_gicp.launch" /> -->
+    <include file="$(find sentry_localization)/launch/small_gicp.launch" />
 
     <!-- publish the initialpose -->
     <node pkg="sentry_localization" type="initialpose_node" name="initialpose_node" output="screen">

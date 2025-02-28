@@ -1,0 +1,7 @@
+image: /home/jgy/RMUC_simulation/src/sentry_navigation/map/test.pgm
+resolution: 0.050000
+origin: [-0.350000, -0.250000, 0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
+

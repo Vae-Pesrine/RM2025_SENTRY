@@ -1,10 +1,11 @@
 initialpose:
-  position_x: 7.647644
-  position_y: 5.864258
+  position_x: 7.03318
+  position_y: 5.96
   position_z: 0.0
 
-  orientation_x: 0.0
-  orientation_y: 0.0
-  orientation_z: 0.001
-  orientation_w: 1.00
+  orientation_w: 0.7011
+  orientation_x: 0.0000
+  orientation_y: 0.0000
+  orientation_z: 0.7129
+ 
     

@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 
         ros::spinOnce();
         count++;
-        if(count <= 250)
+        if(count <= 50)
         {
             pub_initialPose.publish(initialPose);
             // ROS_INFO_STREAM("The pose has been published!");            
