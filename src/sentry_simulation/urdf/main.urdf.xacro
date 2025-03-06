@@ -9,18 +9,18 @@
     <link name="base_link">
         <visual>
             <geometry>
-                    <cylinder length="0.05" radius="0.18" />
+                    <cylinder length="0.05" radius="0.1" />
             </geometry>
-            <origin rpy="0 0 1.57075" xyz="0 0 0.07" />
+            <origin rpy="0 0 1.57075" xyz="0 0 0.01" />
             <material name="White" />
         </visual>
         <collision>
             <geometry>
-                    <cylinder length="0.005" radius="0.15" />
+                    <cylinder length="0.005" radius="0.2" />
             </geometry>
-            <origin rpy="0 0 1.57075" xyz="0 0 0.07" />
+            <origin rpy="0 0 1.57075" xyz="0 0 0.01" />
         </collision>
-        <xacro:cylinder_inertial_matrix m="250" r="0.18" h="0.05" />
+        <xacro:cylinder_inertial_matrix m="10" r="0.1" h="0.05" />
     </link>
 
     <gazebo reference="base_link">
@@ -29,16 +29,16 @@
     </gazebo>
 
     <xacro:wheel_macro name="1" color="Red"
-                       xyz="0.2 -0.2 0.0326524329692152" 
-                       rpy="-1.5707963267949 -6.12303176911189E-17 -2.35619445" />
-    <xacro:wheel_macro name="2" color="Blue"
-                       xyz="-0.2 0.2 0.0326524329692152" 
-                       rpy="1.5707963267949 3.06151588454563E-17 0.78539815" />
+                       xyz="0.1 -0.1 0.0099524329692152" 
+                       rpy="1.5707963267949 -6.12303176911189E-17 -2.35619445" />
     <xacro:wheel_macro name="3" color="Black"
-                       xyz="0.2 0.2 0.0326524329692152" 
+                       xyz="-0.1 0.1 0.0099524329692152" 
+                       rpy="1.5707963267949 3.06151588454563E-17 0.78539815" />
+    <xacro:wheel_macro name="2" color="Blue"
+                       xyz="0.1 0.1 0.0099524329692152" 
                        rpy="1.57079632679490 3.06151588456647E-17 -0.78539815" />
     <xacro:wheel_macro name="4" color="Green"
-                       xyz="-0.2 -0.2 0.0326524329692152" 
+                       xyz="-0.1 -0.1 0.0099524329692152" 
                        rpy="1.5707963267949 3.06151588456647E-17 2.35619445" />
 
     <!-- //// ////////////////////////////// driver controller ///////////////////  -->
@@ -59,5 +59,12 @@
             <broadcastTF>False</broadcastTF>
         </plugin>
     </gazebo>
+
+
+	<!-- <gazebo>
+		<plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+		<robotNamespace></robotNamespace>
+		</plugin>
+	</gazebo> -->
 
 </robot>

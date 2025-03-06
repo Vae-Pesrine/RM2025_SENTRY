@@ -6,7 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /PointCloud21
+        - /PointCloud22
       Splitter Ratio: 0.5
     Tree Height: 550
   - Class: rviz/Selection
@@ -143,12 +143,12 @@ Visualization Manager:
       Class: rviz/Map
       Color Scheme: map
       Draw Behind: false
-      Enabled: true
+      Enabled: false
       Name: Map
       Topic: /map
       Unreliable: false
       Use Timestamp: false
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -360,7 +360,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.05000000074505806
       Style: Flat Squares
-      Topic: /cloud_registered
+      Topic: /terrain_map_ext
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -386,7 +386,7 @@ Visualization Manager:
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.009999999776482582
+      Size (m): 0.0020000000949949026
       Style: Flat Squares
       Topic: /prior_pcd
       Unreliable: false
@@ -421,7 +421,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 41.704742431640625
+      Distance: 51.888648986816406
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -429,17 +429,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 8.182162284851074
-        Y: 7.64457368850708
-        Z: -0.40513911843299866
+        X: 9.091493606567383
+        Y: 9.701841354370117
+        Z: 0.22214363515377045
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.4297964572906494
+      Pitch: 1.5697963237762451
       Target Frame: <Fixed Frame>
-      Yaw: 3.680422067642212
+      Yaw: 4.755431652069092
     Saved: ~
 Window Geometry:
   Displays:
@@ -457,5 +457,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1386
-  X: 324
-  Y: 303
+  X: 198
+  Y: 556

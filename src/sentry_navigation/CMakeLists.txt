@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   tf
   nav_msgs
+  std_msgs
   sensor_msgs
   pcl_ros
 )
@@ -43,8 +44,20 @@ include_directories(
 link_directories(${PCL_LIBRARY_DIRS})
 
 
-add_executable(terrian_analysis src/terrian_analysis.cpp)
-add_dependencies(terrian_analysis ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(terrian_analysis
+add_executable(terrain_analysis src/terrian_analysis/terrainAnalysis.cpp)
+add_dependencies(terrain_analysis ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(terrain_analysis
+  ${catkin_LIBRARIES}
+)
+
+add_executable(terrain_analysis_ext src/terrian_analysis/terrainAnalysisExt.cpp)
+add_dependencies(terrain_analysis_ext ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(terrain_analysis_ext
+  ${catkin_LIBRARIES}
+)
+
+add_executable(test_goal src/test_goal.cpp)
+add_dependencies(test_goal ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(test_goal
   ${catkin_LIBRARIES}
 )

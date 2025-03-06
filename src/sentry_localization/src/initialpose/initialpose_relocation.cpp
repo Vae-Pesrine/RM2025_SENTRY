@@ -6,13 +6,11 @@
 #include "sensor_msgs/LaserScan.h"
 #include "tf2/utils.h"
 
-namespace xju::slam {
-#define degree2rad (M_PI / 180.0)
-class XjuRelo {
+class rePose {
 public:
-  XjuRelo();
+  rePose();
 
-  ~XjuRelo() = default;
+  ~rePose() = default;
 
 private:
   void initialPoseReceived(const geometry_msgs::PoseWithCovarianceStampedConstPtr& msg);
@@ -22,8 +20,8 @@ private:
   void laserReceived(const sensor_msgs::LaserScanConstPtr& msg);
 
   auto rangeRelocate(geometry_msgs::PoseWithCovarianceStamped& best_pose,
-                     double dist_range = 2.0, double angle_range = 60.0 * degree2rad,
-                     double dist_reso = 0.05, double angle_reso = 1.0 * degree2rad) -> int;
+                     double dist_range = 2.0, double angle_range = 60.0 * M_PI / 180.0,
+                     double dist_reso = 0.05, double angle_reso = 1.0 * M_PI / 180.0) -> int;
 
 private:
   ros::Publisher initial_pose_pub_;
@@ -40,16 +38,16 @@ private:
   std::atomic_bool got_laser_info_{false};
 };
 
-XjuRelo::XjuRelo() {
+rePose::rePose() {
   ros::NodeHandle nh;
 
   initial_pose_pub_ = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/initialpose", 1);
-  initial_pose_sub_ = nh.subscribe("/initialpose_ori", 1, &XjuRelo::initialPoseReceived, this);
-  map_sub_ = nh.subscribe("map", 1, &XjuRelo::mapReceived, this);
-  laser_sub_ = nh.subscribe("/scan", 1, &XjuRelo::laserReceived, this);
+  initial_pose_sub_ = nh.subscribe("/initialpose_ori", 1, &rePose::initialPoseReceived, this);
+  map_sub_ = nh.subscribe("map", 1, &rePose::mapReceived, this);
+  laser_sub_ = nh.subscribe("/scan", 1, &rePose::laserReceived, this);
 }
 
-void XjuRelo::initialPoseReceived(const geometry_msgs::PoseWithCovarianceStampedConstPtr& msg) {
+void rePose::initialPoseReceived(const geometry_msgs::PoseWithCovarianceStampedConstPtr& msg) {
   on_going_ = true;
   auto best_pose = *msg;
   ROS_INFO("Receive original initial pose for amcl node [%.3f, %.3f, %.3f]",
@@ -63,13 +61,13 @@ void XjuRelo::initialPoseReceived(const geometry_msgs::PoseWithCovarianceStamped
   on_going_ = false;
 }
 
-void XjuRelo::mapReceived(const nav_msgs::OccupancyGridConstPtr& msg) {
+void rePose::mapReceived(const nav_msgs::OccupancyGridConstPtr& msg) {
   if (on_going_) return;
   map_ = *msg;
 
 }
 
-void XjuRelo::laserReceived(const sensor_msgs::LaserScanConstPtr& msg) {
+void rePose::laserReceived(const sensor_msgs::LaserScanConstPtr& msg) {
   if (on_going_) return;
   laser_ = *msg;
   if (got_laser_info_) return;
@@ -84,7 +82,7 @@ void XjuRelo::laserReceived(const sensor_msgs::LaserScanConstPtr& msg) {
            cos_sin_table_.size(), (ros::Time::now() - start_time).toSec());
 }
 
-auto XjuRelo::rangeRelocate(geometry_msgs::PoseWithCovarianceStamped& best_pose,
+auto rePose::rangeRelocate(geometry_msgs::PoseWithCovarianceStamped& best_pose,
                             double dist_range, double angle_range, double dist_reso, double angle_reso) -> int {
   auto mapValid = [&](double x, double y) {
     auto i = std::floor((x - map_.info.origin.position.x) / map_.info.resolution + 0.5);
@@ -148,12 +146,11 @@ auto XjuRelo::rangeRelocate(geometry_msgs::PoseWithCovarianceStamped& best_pose,
   best_pose.pose.pose.orientation.w = std::cos(target_th / 2.0);
   return score;
 }
-}
 
 int main(int argc, char** argv) {
-  ros::init(argc, argv, "xju_relocation");
+  ros::init(argc, argv, "rePose");
 
-  xju::slam::XjuRelo _xju_relo;
+  rePose _xju_relo;
   ros::spin();
 
   return 0;

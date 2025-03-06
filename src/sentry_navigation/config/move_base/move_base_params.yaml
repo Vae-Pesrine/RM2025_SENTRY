@@ -14,10 +14,10 @@ base_local_planner:   teb_local_planner/TebLocalPlannerROS
 
 # 设置恢复行为(自定义流程)
 recovery_behaviors:
-  - name: 'rotate_recovery'
-    type: 'rotate_recovery/RotateRecovery'
   - name: 'reset_recovery'
     type: 'clear_costmap_recovery/ClearCostmapRecovery'
+  - name: 'rotate_recovery'
+    type: 'rotate_recovery/RotateRecovery'                                              
 
 reset_recovery:
   invert_area_to_clear: false       # false清除正方形外, true清除正方形内

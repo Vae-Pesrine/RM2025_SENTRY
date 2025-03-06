@@ -72,7 +72,7 @@
       </link>
     </model>
 
-    <gravity>0 0 -400</gravity>
+    <gravity>0 0 -9.8</gravity>
     
     <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>        
     
@@ -172,19 +172,19 @@
               <collide_bitmask>1</collide_bitmask>
               <ode>
                 <soft_cfm>0</soft_cfm>
-                <soft_erp>0.2</soft_erp>
-                <kp>1e+13</kp>
-                <kd>1</kd>
-                <max_vel>0.01</max_vel>
+                <soft_erp>0.6</soft_erp>
+                <kp>1e+8</kp>
+                <kd>1e3</kd>
+                <max_vel>0.5</max_vel>
                 <min_depth>0</min_depth>
               </ode>
               <bullet>
                 <split_impulse>1</split_impulse>
                 <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
                 <soft_cfm>0</soft_cfm>
-                <soft_erp>0.2</soft_erp>
-                <kp>1e+13</kp>
-                <kd>1</kd>
+                <soft_erp>0.6</soft_erp>
+                <kp>1e+8</kp>
+                <kd>1e3</kd>
               </bullet>
             </contact>
           </surface>

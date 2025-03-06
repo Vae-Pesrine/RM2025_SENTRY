@@ -25,7 +25,7 @@ CTRL-C to quit
 )";
 
 std::map<char, std::tuple<double, double, double, double>> moveBindings = {
-    //left_front  right_front  left_rear  right_rear 顺时针是1
+    //link_1  link_2  link_3  link_4 逆时针是1
     {'w', {-1, 1, -1, 1}},
     {'s', {1, -1, 1, -1}},
     {'a', {1, 1, -1, -1}},
@@ -58,16 +58,16 @@ int main(int argc, char** argv) {
     ros::init(argc, argv, "vel_publisher");
     ros::NodeHandle nh;
 
-    ros::Publisher pub_left_front = nh.advertise<std_msgs::Float64>("/open_base/left_front_joint_velocity_controller/command", 1);
-    ros::Publisher pub_right_front = nh.advertise<std_msgs::Float64>("/open_base/right_front_joint_velocity_controller/command", 1);
-    ros::Publisher pub_left_rear = nh.advertise<std_msgs::Float64>("/open_base/left_rear_joint_velocity_controller/command", 1);
-    ros::Publisher pub_right_rear = nh.advertise<std_msgs::Float64>("/open_base/right_rear_joint_velocity_controller/command", 1);
+    ros::Publisher pub_1_front = nh.advertise<std_msgs::Float64>("wheel_1_joint_velocity_controller/command", 1);
+    ros::Publisher pub_2_front = nh.advertise<std_msgs::Float64>("wheel_2_joint_velocity_controller/command", 1);
+    ros::Publisher pub_3_rear = nh.advertise<std_msgs::Float64>("wheel_3_joint_velocity_controller/command", 1);
+    ros::Publisher pub_4_rear = nh.advertise<std_msgs::Float64>("wheel_4_joint_velocity_controller/command", 1);
 
     double speed = 1.0;
-    double left_front = 0;
-    double right_front = 0;
-    double left_rear = 0;
-    double right_rear = 0;
+    double link_1 = 0;
+    double link_2 = 0;
+    double link_3 = 0;
+    double link_4 = 0;
     int status = 0;
 
     std::cout << msg << std::endl;
@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
     while (ros::ok()) {
         char key = getKey();
         if (moveBindings.find(key) != moveBindings.end()) {
-            std::tie(left_front, right_front, left_rear, right_rear) = moveBindings[key];
+            std::tie(link_1, link_2, link_3, link_4) = moveBindings[key];
         } else if (speedBindings.find(key) != speedBindings.end()) {
             speed = speed * std::get<0>(speedBindings[key]);
             std::cout << vels(speed) << std::endl;
@@ -85,44 +85,44 @@ int main(int argc, char** argv) {
             }
             status = (status + 1) % 15;
         } else {
-            left_front = 0;
-            right_front = 0;
-            left_rear = 0;
-            right_rear = 0;
+            link_1 = 0;
+            link_2 = 0;
+            link_3 = 0;
+            link_4 = 0;
             if (key == '\x03') {
                 break;
             }
         }
 
-        std_msgs::Float64 vel_left_front;
-        std_msgs::Float64 vel_right_front;
-        std_msgs::Float64 vel_left_rear;
-        std_msgs::Float64 vel_right_rear;
+        std_msgs::Float64 vel_1;
+        std_msgs::Float64 vel_2;
+        std_msgs::Float64 vel_3;
+        std_msgs::Float64 vel_4;
 
-        vel_left_front.data  = left_front * speed;
-        vel_right_front.data = right_front * speed;
-        vel_left_rear.data   = left_rear * speed;
-        vel_right_rear.data  = right_rear * speed;
+        vel_1.data  = link_1 * speed;
+        vel_2.data = link_2 * speed;
+        vel_3.data   = link_3 * speed;
+        vel_4.data  = link_4 * speed;
 
-        pub_left_front.publish(vel_left_front);
-        pub_right_front.publish(vel_right_front);
-        pub_left_rear.publish(vel_left_rear);
-        pub_right_rear.publish(vel_right_rear);
+        pub_1_front.publish(vel_1);
+        pub_2_front.publish(vel_2);
+        pub_3_rear.publish(vel_3);
+        pub_4_rear.publish(vel_4);
     }
 
-    std_msgs::Float64 vel_left_front;
-    std_msgs::Float64 vel_right_front;
-    std_msgs::Float64 vel_left_rear;
-    std_msgs::Float64 vel_right_rear;
-    vel_left_front.data  = 0;
-    vel_right_front.data = 0;
-    vel_left_rear.data   = 0;
-    vel_right_rear.data  = 0;
+    std_msgs::Float64 vel_1;
+    std_msgs::Float64 vel_2;
+    std_msgs::Float64 vel_3;
+    std_msgs::Float64 vel_4;
+    vel_1.data  = 0;
+    vel_2.data = 0;
+    vel_3.data   = 0;
+    vel_4.data  = 0;
 
-    pub_left_front.publish(vel_left_front);
-    pub_right_front.publish(vel_right_front);
-    pub_left_rear.publish(vel_left_rear);
-    pub_right_rear.publish(vel_right_rear);
+    pub_1_front.publish(vel_1);
+    pub_2_front.publish(vel_2);
+    pub_3_rear.publish(vel_3);
+    pub_4_rear.publish(vel_4);
 
     return 0;
 }

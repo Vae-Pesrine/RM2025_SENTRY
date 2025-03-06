@@ -15,6 +15,8 @@
         <rosparam file="$(find sentry_navigation)/config/planner/teb_local_planner_params.yaml" command="load" />
     </node>
 
+    <!-- <include file="$(find sentry_navigation)/launch/terrain_analysis.launch" /> -->
+    
     <!-- rviz -->
     <node pkg="rviz" type="rviz" name="sentry_rviz" args="-d $(find sentry_navigation)/rviz/sentry_navigation.rviz" />
 

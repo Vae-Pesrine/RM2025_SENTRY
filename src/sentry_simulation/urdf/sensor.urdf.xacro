@@ -120,7 +120,7 @@
             </ray>
 
             <visualize>false</visualize>
-            <samples>20000</samples>
+            <samples>50000</samples>
     	    <downsample>1</downsample>
     	    <csv_file_name>mid360.csv</csv_file_name>
     	    <ros_topic>/livox/lidar</ros_topic>
