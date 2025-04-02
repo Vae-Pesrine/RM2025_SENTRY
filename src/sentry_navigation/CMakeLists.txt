@@ -11,14 +11,25 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   tf
+  tf2
   nav_msgs
   std_msgs
   sensor_msgs
   pcl_ros
+  message_generation
 )
 
 find_package(PCL 1.12 REQUIRED)
 find_package(Boost REQUIRED)
+
+add_message_files(
+  FILES
+  refree.msg
+)
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
 
 
 catkin_package(
@@ -28,7 +39,11 @@ catkin_package(
   nav_msgs
   sensor_msgs
   pcl_ros
+  std_msgs
+  message_runtime
 )
+
+
 
 ###########
 ## Build ##
@@ -59,5 +74,11 @@ target_link_libraries(terrain_analysis_ext
 add_executable(test_goal src/test_goal.cpp)
 add_dependencies(test_goal ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(test_goal
+  ${catkin_LIBRARIES}
+)
+
+add_executable(test_analysis src/test.cpp)
+add_dependencies(test_analysis ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(test_analysis
   ${catkin_LIBRARIES}
 )

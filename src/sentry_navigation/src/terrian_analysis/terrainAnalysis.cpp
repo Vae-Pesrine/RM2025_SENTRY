@@ -24,6 +24,8 @@
 
 using namespace std;
 
+std::string cloud_topic;
+
 const double PI = 3.1415926;
 
 double scanVoxelSize = 0.05;
@@ -79,6 +81,11 @@ pcl::PointCloud<pcl::PointXYZI>::Ptr
 pcl::PointCloud<pcl::PointXYZI>::Ptr
     terrainCloudElev(new pcl::PointCloud<pcl::PointXYZI>());
 pcl::PointCloud<pcl::PointXYZI>::Ptr terrainVoxelCloud[terrainVoxelNum];
+
+pcl::PointCloud<pcl::PointXYZI>::Ptr obstacleCloud(new pcl::PointCloud<pcl::PointXYZI>());
+
+// 在main函数中，terrainCloudElev已经包含了所有点的高度信息
+pcl::PointCloud<pcl::PointXYZI>::Ptr impassableCloud(new pcl::PointCloud<pcl::PointXYZI>());
 
 int terrainVoxelUpdateNum[terrainVoxelNum] = {0};
 float terrainVoxelUpdateTime[terrainVoxelNum] = {0};
@@ -253,13 +260,15 @@ int main(int argc, char **argv) {
   nhPrivate.getParam("minRelZ", minRelZ);
   nhPrivate.getParam("maxRelZ", maxRelZ);
   nhPrivate.getParam("disRatioZ", disRatioZ);
+  nhPrivate.getParam("cloud_topic", cloud_topic);
+
   
 
   ros::Subscriber subOdometry =
       nh.subscribe<nav_msgs::Odometry>("/odom", 5, odometryHandler);
 
   ros::Subscriber subLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>(
-      "/cloud_registered", 5, laserCloudHandler);
+      cloud_topic.c_str(), 5, laserCloudHandler);
 
   ros::Subscriber subJoystick =
       nh.subscribe<sensor_msgs::Joy>("/joy", 5, joystickHandler);
@@ -269,6 +278,9 @@ int main(int argc, char **argv) {
 
   ros::Publisher pubLaserCloud =
       nh.advertise<sensor_msgs::PointCloud2>("/terrain_map", 2);
+
+  ros::Publisher pubImPassable = nh.advertise<sensor_msgs::PointCloud2>("/obstacle_points", 2);
+
 
   //将每个点云归纳到体素地图中
   for (int i = 0; i < terrainVoxelNum; i++) {
@@ -700,6 +712,25 @@ int main(int argc, char **argv) {
       terrainCloud2.header.stamp = ros::Time().fromSec(laserCloudTime);
       terrainCloud2.header.frame_id = "odom";
       pubLaserCloud.publish(terrainCloud2);
+
+
+
+// 遍历terrainCloudElev中的每个点
+for (int i = 0; i < terrainCloudElev->points.size(); i++) {
+    pcl::PointXYZI point = terrainCloudElev->points[i];
+    
+    // 判断高度是否大于车辆高度（认为高于车辆高度的点为不可通行点）
+    if (point.intensity >= vehicleHeight) {
+        impassableCloud->push_back(point);
+    }
+}
+
+// 发布不可通行点云
+sensor_msgs::PointCloud2 impassableCloud2;
+pcl::toROSMsg(*impassableCloud, impassableCloud2);
+impassableCloud2.header.stamp = ros::Time().fromSec(laserCloudTime);
+impassableCloud2.header.frame_id = "odom";
+pubImPassable.publish(impassableCloud2);
     }
 
     status = ros::ok();

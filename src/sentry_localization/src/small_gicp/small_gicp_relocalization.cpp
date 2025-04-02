@@ -162,7 +162,7 @@ void SmallGicpRelocalization::publishTransform(const ros::WallTimerEvent& event)
      * 这种问题一般是由于tf树底层发布比顶层快，也可能是因为话题通信中节点发布信息的频率和代码中tf变换发布的频率等不匹配造成的
      * 我最终的解决方案如下，测试时没有太大问题，当然也可能有更好的方案
      */
-        static ros::Time last_tf_time;
+    static ros::Time last_tf_time;
     if (tf_stamped.header.stamp != last_tf_time){
         last_tf_time = tf_stamped.header.stamp;
         tf_broadcaster_->sendTransform(tf_stamped);

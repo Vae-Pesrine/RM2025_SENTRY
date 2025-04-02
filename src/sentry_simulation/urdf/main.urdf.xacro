@@ -53,6 +53,10 @@
             <odometryTopic>/gazebo_odom</odometryTopic>
             <odometryRate>10.0</odometryRate>
             <odometryFrame>gazebo_odom</odometryFrame>
+            <!-- <leftFrontJoint>wheel_2_joint</leftFrontJoint>
+            <rightFrontJoint>wheel_1_joint</rightFrontJoint>
+            <leftRearJoint>wheel_3_joint</leftRearJoint>
+            <rightRearJoint>wheel_4_joint</rightRearJoint> -->
             <robotBaseFrame>gazebo_base_link</robotBaseFrame>
             <cmdTimeout>3.0</cmdTimeout>
             <publishOdomTF>False</publishOdomTF>
@@ -61,10 +65,5 @@
     </gazebo>
 
 
-	<!-- <gazebo>
-		<plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-		<robotNamespace></robotNamespace>
-		</plugin>
-	</gazebo> -->
 
 </robot>

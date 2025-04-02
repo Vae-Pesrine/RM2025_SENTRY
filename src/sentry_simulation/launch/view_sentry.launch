@@ -8,14 +8,12 @@
     <arg name="debug" default="false"/>
     <arg name="verbose" default="true"/>
     <!-- the original pose of sentry in the gazebo world-->
-    <arg name="origin_x"     default="6.881396" />
-    <arg name="origin_y"     default="6.052823" />
-    <arg name="origin_z"     default="0.140688" />
+    <arg name="origin_x"     default="8.5" />
+    <arg name="origin_y"     default="4.0" />
+    <arg name="origin_z"     default="0.09" />
     <arg name="origin_roll"  default="0.000000" />
     <arg name="origin_pitch" default="0.000000" />
     <arg name="origin_yaw"   default="1.570796327" />
-
-    <!-- <include file="$(find sentry_simulation)/launch/teleop_keyboard_ctrl.launch" /> -->
 
     <!-- 加载机器人模型参数 -->
     <param name="robot_description" command="$(find xacro)/xacro  $(find sentry_simulation)/urdf/main.urdf.xacro" />
@@ -32,16 +30,16 @@
         <arg name="verbose" value="$(arg verbose)"/>
         <arg name="headless" value="$(arg headless)"/>
         <arg name="use_sim_time" value="$(arg use_sim_time)"/>
-        <arg name="world_name" value="$(find sentry_simulation)/world/RMUC2024.world" />
+        <arg name="world_name" value="$(find sentry_simulation)/world/rmuc2025.world" />
     </include>
       
     <node pkg="joint_state_publisher" type="joint_state_publisher" name="sentry_joint_publisher" output="screen" />    
     <node pkg="robot_state_publisher" type="robot_state_publisher" name="sentry_tf_publisher" output="screen" />
     
     <node pkg="sentry_simulation" type="key_control" name="key_control" output="screen">
-        <param name="linear_speed" value="1.0" />
-        <param name="angular_speed" value="1.6" />
+        <param name="linear_speed" value="3.5" />
+        <param name="angular_speed" value="3.2" />
     </node>
 
-    <node pkg="rviz" type="rviz" name="sentry_view_rviz" args="-d $(find sentry_simulation)/rviz/sentry_omni.rviz"/>
+    <!-- <node pkg="rviz" type="rviz" name="sentry_view_rviz" args="-d $(find sentry_simulation)/rviz/sentry_omni.rviz"/> -->
 </launch>

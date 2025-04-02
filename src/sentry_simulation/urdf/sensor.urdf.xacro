@@ -28,20 +28,12 @@
 
     <link name="livox_mid360">
         <visual>
-            <origin xyz="0 0 0" rpy="0 0 0" />
+            <origin xyz="0 0 0" rpy="${PI/2} 0 ${PI}" />
             <geometry>
-                <mesh filename="package://sentry_simulation/mesh/mid360.stl">
+                <mesh filename="package://sentry_simulation/mesh/mid360.stl" scale="0.0008 0.0008 0.0008">
                 </mesh>
             </geometry>
        </visual>
-
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 0" />
-            <geometry>
-                <mesh filename="package://sentry_simulation/mesh/mid360.stl">
-                </mesh>
-            </geometry>
-        </collision>
     </link>
 
    <joint name="imu_joint" type="fixed">
@@ -108,7 +100,7 @@
 
                 <range>
                   <min>0.1</min>
-                  <max>40</max>
+                  <max>40.0</max>
                   <resolution>1</resolution>
                 </range>
 
@@ -119,8 +111,8 @@
                 </noise>
             </ray>
 
-            <visualize>false</visualize>
-            <samples>50000</samples>
+            <visualize>true</visualize>
+            <samples>20000</samples>
     	    <downsample>1</downsample>
     	    <csv_file_name>mid360.csv</csv_file_name>
     	    <ros_topic>/livox/lidar</ros_topic>

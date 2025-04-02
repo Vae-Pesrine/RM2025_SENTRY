@@ -43,7 +43,7 @@
     <!-- // 最小阻塞的点数 -->
     <param name="minBlockPointNum" type="int" value="10" />
     <!-- // 车辆的高度 -->
-    <param name="vehicleHeight" type="double" value="0.3" />
+    <param name="vehicleHeight" type="double" value="0.25" />
     <!-- // 同一个位置的雷达点数阈值 -->
     <param name="voxelPointUpdateThre" type="int" value="100" />
     <!-- // 同一个位置的雷达点时间阈值 -->
@@ -54,11 +54,15 @@
     <param name="maxRelZ" type="double" value="2.0" />
     <!-- // 点云处理的高度与距离的比例-与激光雷达性能相关 -->
     <param name="disRatioZ" type="double" value="0.2" />
+    
+    <param name="cloud_topic" value="/cloud_registered" />
   </node>
 
   <arg name="checkTerrainConn" default="true"/>
 
   <node pkg="sentry_navigation" type="terrain_analysis_ext" name="terrainAnalysisExt" output="screen" required="true">
+    <param name="cloud_topic"  value="/cloud_registered" />
+   
     <param name="scanVoxelSize" type="double" value="0.1" />
     <param name="decayTime" type="double" value="10.0" />
     <param name="noDecayDis" type="double" value="0" />
@@ -76,6 +80,8 @@
     <param name="terrainUnderVehicle" type="double" value="-0.75" />
     <param name="ceilingFilteringThre" type="double" value="2.0" />
     <param name="localTerrainMapRadius" type="double" value="4.0" />
+
+    <param name="intensity" value="0.08" />
   </node>
 
 </launch>

@@ -32,9 +32,10 @@
             <parent link="base_link" />
             <child link="wheel_${name}_link" />
             <axis xyz="0 0 1" />
+            <limit effort="30" velocity="17.4" />
         </joint>
 
-		<transmission name="wheel_${name}_transmission">
+		<!-- <transmission name="wheel_${name}_transmission">
 			<type>transmission_interface/SimpleTransmission</type>
 			<joint name="wheel_${name}_joint">
 				<hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
@@ -43,9 +44,15 @@
 				<hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
 				<mechanicalReduction>1</mechanicalReduction>
 			</actuator>
-		</transmission>
+		</transmission> -->
 
         <gazebo reference="wheel_${name}_link">
+            <mu1>0</mu1>
+            <mu2>0</mu2>
+            <kp>200000.0</kp>
+            <kd>10.0</kd>
+            <minDepth>0.001</minDepth>
+            <maxVel>1.0</maxVel>
             <pose>0 0 0 0 0 0</pose>
             <material>Gazebo/${color}</material>
         </gazebo>

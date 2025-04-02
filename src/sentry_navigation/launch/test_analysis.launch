@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="sentry_navigation" type="test_analysis" name="test_analysis" output="screen">
+        <rosparam file="$(find sentry_navigation)/config/test_analysis.yaml" command="load" />
+    </node>
+</launch>

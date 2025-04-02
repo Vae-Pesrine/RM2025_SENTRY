@@ -26,6 +26,8 @@
 
 using namespace std;
 
+std::string cloud_topic;
+
 const double PI = 3.1415926;
 
 double scanVoxelSize = 0.1;
@@ -69,6 +71,10 @@ pcl::PointCloud<pcl::PointXYZI>::Ptr terrainCloudElev(new pcl::PointCloud<pcl::P
 pcl::PointCloud<pcl::PointXYZI>::Ptr terrainCloudLocal(new pcl::PointCloud<pcl::PointXYZI>());
 pcl::PointCloud<pcl::PointXYZI>::Ptr terrainVoxelCloud[terrainVoxelNum];
 
+pcl::PointCloud<pcl::PointXYZI>::Ptr obstacleCloud(new pcl::PointCloud<pcl::PointXYZI>());
+
+
+
 int terrainVoxelUpdateNum[terrainVoxelNum] = { 0 };
 float terrainVoxelUpdateTime[terrainVoxelNum] = { 0 };
 float planarVoxelElev[planarVoxelNum] = { 0 };
@@ -87,6 +93,7 @@ float vehicleX = 0, vehicleY = 0, vehicleZ = 0;
 
 pcl::VoxelGrid<pcl::PointXYZI> downSizeFilter;
 pcl::KdTreeFLANN<pcl::PointXYZI> kdtree;
+
 
 // state estimation callback function
 void odometryHandler(const nav_msgs::Odometry::ConstPtr& odom)
@@ -172,6 +179,8 @@ int main(int argc, char** argv)
   ros::NodeHandle nh;
   ros::NodeHandle nhPrivate = ros::NodeHandle("~");
 
+  double intensity;
+
   nhPrivate.getParam("scanVoxelSize", scanVoxelSize);
   nhPrivate.getParam("decayTime", decayTime);
   nhPrivate.getParam("noDecayDis", noDecayDis);
@@ -189,10 +198,14 @@ int main(int argc, char** argv)
   nhPrivate.getParam("terrainConnThre", terrainConnThre);
   nhPrivate.getParam("ceilingFilteringThre", ceilingFilteringThre);
   nhPrivate.getParam("localTerrainMapRadius", localTerrainMapRadius);
+  nhPrivate.getParam("cloud_topic", cloud_topic);
+  nhPrivate.getParam("intensity", intensity);
+
+
 
   ros::Subscriber subOdometry = nh.subscribe<nav_msgs::Odometry>("/odom", 5, odometryHandler);
 
-  ros::Subscriber subLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>("/cloud_registered", 5, laserCloudHandler);
+  ros::Subscriber subLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>(cloud_topic.c_str(), 5, laserCloudHandler);
 
   ros::Subscriber subJoystick = nh.subscribe<sensor_msgs::Joy>("/joy", 5, joystickHandler);
 
@@ -201,6 +214,8 @@ int main(int argc, char** argv)
   ros::Subscriber subTerrainCloudLocal = nh.subscribe<sensor_msgs::PointCloud2>("/terrain_map", 2, terrainCloudLocalHandler);
 
   ros::Publisher pubTerrainCloud = nh.advertise<sensor_msgs::PointCloud2>("/terrain_map_ext", 2);
+
+  // ros::Publisher pubObstacleCloud = nh.advertise<sensor_msgs::PointCloud2>("/obstacle_points", 2);
 
   for (int i = 0; i < terrainVoxelNum; i++)
   {
@@ -482,6 +497,7 @@ int main(int argc, char** argv)
 
       // compute terrain map beyond localTerrainMapRadius
       terrainCloudElev->clear();
+      obstacleCloud->clear();
       int terrainCloudElevSize = 0;
       for (int i = 0; i < terrainCloudSize; i++)
       {
@@ -510,8 +526,17 @@ int main(int argc, char** argv)
               terrainCloudElev->points[terrainCloudElevSize].intensity = disZ;
 
               terrainCloudElevSize++;
+              if(disZ > intensity){
+                obstacleCloud->push_back(point);
+              }
+            } else{
+              // obstacleCloud->push_back(point);
             }
+          }else{
+            // obstacleCloud->push_back(point);
           }
+        }else{
+          // obstacleCloud->push_back(point);
         }
       }
 
@@ -520,8 +545,7 @@ int main(int argc, char** argv)
       for (int i = 0; i < terrainCloudLocalSize; i++) {
         point = terrainCloudLocal->points[i];
         float dis = sqrt((point.x - vehicleX) * (point.x - vehicleX) + (point.y - vehicleY) * (point.y - vehicleY));
-        if (dis <= localTerrainMapRadius)
-        {
+        if (dis <= localTerrainMapRadius){
           terrainCloudElev->push_back(point);
         }
       }
@@ -534,6 +558,12 @@ int main(int argc, char** argv)
       terrainCloud2.header.stamp = ros::Time().fromSec(laserCloudTime);
       terrainCloud2.header.frame_id = "odom";
       pubTerrainCloud.publish(terrainCloud2);
+
+      // sensor_msgs::PointCloud2 obstacleCloud2;
+      // pcl::toROSMsg(*obstacleCloud, obstacleCloud2);
+      // obstacleCloud2.header.stamp = ros::Time().fromSec(laserCloudTime);
+      // obstacleCloud2.header.frame_id = "odom";    
+      // pubObstacleCloud.publish(obstacleCloud2); 
     }
 
     status = ros::ok();

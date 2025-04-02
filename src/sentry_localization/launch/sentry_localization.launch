@@ -1,7 +1,7 @@
 <launch>
 
     <!-- lio -->
-    <include file="$(find fast_lio)/launch/mapping_mid360.launch" />
+    <!-- <include file="$(find fast_lio)/launch/mapping_mid360.launch" /> -->
     <!-- <include file="$(find point_lio)/launch/mapping_mid360.launch" /> -->
 
     <!-- turn the livox mid360 points to PointCloud2 points -->

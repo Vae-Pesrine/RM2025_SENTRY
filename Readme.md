@@ -1,52 +1,66 @@
+# SENTRY SIMULATION FOR ROBOMASTER 
 
+## 1.Run
 
-
-# SENTRY SIMULATION FOR RM
-
-## run
-
-启动仿真环境
+run the simulation environment
 ```SHELL
 roslaunch sentry_simulation view.launch
 ```
 
-启动定位算法:里程计和重定位算法
+run the localization algorithm
 ```SHELL
 roslaunch fast_lio mapping_mid360.launch
 roslaunch sentry_localization sentry_localization.launch
 ```
 
-启动导航部分
+run the navigation (you can use the fast_planner_nmpc or use the move base package)
 ```SHELL
 roslaunch plan_manage 16_lidar.launch
 roslaunch plan_manage rviz.launch
 rosrun mpc_tracking mpc_tracking_node
 ```
 
+## 1.Change the version of pcl to build the small_gicp_localization
 
-### update the version of pcl to build the small_gicp_localization
+I choose to compile from source code to change the version of pcl. 
 
-download [pcl-1.12.0](https://github.com/PointCloudLibrary/pcl/tree/pcl-1.12.0)  
+New version->[pcl-1.12.0](https://github.com/PointCloudLibrary/pcl/tree/pcl-1.12.0)   
 
 ```SHELL
 cd ~/DownLoads
 unzip pcl-1.12.0.zip
-mv pcl-1.12.0 /usr/include
+sudo mv pcl-1.12.0 /usr/local/include
 mkdir build && cd build
-cmake .. && make -j4   
+cmake .. 
+make -j4   
 sudo make install
 ```
+The building process is running slow. Code "make -j4" means building with four threads, if your computer cannot afford it, you can run "make".  
+
 ```SHELL
-cd /usr/local/include/share 
+cd /opt/ros/noetic/share/pcl_ros/cmake
+sudo chmod 777 pcl_rosConfig.cmake  
+```
+Find the code below and change the pcl path to newest.If you follow the steps I mentioned above, you should change "/usr/include/pcl-1.10" to "/usr/local/include/pcl-1.12".
+
+```SHELL
+if(NOT "include;/usr/include;/usr/include/eigen3;/usr/include/pcl-1.10;/usr/include/vtk-7.1;/usr/include/freetype2;/usr/include/x86_64-linux-gnu " STREQUAL " ")
+  set(pcl_ros_INCLUDE_DIRS "")
+  set(_include_dirs "include;/usr/include;/usr/include/eigen3;/usr/include/pcl-1.10;/usr/include/vtk-7.1;/usr/include/freetype2;/usr/include/x86_64-linux-gnu")
+ ```
+```SHELL
+cd /opt/ros/noetic/share/pcl_conversions/cmake
+sudo chmod 777 pcl_conversionsConfig.cmake  
+```
+Just like "pcl_ros".
+
+If you meet with the warning like "/usr/bin/ld: warning: libpcl_filters.so.1.10, needed by /usr/lib/x86_64-linux-gnu/libpcl_registration.so, may conflict with libpcl_filters.so.1.12", run code below.
+```SHELL
+sudo ln -sf /usr/local/lib/libpcl_filters.so.1.12 /usr/lib/x86_64-linux-gnu/libpcl_filters.so 
 ```
 
-find pcl_ros and pcl_conversions packages, change the pcl path to the newest, we can build the package finally
-
-
-### How to install Ipopt and Casadi 
-
-
-1. install some dependencies
+## 2.Install Ipopt and Casadi 
+1.install some dependencies
 
 ```SHELL
 sudo apt-get install gcc g++ gfortran git patch wget pkg-config liblapack-dev libmetis-dev libblas-dev 
@@ -57,7 +71,7 @@ mkdir ~/Ipopt_pkg
 cd Ipopt_pkg
 ```
 
-2. install ASL
+2.install ASL
 
 ```SHELL
 git clone https://github.com/coin-or-tools/ThirdParty-ASL.git
@@ -69,9 +83,9 @@ sudo make install
 cd ..
 ```
 
-3. install HSL
+3.install HSL
 
-download the [coinhsl](https://github.com/CHH3213/testCPP/blob/master/coinhsl.zip)
+Download the [coinhsl](https://github.com/CHH3213/testCPP/blob/master/coinhsl.zip)
 
 ```SHELL
 git clone https://github.com/coin-or-tools/ThirdParty-HSL.git
@@ -84,7 +98,7 @@ sudo make install
 cd ..
 ```
 
-4. install MUMPS
+4.install MUMPS
 
 ```SHELL
 git clone https://github.com/coin-or-tools/ThirdParty-Mumps.git
@@ -96,7 +110,7 @@ sudo make install
 cd ..
 ```
 
-5. install Ipopt
+5.install Ipopt
 
 ```SHELL
 git clone https://github.com/coin-or/Ipopt.git
@@ -109,7 +123,7 @@ sudo make test
 sudo make install
 ```
 
-6. prefect the environment
+6.prefect the environment
 
 ```SHELL
 cd /usr/local/include
@@ -120,9 +134,8 @@ sudo ln -s /usr/local/lib/libipopt.so.3 /usr/lib/libipopt.so.3
 ```
 The Ipopt is installed successfully until now.
 
-7. install the casadi use the bash
-
-the bash is:
+7.install the casadi use the bash
+```SHELL
    #!/usr/bin/env bash
 
    set -e
@@ -143,6 +156,8 @@ the bash is:
 
    sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/*
    sudo rm -fr casadi-3.5.5-1.tar.gz casadi-3.5.5.1
+```
+
 
 ```SHELL
 cd ~/
