@@ -1,6 +1,6 @@
 # SENTRY SIMULATION FOR ROBOMASTER 
 
-## 1.Run
+## 一.Run
 
 run the simulation environment
 ```SHELL
@@ -20,7 +20,7 @@ roslaunch plan_manage rviz.launch
 rosrun mpc_tracking mpc_tracking_node
 ```
 
-## 1.Change the version of pcl to build the small_gicp_localization
+## 二.Change the version of pcl to build the small_gicp_localization
 
 I choose to compile from source code to change the version of pcl. 
 
@@ -59,7 +59,7 @@ If you meet with the warning like "/usr/bin/ld: warning: libpcl_filters.so.1.10,
 sudo ln -sf /usr/local/lib/libpcl_filters.so.1.12 /usr/lib/x86_64-linux-gnu/libpcl_filters.so 
 ```
 
-## 2.Install Ipopt and Casadi 
+## 三.Install Ipopt and Casadi 
 1.install some dependencies
 
 ```SHELL
