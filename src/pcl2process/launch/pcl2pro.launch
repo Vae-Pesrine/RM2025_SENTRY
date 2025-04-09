@@ -1,0 +1,9 @@
+<launch>
+    <node pkg="pcl2process" type="pcl2process" name="pcl2process" output="screen">
+        <rosparam>
+            max_ground_angle: 45
+            ground_height: 0.8
+        </rosparam>
+        <remap from="/livox/points" to="/cloud_registered" />
+    </node>
+</launch>

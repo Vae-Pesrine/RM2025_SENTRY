@@ -163,7 +163,7 @@ void SmallGicpRelocalization::publishTransform(const ros::WallTimerEvent& event)
      * 我最终的解决方案如下，测试时没有太大问题，当然也可能有更好的方案
      */
     static ros::Time last_tf_time;
-    if (tf_stamped.header.stamp != last_tf_time){
+    if(tf_stamped.header.stamp != last_tf_time){
         last_tf_time = tf_stamped.header.stamp;
         tf_broadcaster_->sendTransform(tf_stamped);
     }
@@ -193,7 +193,7 @@ void SmallGicpRelocalization::initialPoseCallback(const geometry_msgs::PoseWithC
             break;
         }catch (tf2::TransformException & ex){
             ROS_WARN_STREAM("Could not transform initial pose from" << base_frame_.c_str() << " to " << registered_scan_->header.frame_id.c_str() << ex.what());
-            ros::Duration(1.0).sleep();    
+            ros::Duration(1.0).sleep();  
         }
     }
 }

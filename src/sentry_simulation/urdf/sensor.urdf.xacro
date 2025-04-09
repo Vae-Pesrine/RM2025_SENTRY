@@ -111,7 +111,7 @@
                 </noise>
             </ray>
 
-            <visualize>true</visualize>
+            <visualize>fasle</visualize>
             <samples>20000</samples>
     	    <downsample>1</downsample>
     	    <csv_file_name>mid360.csv</csv_file_name>

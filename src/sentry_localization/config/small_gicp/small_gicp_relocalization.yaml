@@ -12,13 +12,13 @@ small_gicp:
   base_frame: base_link
   lidar_frame: livox_mid360
 
-  prior_pcd_file: /home/jgy/RMUC_simulation/src/sentry_localization/PCD/rmuc_2024.pcd
+  prior_pcd_file: /home/jgy/RMUC_simulation/src/sentry_localization/PCD/scans.pcd
   pcd_in_topic: /cloud_registered
   initialpose_topic: /initialpose
 
   # the transform between map and odom when mapping using lio
-  x:     6.881396
-  y:     6.052823
+  x:     8.50396
+  y:     4.052823
   z:     0.140688
   roll:  0.000000
   pitch: 0.000000
