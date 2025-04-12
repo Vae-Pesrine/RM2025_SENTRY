@@ -28,12 +28,13 @@
   cd ~/DownLoads
   unzip pcl-1.12.0.zip
   sudo mv pcl-1.12.0 /usr/local/include
-  mkdir build && cd build
+  cd /usr/local/include
+  sudo mkdir build && cd build
   cmake .. 
   make -j4   
   sudo make install
   ```
-  The building process is running slow. Code "make -j4" means building with four threads, if your computer cannot afford it, you can run "make".  
+  The building process is running slow. Code "make -j4" means building with four threads, if your computer cannot afford it, you can run "make". If you can't run the command ,try "sudo *".   
 
 - 2.Change the default path of pcl
 
