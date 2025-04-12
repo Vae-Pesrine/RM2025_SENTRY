@@ -37,12 +37,6 @@ catkin_package(
         pcl_ros
 )
 
-add_executable(telelop_keyboard_ctrl src/telelop_keyboard_ctrl.cpp)
-add_dependencies(telelop_keyboard_ctrl ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(telelop_keyboard_ctrl 
-${catkin_LIBRARIES}
-)
-
 add_executable(key_control src/key_control.cpp)
 add_dependencies(key_control ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(key_control 

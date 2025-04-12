@@ -11,12 +11,6 @@
 
 #include "mpc_tracking/mpc.h"
 
-// #define BACKWARD_HAS_DW 1
-// #include "backward.hpp"
-// namespace backward{
-//     backward::SignalHandling sh;
-// }
-
 using fast_planner::NonUniformBspline;
 
 ros::Publisher cmd_vel_pub, motion_path_pub, predict_path_pub;

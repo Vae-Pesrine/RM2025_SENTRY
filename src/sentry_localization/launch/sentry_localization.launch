@@ -1,25 +1,22 @@
 <launch>
 
-    <!-- lio -->
-    <!-- <include file="$(find fast_lio)/launch/mapping_mid360.launch" /> -->
+  <!-- lio -->
+    <include file="$(find fast_lio)/launch/mapping_mid360.launch" />
     <!-- <include file="$(find point_lio)/launch/mapping_mid360.launch" /> -->
 
-    <!-- turn the livox mid360 points to PointCloud2 points -->
+  <!-- turn the livox mid360 points to PointCloud2 points -->
     <node pkg="sentry_localization" type="livox_lidar_to_points" name="livox_lidar_to_points_node" output="screen" >
         <param name="livox_in_name" type="string" value="/livox/lidar" />
         <param name="livox_out_name" type="string" value="/livox/points" />
     </node>
 
-    <!-- turn the PointCloud2 points to laserscan -->
-    <include file="$(find sentry_localization)/launch/pcl_to_scan.launch" />
+  <!-- turn the PointCloud2 points to laserscan -->
+    <!-- <include file="$(find sentry_localization)/launch/pcl_to_scan.launch" /> -->
+  
+  <!-- small gicp node -->
+    <include file="$(find sentry_localization)/launch/small_gicp.launch" />
 
-    <!-- amcl node -->
-    <!-- <include file="$(find sentry_localization)/launch/amcl.launch" /> -->
-    
-    <!-- small gicp node -->
-    <!-- <include file="$(find sentry_localization)/launch/small_gicp.launch" /> -->
-
-    <!-- publish the initialpose -->
+  <!-- publish the initialpose -->
     <!-- <node pkg="sentry_localization" type="initialpose_node" name="initialpose_node" output="screen">
         <rosparam file="$(find sentry_localization)/config/initialpose/initialpose_params.yaml" command="load" />
     </node>  

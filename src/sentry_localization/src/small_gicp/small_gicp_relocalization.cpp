@@ -5,7 +5,7 @@ SmallGicpRelocalization::SmallGicpRelocalization():
     pr_nh_("~"),
     result_t_(Eigen::Isometry3d::Identity()), prior_result_t_(Eigen::Isometry3d::Identity())
 {
-    pr_nh_.param<bool>("small_gicp/debug", debug_, false);
+    pr_nh_.param<bool>("small_gicp/debug", debug_, true);
 
     pr_nh_.param<int>("small_gicp/num_threads", num_threads_, 4);
     pr_nh_.param<int>("small_gicp/num_neighbors", num_neighbors_, 20);
@@ -66,8 +66,6 @@ SmallGicpRelocalization::~SmallGicpRelocalization()
 
 }
  
-//load the globalmap and convert to map
-
 void SmallGicpRelocalization::loadGlobalMap(const std::string& file_name)
 {
     if(pcl::io::loadPCDFile<pcl::PointXYZ>(file_name, *global_map_) == -1){
@@ -75,8 +73,7 @@ void SmallGicpRelocalization::loadGlobalMap(const std::string& file_name)
         return;
     }
 
-    if(debug_)
-        ROS_INFO_STREAM("Loaded global map with " << global_map_->points.size() << " points.");
+    ROS_INFO_STREAM("Loaded global map with " << global_map_->points.size() << " points.");
 
     // convert the pointcloud to the map frame
     Eigen::Affine3d transform = Eigen::Affine3d::Identity();
@@ -119,13 +116,14 @@ void SmallGicpRelocalization::runRegistration(const ros::WallTimerEvent& event)
     register_->reduction.num_threads = num_threads_;
     register_->rejector.max_dist_sq = max_dist_sq_;
 
-    // align_time_begin_ = ros::Time::now().toSec();
+    auto align_time_begin = std::chrono::high_resolution_clock::now();
     auto result = register_->align(*target_, *source_, *target_tree_, prior_result_t_);
-    // align_time_end_ = ros::Time::now().toSec();
-    // ROS_INFO_STREAM("The aligned time is " << align_time_end_ - align_time_begin_ << " s.");
+    auto align_time_end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> align_duration = align_time_end - align_time_begin;
+    ROS_INFO_STREAM("The aligned time is " << align_duration.count() << " ms.");
 
     if(!result.converged){
-        // ROS_WARN_STREAM("The small gicp didn't converge");
+        ROS_WARN_STREAM("The small gicp didn't converge");
         return;
     }
 
@@ -141,8 +139,6 @@ void SmallGicpRelocalization::publishTransform(const ros::WallTimerEvent& event)
 
     geometry_msgs::TransformStamped tf_stamped;
     tf_stamped.header.stamp = last_scan_time_ + ros::Duration(transform_tolerance_);
-    // tf_stamped.header.stamp = ros::Time::now() + ros::Duration(transform_tolerance_);
-
     tf_stamped.header.frame_id = map_frame_;
     tf_stamped.child_frame_id = odom_frame_;
 

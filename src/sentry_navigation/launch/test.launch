@@ -1,5 +1,0 @@
-<launch>
-    <node pkg="sentry_navigation" type="terrain_analysis" name="terrain_analysis_node" output="screen">
-        <rosparam file="$(find sentry_navigation)/config/terrian_analysis/terrian_analysis_params.yaml" command="load" /> 
-    </node>
-</launch>

@@ -1,0 +1,37 @@
+<launch>
+    <node pkg="pcd2gridmap" type="pcd_to_gridmap" name="pcd_to_gridmap" output="screen">
+        <param name="pcd_file" type="string" value="$(find sentry_localization)/PCD/scans.pcd" />
+        <param name="x" type="double" value="0.0" />
+        <param name="y" type="double" value="0.0" />
+        <param name="z" type="double" value="0.0" />
+        <!-- input: degree -->
+        <param name="roll" type="double" value="-20" />
+        <param name="pitch" type="double" value="0.0" />
+        <param name="yaw" type="double" value="0.0" />
+    </node>
+    
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find pcd2gridmap)/rviz/config.rviz" />
+
+  <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+ 
+    <!-- resolution in meters per pixel -->
+    <param name="resolution" value="0.05" />
+ 
+    <!-- name of the fixed frame, needs to be "/map" for SLAM -->
+    <param name="frame_id" type="string" value="/world" />
+ 
+    <!-- max range / depth resolution of the kinect in meter -->
+    <param name="sensor_model/max_range" value="500.0" />
+    <param name="latch" value="true" />
+ 
+    <!-- max/min height for occupancy map, should be in meters -->
+    <param name="pointcloud_max_z" value="1.0" />
+    <param name="pointcloud_min_z" value="0.4" />
+ 
+    <!-- topic from where pointcloud2 messages are subscribed -->
+    <remap from="cloud_in" to="/pcd" />
+    <remap from="/projected_map" to="/map" />
+ 
+  </node>
+  
+</launch>

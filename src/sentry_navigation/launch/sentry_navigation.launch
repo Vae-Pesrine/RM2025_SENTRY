@@ -1,18 +1,22 @@
 <launch>
    
-    <!-- load the 2D grid map -->
-    <arg name="map" default="test.yaml" />
+  <!-- load the 2D grid map -->
+    <arg name="map" default="RMUC.yaml" />
     <node pkg="map_server" type="map_server" name="map_server" args="$(find sentry_navigation)/map/$(arg map)" />
     
-    <!-- move base package -->
+  <!-- move base package -->
+    <arg name="global_planner" default="hybrid_a_star" />
     <node pkg="move_base" type="move_base" name="move_base" output="screen"  respawn="false">
         <rosparam file="$(find sentry_navigation)/config/move_base/costmap_common_params.yaml" command="load" ns="global_costmap" />
         <rosparam file="$(find sentry_navigation)/config/move_base/costmap_common_params.yaml" command="load" ns="local_costmap" />
         <rosparam file="$(find sentry_navigation)/config/move_base/local_costmap_params.yaml" command="load" />
         <rosparam file="$(find sentry_navigation)/config/move_base/global_costmap_params.yaml" command="load" />
         <rosparam file="$(find sentry_navigation)/config/move_base/move_base_params.yaml" command="load" />
-        <rosparam file="$(find sentry_navigation)/config/planner/global_planner_params.yaml" command="load" />
         <rosparam file="$(find sentry_navigation)/config/planner/teb_local_planner_params.yaml" command="load" />
+
+        <param name="base_global_planner" value="path_planner/PathPlanner" />
+        <param name="PathPlanner/planner_name" value="$(arg global_planner)" />
+        <rosparam file="$(find sentry_navigation)/config/move_base/graph_planner_params.yaml" command="load" />
     </node>
 
     <!-- <include file="$(find plan_manage)/launch/16_lidar.launch" />
@@ -21,7 +25,7 @@
 
     <!-- <include file="$(find sentry_navigation)/launch/terrain_analysis.launch" /> -->
     
-    <!-- rviz -->
+  <!-- rviz -->
     <node pkg="rviz" type="rviz" name="sentry_rviz" args="-d $(find sentry_navigation)/rviz/sentry_navigation.rviz" />
 
 </launch>
