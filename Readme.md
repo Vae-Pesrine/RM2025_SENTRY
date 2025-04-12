@@ -20,6 +20,19 @@
   rosrun mpc_tracking mpc_tracking_node
   ```
 
+## **Install small gicp**
+- Small gicp is a header-only library. You can just download and drop it in your project directory to use it. If you need only basic point cloud registration functions, you can build and install the helper library as follows.
+
+  ```SHELL
+  git clone https://github.com/koide3/small_gicp.git
+  sudo apt-get install libeigen3-dev libomp-dev
+  cd small_gicp
+  mkdir build && cd build
+  cmake .. -DCMAKE_BUILD_TYPE=Release && make -j
+  sudo make install
+  ```
+
+
 ## **Change the version of pcl to build the small_gicp_localization**
 
 - 1.The default version of pcl is 1.10 when install ROS, we should change to higher version. We choose [pcl-1.12.0](https://github.com/PointCloudLibrary/pcl/tree/pcl-1.12.0).
