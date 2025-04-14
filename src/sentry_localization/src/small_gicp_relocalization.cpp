@@ -3,34 +3,36 @@
 
 SmallGicpRelocalization::SmallGicpRelocalization(): 
     pr_nh_("~"),
-    result_t_(Eigen::Isometry3d::Identity()), prior_result_t_(Eigen::Isometry3d::Identity())
-{
-    pr_nh_.param<bool>("small_gicp/debug", debug_, true);
+    initial_transform_(Eigen::Isometry3d::Identity()),
+    result_t_(Eigen::Isometry3d::Identity()), 
+    prior_result_t_(Eigen::Isometry3d::Identity()){
+    
+    pr_nh_.param<bool>("debug", debug_, true);
 
-    pr_nh_.param<int>("small_gicp/num_threads", num_threads_, 4);
-    pr_nh_.param<int>("small_gicp/num_neighbors", num_neighbors_, 20);
-    pr_nh_.param<float>("small_gicp/global_leaf_size", global_leaf_size_, 0.25);
-    pr_nh_.param<float>("small_gicp/registered_leaf_size", registered_leaf_size_, 1.0);
-    pr_nh_.param<float>("small_gicp/max_dist_sq", max_dist_sq_, 1.0);
-    pr_nh_.param<std::string>("small_gicp/map_frame", map_frame_, "");
-    pr_nh_.param<std::string>("small_gicp/odom_frame", odom_frame_, "");
-    pr_nh_.param<std::string>("small_gicp/base_frame", base_frame_, "");
-    pr_nh_.param<std::string>("small_gicp/lidar_frame", lidar_frame_, "");
-    pr_nh_.param<std::string>("small_gicp/pcd_in_topic", pcd_in_topic_, "");
-    pr_nh_.param<std::string>("small_gicp/prior_pcd_file", prior_pcd_file_, "");
-    pr_nh_.param<std::string>("small_gicp/initialpose_topic", initialpose_topic_, "");
+    pr_nh_.param<int>("num_threads", num_threads_, 4);
+    pr_nh_.param<int>("num_neighbors", num_neighbors_, 20);
+    pr_nh_.param<float>("global_leaf_size", global_leaf_size_, 0.25);
+    pr_nh_.param<float>("registered_leaf_size", registered_leaf_size_, 1.0);
+    pr_nh_.param<float>("max_dist_sq", max_dist_sq_, 1.0);
+    
+    pr_nh_.param<std::string>("map_frame", map_frame_, "");
+    pr_nh_.param<std::string>("odom_frame", odom_frame_, "");
+    pr_nh_.param<std::string>("base_frame", base_frame_, "");
+    pr_nh_.param<std::string>("lidar_frame", lidar_frame_, "");
+    pr_nh_.param<std::string>("pcd_in_topic", pcd_in_topic_, "");
+    pr_nh_.param<std::string>("prior_pcd_file", prior_pcd_file_, "");
+    pr_nh_.param<std::string>("initialpose_topic", initialpose_topic_, "");
 
-    pr_nh_.param<double>("small_gicp/x", x_, 0.0);
-    pr_nh_.param<double>("small_gicp/y", y_, 0.0);
-    pr_nh_.param<double>("small_gicp/z", z_, 0.0);
-    pr_nh_.param<double>("small_gicp/yaw", yaw_, 0.0);
-    pr_nh_.param<double>("small_gicp/roll", roll_, 0.0);
-    pr_nh_.param<double>("small_gicp/pitch", pitch_, 0.0);
+    pr_nh_.param<double>("x", x_, 0.0);
+    pr_nh_.param<double>("y", y_, 0.0);
+    pr_nh_.param<double>("z", z_, 0.0);
+    pr_nh_.param<double>("yaw", yaw_, 0.0);
+    pr_nh_.param<double>("roll", roll_, 0.0);
+    pr_nh_.param<double>("pitch", pitch_, 0.0);
 
-    pr_nh_.param<double>("small_gicp/registration_frequency", registration_frequency_, 4);
-    pr_nh_.param<double>("small_gicp/pose_update_frequency", pose_update_frequency_, 2);
-
-    pr_nh_.param<double>("small_gicp/transform_tolerance", transform_tolerance_, 0.18);
+    pr_nh_.param<double>("registration_frequency", registration_frequency_, 4);
+    pr_nh_.param<double>("pose_update_frequency", pose_update_frequency_, 2);
+    pr_nh_.param<double>("transform_tolerance", transform_tolerance_, 0.18);
 
     registered_scan_ = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
     global_map_ = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
@@ -40,6 +42,7 @@ SmallGicpRelocalization::SmallGicpRelocalization():
     tf_listener_ = std::make_unique<tf2_ros::TransformListener>(*tf_buffer_);
     tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>();
 
+    setInitialPose();
     loadGlobalMap(prior_pcd_file_);
 
     target_ = small_gicp::voxelgrid_sampling_omp<pcl::PointCloud<pcl::PointXYZ>, pcl::PointCloud<pcl::PointCovariance>>
@@ -65,7 +68,17 @@ SmallGicpRelocalization::~SmallGicpRelocalization()
 {
 
 }
- 
+
+void SmallGicpRelocalization::setInitialPose(){
+    initial_transform_.translation() = Eigen::Vector3d(x_, y_, z_);
+    Eigen::AngleAxisd roll_rotation(roll_, Eigen::Vector3d::UnitX());
+    Eigen::AngleAxisd pitch_rotation(pitch_, Eigen::Vector3d::UnitY());
+    Eigen::AngleAxisd yaw_rotation(yaw_, Eigen::Vector3d::UnitZ());
+    Eigen::Quaterniond q = yaw_rotation * pitch_rotation * roll_rotation;
+    initial_transform_.linear() = q.toRotationMatrix();
+    result_t_ = initial_transform_;
+    prior_result_t_ = initial_transform_;
+}
 void SmallGicpRelocalization::loadGlobalMap(const std::string& file_name)
 {
     if(pcl::io::loadPCDFile<pcl::PointXYZ>(file_name, *global_map_) == -1){
@@ -76,14 +89,7 @@ void SmallGicpRelocalization::loadGlobalMap(const std::string& file_name)
     ROS_INFO_STREAM("Loaded global map with " << global_map_->points.size() << " points.");
 
     // convert the pointcloud to the map frame
-    Eigen::Affine3d transform = Eigen::Affine3d::Identity();
-    transform.translation() = Eigen::Vector3d(x_, y_, z_);
-    Eigen::AngleAxisd roll_rotation(roll_, Eigen::Vector3d::UnitX());
-    Eigen::AngleAxisd pitch_rotation(pitch_, Eigen::Vector3d::UnitY());
-    Eigen::AngleAxisd yaw_rotation(yaw_, Eigen::Vector3d::UnitZ());
-    Eigen::Quaterniond q = yaw_rotation * pitch_rotation * roll_rotation;
-    transform.linear() = q.toRotationMatrix();
-    pcl::transformPointCloud(*global_map_, *global_map_, transform);
+    pcl::transformPointCloud(*global_map_, *global_map_, Eigen::Affine3d(initial_transform_));
 }
 
 void SmallGicpRelocalization::registerPcdCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
@@ -154,9 +160,7 @@ void SmallGicpRelocalization::publishTransform(const ros::WallTimerEvent& event)
     tf_stamped.transform.rotation.w = rotation.w();
     
     /**
-     * @brief 仅当时间戳变化时发布变换,否则终端会弹出很多和时间戳有关的问题，虽然不会影响机器人实际的导航运动
-     * 这种问题一般是由于tf树底层发布比顶层快，也可能是因为话题通信中节点发布信息的频率和代码中tf变换发布的频率等不匹配造成的
-     * 我最终的解决方案如下，测试时没有太大问题，当然也可能有更好的方案
+     * @brief 仅当时间戳变化时发布变换,避免时间戳重复，导致tf树异常
      */
     static ros::Time last_tf_time;
     if(tf_stamped.header.stamp != last_tf_time){

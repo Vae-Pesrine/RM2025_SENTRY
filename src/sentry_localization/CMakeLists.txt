@@ -46,19 +46,14 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
   include
+  /usr/local/include/teaser
   ${catkin_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
 )
+
 link_directories(${PCL_LIBRARY_DIRS})
 
-
-add_executable(initialpose_relocation src/initialpose/initialpose_relocation.cpp)
-add_dependencies(initialpose_relocation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(initialpose_relocation 
-${catkin_LIBRARIES}
-)
-
-add_executable(initialpose_node src/initialpose/initialpose_node.cpp)
+add_executable(initialpose_node src/initialpose_node.cpp)
 add_dependencies(initialpose_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(initialpose_node 
 ${catkin_LIBRARIES}
@@ -87,10 +82,17 @@ target_link_libraries(pointcloud_to_laserscan_node pointcloud_to_laserscan
 ${catkin_LIBRARIES}
 )
 
-add_executable(small_gicp_relocalization src/small_gicp/small_gicp_relocalization.cpp)
+add_executable(small_gicp_relocalization src/small_gicp_relocalization.cpp)
 add_dependencies(small_gicp_relocalization ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(small_gicp_relocalization pointcloud_to_laserscan 
 ${catkin_LIBRARIES}
 ${OpenMP_CXX_FLAGS}
 )
+
+add_executable(test_pcl src/test.cpp)
+add_dependencies(test_pcl ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(test_pcl  
+${catkin_LIBRARIES}
+)
+
 

@@ -1,8 +1,8 @@
-#ifndef SMALL_GICP_RELOCALIZATION_HPP_
-#define SMALL_GICP_RELOCALIZATION_HPP_
+#pragma once
 
 #include <string>
 #include <memory>
+#include <Eigen/Dense>
 #include <Eigen/Geometry>
 #include <ros/ros.h>
 
@@ -43,6 +43,8 @@ private:
 
     void loadGlobalMap(const std::string& file_name);
 
+    void setInitialPose();
+
     void runRegistration(const ros::WallTimerEvent& event);
 
     void publishTransform(const ros::WallTimerEvent& event);
@@ -82,6 +84,7 @@ private:
     std::string initialpose_topic_;
 
     ros::Time last_scan_time_;
+    Eigen::Isometry3d initial_transform_;
     Eigen::Isometry3d result_t_;
     Eigen::Isometry3d prior_result_t_;
 
@@ -104,6 +107,3 @@ private:
     std::unique_ptr<tf2_ros::TransformListener> tf_listener_;
     std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
 };
-
-
-#endif

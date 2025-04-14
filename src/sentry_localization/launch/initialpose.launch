@@ -1,0 +1,16 @@
+<launch>
+    <node pkg="sentry_localization" type="initialpose_node" name="initialpose_node" output="screen">
+        <rosparam>
+            position_x: 7.03318
+            position_y: 5.96
+            position_z: 0.0
+
+            orientation_w: 0.7011
+            orientation_x: 0.0000
+            orientation_y: 0.0000
+            orientation_z: 0.7129 
+
+            pub_time: 7  # rate is 10, so actually pub_time*10
+        </rosparam>
+    </node>  
+</launch>

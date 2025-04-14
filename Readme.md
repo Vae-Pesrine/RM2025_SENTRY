@@ -1,4 +1,4 @@
-# <center>***SENTRY SIMULATION FOR ROBOMASTER*** 
+# <center>***SENTRY SIMULATION FOR ROBOMASTER***<center> 
 
 ## **How to run**
 
@@ -35,7 +35,7 @@
 
 ## **Change the version of pcl to build the small_gicp_localization**
 
-- 1.The default version of pcl is 1.10 when install ROS, we should change to higher version. We choose [pcl-1.12.0](https://github.com/PointCloudLibrary/pcl/tree/pcl-1.12.0).
+- 1.This small gicp library uses C++17 features. The pcl interface is not compatible with pcl older than 1.11 that uses boost::shared_ptr. And the default version of pcl is 1.10 when install ROS. So we install [pcl-1.12.0](https://github.com/PointCloudLibrary/pcl/tree/pcl-1.12.0).
 
   ```SHELL
   cd ~/DownLoads
