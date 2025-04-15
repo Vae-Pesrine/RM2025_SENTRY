@@ -30,7 +30,7 @@
         <arg name="verbose" value="$(arg verbose)"/>
         <arg name="headless" value="$(arg headless)"/>
         <arg name="use_sim_time" value="$(arg use_sim_time)"/>
-        <arg name="world_name" value="$(find sentry_simulation)/world/rmuc2025.world" />
+        <arg name="world_name" value="$(find sentry_simulation)/world/rmuc2024.world" />
     </include>
       
     <node pkg="joint_state_publisher" type="joint_state_publisher" name="sentry_joint_publisher" output="screen" />    
