@@ -1,62 +1,67 @@
 #pragma once
 
 #include <ros/ros.h>
+#include <memory>
+#include <string>
 
-// pcl
+#include <nav_msgs/OccupancyGrid.h>
+#include <sensor_msgs/PointCloud2.h>
+
+#include <pcl/filters/passthrough.h>
+#include <pcl/filters/radius_outlier_removal.h>
 #include <pcl/io/pcd_io.h>
-#include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
-#include <pcl_ros/transforms.h>
+
+#include <pcl/common/transforms.h>
 #include <pcl_conversions/pcl_conversions.h>
 
-class PclProcess
+using PointT = pcl::PointXYZ;
+using PointCloudT = pcl::PointCloud<PointT>;
+
+
+class PCDToGridMap
 {
 public:
-    using PointCloud = pcl::PointCloud<pcl::PointXYZ>;
-
-    PclProcess();
-    ~PclProcess();
+    PCDToGridMap();
+    ~PCDToGridMap();
 
 private:
-    bool loadPCD(PointCloud::Ptr &cloud_output);
-    void pcdLoadCb(const ros::TimerEvent&);
 
+    void pcdFilter();
+    void loadPCD();
 
+    void publishCb();
 
-private:
-    ros::NodeHandle pr_nh_;
-    ros::NodeHandle nh_;
-    ros::Publisher pub_pcd_;
+    void buildMap(const PointCloudT::Ptr &cloud, nav_msgs::OccupancyGrid &map);
 
-    ros::Timer update_timer_;
+    // filter
+    double thre_z_min_;
+    double thre_z_max_;
+
+    double thre_radius_;
+    int thre_count_;
+
+    // transform
+    double x_, y_, z_;
+    double roll_, pitch_, yaw_;
+    Eigen::Affine3d transform_;
+
+    double map_resolution_;
 
     std::string pcd_file_;
 
-    double x_, y_, z_;
-    double roll_, pitch_, yaw_;
+    PointCloudT::Ptr pcd_cloud_;
+    PointCloudT::Ptr filtered_passcloud_;
+    PointCloudT::Ptr filtered_radiuscloud_;
 
-    Eigen::Affine3d transform;
+    nav_msgs::OccupancyGrid map_;
+
+    ros::NodeHandle nh_;
+    ros::NodeHandle pr_nh_;
+
+    ros::Publisher pub_map_;
+    ros::Publisher pub_pcd_;
+    ros::Timer timer_;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
