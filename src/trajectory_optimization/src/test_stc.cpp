@@ -22,7 +22,7 @@ CorridorGenerator::CorridorGenerator(){
 }
 
 CorridorGenerator::~CorridorGenerator(){
-  
+
 }
 
 void CorridorGenerator::mapCallback(const nav_msgs::OccupancyGrid::ConstPtr &msg) {
@@ -89,9 +89,75 @@ void CorridorGenerator::generateCorridor() {
   // 基于离散路径生成安全走廊
   m_decomp_util.dilate(m_discrete_path);
 
-  // 获取生成的椭圆体和多面体表示的安全走廊
-  m_elliposid2d = m_decomp_util.get_ellipsoids();
+  // 获取生成的多面体和线性约束
   m_polyhedron2d = m_decomp_util.get_polyhedrons();
+  m_constraints = m_decomp_util.get_constraints();
+
+  // 计算每个多面体的中心点
+  m_corridor_centers.clear();
+  for (const auto &polyhedron : m_polyhedron2d) {
+    Eigen::Vector2d center = polyhedron.centroid(); // 假设 Polyhedron 类有 centroid() 方法
+    m_corridor_centers.push_back(center);
+  }
+}
+
+// 约束路径
+
+void CorridorGenerator::optimizePath(const Eigen::Vector2d &goal) {
+  if (m_constraints.empty()) {
+    ROS_WARN("No constraints available for optimization.");
+    return;
+  }
+
+  // 提取线性约束矩阵 A 和 b
+  size_t num_constraints = m_constraints.size();
+  Eigen::MatrixXd A(num_constraints, 2); // 假设二维空间
+  Eigen::VectorXd b(num_constraints);
+
+  for (size_t i = 0; i < num_constraints; ++i) {
+    A.row(i) = m_constraints[i].A(); // 获取约束的法向量
+    b(i) = m_constraints[i].b();     // 获取约束的偏移量
+  }
+
+  // 定义目标函数的二次项和一次项
+  Eigen::MatrixXd P = Eigen::MatrixXd::Identity(2, 2); // 单位矩阵
+  Eigen::VectorXd q = -2 * goal; // 最小化 (x - goal)^2
+
+  // 转换为 OSQP 格式
+  c_int n = 2; // 变量维度
+  c_int m = num_constraints; // 约束数量
+
+  // OSQP 数据
+  OSQPWorkspace *work;
+  OSQPSettings *settings = (OSQPSettings *)c_malloc(sizeof(OSQPSettings));
+  OSQPData *data = (OSQPData *)c_malloc(sizeof(OSQPData));
+
+  data->n = n;
+  data->m = m;
+  data->P = csc_matrix(n, n, P.nonZeros(), P.valuePtr(), P.innerIndexPtr(), P.outerIndexPtr());
+  data->q = q.data();
+  data->A = csc_matrix(m, n, A.nonZeros(), A.valuePtr(), A.innerIndexPtr(), A.outerIndexPtr());
+  data->l = nullptr; // 无下界
+  data->u = b.data(); // 上界
+
+  // 设置默认参数
+  osqp_set_default_settings(settings);
+  settings->alpha = 1.0; // 松弛因子
+
+  // 初始化 OSQP
+  osqp_setup(&work, data, settings);
+
+  // 求解
+  osqp_solve(work);
+
+  // 获取结果
+  Eigen::Vector2d optimized_point(work->solution->x[0], work->solution->x[1]);
+  ROS_INFO_STREAM("Optimized point: " << optimized_point.transpose());
+
+  // 清理内存
+  osqp_cleanup(work);
+  c_free(settings);
+  c_free(data);
 }
 
 void CorridorGenerator::corridor_generate_timer_cb(const ros::TimerEvent &e) {
@@ -116,6 +182,24 @@ void CorridorGenerator::displayCorridor() {
       DecompROS::polyhedron_array_to_ros(m_polyhedron2d);
   poly_msg.header.frame_id = "map";
   m_polyhedron_array_pub.publish(poly_msg);
+
+  // 可视化优化路径
+  visualization_msgs::Marker optimized_path_marker;
+  optimized_path_marker.header.frame_id = "map";
+  optimized_path_marker.type = visualization_msgs::Marker::LINE_STRIP;
+  optimized_path_marker.scale.x = 0.1;
+  optimized_path_marker.color.r = 1.0;
+  optimized_path_marker.color.a = 1.0;
+
+  for (const auto &point : m_optimized_path) {
+    geometry_msgs::Point p;
+    p.x = point.x();
+    p.y = point.y();
+    p.z = 0.0;
+    optimized_path_marker.points.push_back(p);
+  }
+
+  m_optimized_path_pub.publish(optimized_path_marker);
 }
 
 int main(int argc, char *argv[])

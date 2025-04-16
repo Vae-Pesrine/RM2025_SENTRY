@@ -10,7 +10,7 @@ obstacle_layer:
     # topic: /scan,                  # 话题名称
     # data_type: LaserScan,          # 数据类型
     sensor_frame: livox_mid360,
-    topic: /cloud_registered,
+    topic: /,
     data_type: PointCloud2,
     marking: true,                 # 是否将扫描到的障碍物添加到地图
     clearing: true,                # 是否清除动态障碍物残影
@@ -20,7 +20,7 @@ obstacle_layer:
 
 inflation_layer:
   enabled: true                    # 是否使能膨胀层
-  inflation_radius:    1.0         # 最大有效膨胀半径
+  inflation_radius:    0.15         # 最大有效膨胀半径
   cost_scaling_factor: 5.0         # 膨胀层的指数衰减速度, 值越小衰减越慢
 
 static_layer:

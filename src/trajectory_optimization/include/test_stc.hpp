@@ -1,6 +1,9 @@
 #pragma once
 #include <ros/ros.h>
 #include <string>
+#include <osqp/osqp.h>
+
+
 
 #include "grid_map.h"
 #include "traj_search3d.h"
@@ -27,6 +30,9 @@ private:
     void pathCallback(const nav_msgs::Path::ConstPtr &msg);
     
     void getDiscretePath(double interval = 0.5);
+
+    void optimizePath(const Eigen::Vector2d &goal);
+
     void getObs();
     void generateCorridor();
     void displayCorridor();
@@ -59,6 +65,7 @@ private:
     EllipsoidDecomp2D m_decomp_util;
     vec_E<Ellipsoid2D> m_elliposid2d;
     vec_E<Polyhedron2D> m_polyhedron2d;
+    vec_E<LinearConstraint2D> m_constraints;
 
 
 };

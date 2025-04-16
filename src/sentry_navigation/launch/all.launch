@@ -1,7 +1,7 @@
 <launch>
    
   <!-- load the 2D grid map -->
-    <arg name="map" default="RMUC.yaml" />
+    <arg name="map" default="rmuc_2025.yaml" />
     <node pkg="map_server" type="map_server" name="map_server" args="$(find sentry_navigation)/map/$(arg map)" />
     
   <!-- move base package -->

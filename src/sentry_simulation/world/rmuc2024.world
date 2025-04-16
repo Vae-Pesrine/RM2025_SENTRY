@@ -231,6 +231,5 @@
     <audio>
       <device>default</device>
     </audio>
-    <plugin filename="libgridmap_creator.so" name="gridmap_creator"/>
   </world>
 </sdf>

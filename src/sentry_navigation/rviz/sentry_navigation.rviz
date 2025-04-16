@@ -6,7 +6,6 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /PointCloud22
       Splitter Ratio: 0.5
     Tree Height: 550
   - Class: rviz/Selection
@@ -280,12 +279,12 @@ Visualization Manager:
       Class: rviz/Map
       Color Scheme: costmap
       Draw Behind: false
-      Enabled: false
+      Enabled: true
       Name: global_costmap
       Topic: /move_base/global_costmap/costmap
       Unreliable: false
       Use Timestamp: false
-      Value: false
+      Value: true
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
@@ -358,7 +357,7 @@ Visualization Manager:
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.05000000074505806
+      Size (m): 0.05999999865889549
       Style: Flat Squares
       Topic: /cloud_registered
       Unreliable: false
@@ -386,12 +385,35 @@ Visualization Manager:
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.019999999552965164
+      Size (m): 0.004999999888241291
       Style: Flat Squares
       Topic: /prior_pcd
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
+      Value: true
+    - Alpha: 0.20000000298023224
+      BoundColor: 255; 0; 0
+      Class: decomp_rviz_plugins/PolyhedronArray
+      Enabled: true
+      MeshColor: 0; 170; 255
+      Name: PolyhedronArray
+      Queue Size: 10
+      Scale: 0.10000000149011612
+      State: Mesh
+      Topic: ""
+      Unreliable: false
+      Value: true
+      VsColor: 0; 255; 0
+      VsScale: 1
+    - Alpha: 0.5
+      Class: decomp_rviz_plugins/EllipsoidArray
+      Color: 204; 51; 204
+      Enabled: true
+      Name: EllipsoidArray
+      Queue Size: 10
+      Topic: ""
+      Unreliable: false
       Value: true
   Enabled: true
   Global Options:
@@ -421,7 +443,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 25.35926628112793
+      Distance: 8.73172664642334
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -429,17 +451,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 10.673379898071289
-        Y: 5.205868244171143
-        Z: -0.029299376532435417
+        X: 11.877591133117676
+        Y: 10.046361923217773
+        Z: 0.23540110886096954
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.1997966766357422
+      Pitch: 1.3297964334487915
       Target Frame: <Fixed Frame>
-      Yaw: 4.695429801940918
+      Yaw: 4.850436210632324
     Saved: ~
 Window Geometry:
   Displays:
@@ -457,5 +479,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1386
-  X: 186
-  Y: 488
+  X: 331
+  Y: 339

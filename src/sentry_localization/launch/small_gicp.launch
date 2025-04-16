@@ -14,7 +14,7 @@
             base_frame: base_link
             lidar_frame: livox_mid360
 
-            prior_pcd_file: /home/jgy/RMUC_simulation/src/sentry_localization/PCD/24.pcd
+            prior_pcd_file: /home/jgy/RMUC_simulation/src/sentry_localization/PCD/rmuc_2025.pcd
             pcd_in_topic: /cloud_registered
             initialpose_topic: /initialpose
 

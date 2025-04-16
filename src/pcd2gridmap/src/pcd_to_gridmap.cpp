@@ -32,7 +32,7 @@ PCDToGridMap::PCDToGridMap():
     
     loadPCD();
     pcdFilter();
-    buildMap(filtered_passcloud_, map_);
+    buildMap(filtered_radiuscloud_, map_);
 }
 
 PCDToGridMap::~PCDToGridMap() {
@@ -92,12 +92,12 @@ void PCDToGridMap::pcdFilter(){
 
     ROS_INFO_STREAM("Pass through filtered PCD : " << " with " << filtered_passcloud_->size() << " points.");
 
-    // pcl::RadiusOutlierRemoval<PointT> outrem;
-    // outrem.setInputCloud(filtered_passcloud_);
-    // outrem.setRadiusSearch(thre_radius_);
-    // outrem.setMinNeighborsInRadius(thre_count_);
-    // outrem.setNegative(false);
-    // outrem.filter(*filtered_radiuscloud_);
+    pcl::RadiusOutlierRemoval<PointT> outrem;
+    outrem.setInputCloud(filtered_passcloud_);
+    outrem.setRadiusSearch(thre_radius_);
+    outrem.setMinNeighborsInRadius(thre_count_);
+    outrem.setNegative(false);
+    outrem.filter(*filtered_radiuscloud_);
 
     ROS_INFO_STREAM("Radius outier filtered PCD : " << " with " << filtered_radiuscloud_->size() << " points.");
 }
