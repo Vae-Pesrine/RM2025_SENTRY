@@ -2,6 +2,5 @@ devel/*
 **/build/** 
 .vscode/*
 src/FAST_LIO/PCD/*
-src/sentry_simulation/mesh/rmuc_2025.stl
 src/sentry_simulation/world/rmuc_2025.stl
 src/sentry_localization/PCD/Mesh.pcd

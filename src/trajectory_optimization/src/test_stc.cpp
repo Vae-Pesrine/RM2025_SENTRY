@@ -93,19 +93,13 @@ void CorridorGenerator::generateCorridor() {
   m_polyhedron2d = m_decomp_util.get_polyhedrons();
   m_constraints = m_decomp_util.get_constraints();
 
-  // 计算每个多面体的中心点
-  m_corridor_centers.clear();
-  for (const auto &polyhedron : m_polyhedron2d) {
-    Eigen::Vector2d center = polyhedron.centroid(); // 假设 Polyhedron 类有 centroid() 方法
-    m_corridor_centers.push_back(center);
-  }
 }
 
 // 约束路径
 
 void CorridorGenerator::optimizePath(const Eigen::Vector2d &goal) {
-  if (m_constraints.empty()) {
-    ROS_WARN("No constraints available for optimization.");
+  if (m_constraints.empty() || m_discrete_path.empty()) {
+    ROS_WARN("No constraints or path available for optimization.");
     return;
   }
 
@@ -115,49 +109,47 @@ void CorridorGenerator::optimizePath(const Eigen::Vector2d &goal) {
   Eigen::VectorXd b(num_constraints);
 
   for (size_t i = 0; i < num_constraints; ++i) {
-    A.row(i) = m_constraints[i].A(); // 获取约束的法向量
-    b(i) = m_constraints[i].b();     // 获取约束的偏移量
+    A.row(i) = m_constraints[i].A().transpose(); // 获取约束的法向量
+    b(i) = m_constraints[i].b()(0);     // 获取约束的偏移量
   }
 
   // 定义目标函数的二次项和一次项
   Eigen::MatrixXd P = Eigen::MatrixXd::Identity(2, 2); // 单位矩阵
-  Eigen::VectorXd q = -2 * goal; // 最小化 (x - goal)^2
+  Eigen::VectorXd q = Eigen::VectorXd::Zero(2); // 最小化路径长度
 
   // 转换为 OSQP 格式
-  c_int n = 2; // 变量维度
-  c_int m = num_constraints; // 约束数量
+  int n = 2; // 变量维度
+  int m = num_constraints; // 约束数量
 
-  // OSQP 数据
-  OSQPWorkspace *work;
-  OSQPSettings *settings = (OSQPSettings *)c_malloc(sizeof(OSQPSettings));
-  OSQPData *data = (OSQPData *)c_malloc(sizeof(OSQPData));
+// OSQP 数据
+std::unique_ptr<OSQPSettings> settings = std::make_unique<OSQPSettings>();
+std::unique_ptr<OSQPData> data = std::make_unique<OSQPData>();
 
-  data->n = n;
-  data->m = m;
-  data->P = csc_matrix(n, n, P.nonZeros(), P.valuePtr(), P.innerIndexPtr(), P.outerIndexPtr());
-  data->q = q.data();
-  data->A = csc_matrix(m, n, A.nonZeros(), A.valuePtr(), A.innerIndexPtr(), A.outerIndexPtr());
-  data->l = nullptr; // 无下界
-  data->u = b.data(); // 上界
+data->n = n;
+data->m = m;
+data->P = csc_matrix(n, n, P.nonZeros(), P.valuePtr(), P.innerIndexPtr(), P.outerIndexPtr());
+data->q = q.data();
+data->A = csc_matrix(m, n, A.nonZeros(), A.valuePtr(), A.innerIndexPtr(), A.outerIndexPtr());
+data->l = nullptr; // 无下界
+data->u = b.data(); // 上界
 
-  // 设置默认参数
-  osqp_set_default_settings(settings);
-  settings->alpha = 1.0; // 松弛因子
+// 设置默认参数
+osqp_set_default_settings(settings.get());
+settings->alpha = 1.0; // 松弛因子
 
-  // 初始化 OSQP
-  osqp_setup(&work, data, settings);
+// 初始化 OSQP
+std::unique_ptr<OSQPWorkspace, decltype(&osqp_cleanup)> work(nullptr, osqp_cleanup);
+if (osqp_setup(&work, data.get(), settings.get()) != 0) {
+  ROS_ERROR("Failed to set up OSQP solver.");
+  return;
+}
 
-  // 求解
-  osqp_solve(work);
+// 求解
+osqp_solve(work.get());
 
-  // 获取结果
-  Eigen::Vector2d optimized_point(work->solution->x[0], work->solution->x[1]);
-  ROS_INFO_STREAM("Optimized point: " << optimized_point.transpose());
-
-  // 清理内存
-  osqp_cleanup(work);
-  c_free(settings);
-  c_free(data);
+// 获取结果
+Eigen::Vector2d optimized_point(work->solution->x[0], work->solution->x[1]);
+ROS_INFO_STREAM("Optimized point: " << optimized_point.transpose());
 }
 
 void CorridorGenerator::corridor_generate_timer_cb(const ros::TimerEvent &e) {

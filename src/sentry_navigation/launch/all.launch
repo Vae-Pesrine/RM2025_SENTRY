@@ -24,8 +24,6 @@
 
     <node pkg="mpc_tracking" type="mpc_tracking_node" name="mpc_tracking_node" output="screen" /> -->
 
-    <!-- <include file="$(find sentry_navigation)/launch/terrain_analysis.launch" /> -->
-    
   <!-- rviz -->
     <node pkg="rviz" type="rviz" name="sentry_rviz" args="-d $(find sentry_navigation)/rviz/sentry_navigation.rviz" />
 

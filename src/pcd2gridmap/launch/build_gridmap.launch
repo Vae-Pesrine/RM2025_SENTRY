@@ -1,6 +1,6 @@
 <launch>
     <node pkg="pcd2gridmap" type="pcd_to_gridmap" name="pcd_to_gridmap" output="screen">
-        <param name="map/pcd_file" type="string" value="$(find sentry_localization)/PCD/test.pcd" />
+        <param name="map/pcd_file" type="string" value="$(find sentry_localization)/PCD/rmuc_2024.pcd" />
         <param name="map/resolution" type="double" value="0.05" />
 
         <param name="transform/x" type="double" value="0.0" />
