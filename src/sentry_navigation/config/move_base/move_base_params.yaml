@@ -4,9 +4,9 @@ controller_frequency: 10.0           # 向底盘控制移动话题发布命令�
 controller_patience:  15.0           # 在空间清理操作执行前, 控制器等待有效控制命令发送的时间
 
 planner_frequency:    5.0            # 全局规划器的执行频率
-planner_patience:     7.0            # 在路径规划操作执y行前, 全局规划器等待有效路径请求的时间
+planner_patience:     2.0            # 在路径规划操作执行前, 全局规划器等待有效路径请求的时间
 
-oscillation_timeout:  10.0           # 执行修复机制之前, 允许震荡的时间
+oscillation_timeout:  5.0           # 执行修复机制之前, 允许震荡的时间
 oscillation_distance: 0.2            # 来回运动在多大距离之上不会被认为是震荡
 
 base_global_planner:  global_planner/GlobalPlanner
@@ -14,10 +14,18 @@ base_local_planner:   teb_local_planner/TebLocalPlannerROS
 
 # 设置恢复行为(自定义流程)
 recovery_behaviors:
+  - name: 'move_recovery'
+    type: 'move_freespace_recovery/MoveFreeSpace'
   - name: 'reset_recovery'
     type: 'clear_costmap_recovery/ClearCostmapRecovery'
   - name: 'rotate_recovery'
     type: 'rotate_recovery/RotateRecovery'                                              
+
+move_recovery:
+  max_radius: 3.32
+  robot_radius: 0.32
+  free_threshold: 3
+  visualization: True
 
 reset_recovery:
   invert_area_to_clear: false       # false清除正方形外, true清除正方形内

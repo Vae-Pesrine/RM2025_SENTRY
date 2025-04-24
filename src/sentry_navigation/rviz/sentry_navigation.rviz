@@ -415,6 +415,14 @@ Visualization Manager:
       Topic: ""
       Unreliable: false
       Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /free_markers
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -443,7 +451,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 8.73172664642334
+      Distance: 5.7802886962890625
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -451,17 +459,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 11.877591133117676
-        Y: 10.046361923217773
-        Z: 0.23540110886096954
+        X: 9.775822639465332
+        Y: 4.871373176574707
+        Z: -0.9048941731452942
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.3297964334487915
+      Pitch: 1.4347963333129883
       Target Frame: <Fixed Frame>
-      Yaw: 4.850436210632324
+      Yaw: 4.620431900024414
     Saved: ~
 Window Geometry:
   Displays:
@@ -480,4 +488,4 @@ Window Geometry:
     collapsed: false
   Width: 1386
   X: 331
-  Y: 339
+  Y: 307

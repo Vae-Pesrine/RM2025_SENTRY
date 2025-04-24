@@ -24,7 +24,7 @@
 #include <pcl_conversions/pcl_conversions.h>
 
 //small gicp
-#include <small_gicp//ann/kdtree_omp.hpp>
+#include <small_gicp/ann/kdtree_omp.hpp>
 #include <small_gicp/factors/gicp_factor.hpp>
 #include <small_gicp/pcl/pcl_point.hpp>
 #include <small_gicp/pcl/pcl_registration.hpp>
@@ -43,7 +43,7 @@ private:
 
     void loadGlobalMap(const std::string& file_name);
 
-    void setInitialPose();
+    void setInitialTransformation();
 
     void runRegistration(const ros::WallTimerEvent& event);
 

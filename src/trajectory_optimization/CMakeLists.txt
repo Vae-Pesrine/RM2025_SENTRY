@@ -25,6 +25,7 @@ find_package(catkin REQUIRED COMPONENTS
     decomp_ros_msgs
     decomp_util
 )
+find_package(OsqpEigen REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(PCL 1.12 REQUIRED)
 
@@ -63,7 +64,9 @@ target_link_libraries(trajectory_optimization ${catkin_LIBRARIES} ${PCL_LIBRARIE
 add_executable(test_stc
     src/test_stc.cpp
 )
-target_link_libraries(test_stc ${catkin_LIBRARIES} ${PCL_LIBRARIES} mosek64)
+target_link_libraries(test_stc ${catkin_LIBRARIES} ${PCL_LIBRARIES} mosek64
+  OsqpEigen::OsqpEigen
+)
 
 
 

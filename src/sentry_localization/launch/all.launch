@@ -1,4 +1,5 @@
 <launch>
+    <arg name="use_sim_time" default="true"/>
 
   <!-- lio -->
     <!-- <include file="$(find fast_lio)/launch/mapping_mid360.launch" /> -->
@@ -10,9 +11,6 @@
         <param name="livox_out_name" type="string" value="/livox/points" />
     </node>
 
-  <!-- turn the PointCloud2 points to laserscan -->
-    <!-- <include file="$(find sentry_localization)/launch/pcl_to_scan.launch" /> -->
-  
   <!-- small gicp node -->
     <include file="$(find sentry_localization)/launch/small_gicp.launch" />
 

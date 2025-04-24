@@ -13,9 +13,6 @@ find_package(catkin REQUIRED COMPONENTS
   costmap_2d
   pcl_ros
   livox_ros_driver2
-  filters
-  message_filters
-  nodelet
 )
 
 find_package(costmap_2d REQUIRED)
@@ -38,12 +35,6 @@ catkin_package(
   DEPENDS 
 )
 
-###########
-## Build ##
-###########
-
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
 include_directories(
   include
   /usr/local/include/teaser
@@ -51,48 +42,30 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
 )
 
-link_directories(${PCL_LIBRARY_DIRS})
-
 add_executable(initialpose_node src/initialpose_node.cpp)
 add_dependencies(initialpose_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(initialpose_node 
-${catkin_LIBRARIES}
+  ${catkin_LIBRARIES}
 )
 
 add_executable(livox_lidar_to_points src/livox_repub/livox_lidar_to_points.cpp)
 add_dependencies(livox_lidar_to_points ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(livox_lidar_to_points 
-${catkin_LIBRARIES}
-)
-
-add_executable(scan_to_scan_filter src/livox_repub/scan_to_scan_filter.cpp)
-add_dependencies(scan_to_scan_filter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(scan_to_scan_filter 
-${catkin_LIBRARIES} ${Boost_LIBRARIES}
-)
-
-add_library(pointcloud_to_laserscan src/livox_repub/pointcloud_to_laserscan_nodelet.cpp)
-target_link_libraries(pointcloud_to_laserscan 
-${catkin_LIBRARIES}
-)
-
-add_executable(pointcloud_to_laserscan_node src/livox_repub/pointcloud_to_laserscan.cpp)
-add_dependencies(pointcloud_to_laserscan_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(pointcloud_to_laserscan_node pointcloud_to_laserscan 
-${catkin_LIBRARIES}
+  ${catkin_LIBRARIES}
 )
 
 add_executable(small_gicp_relocalization src/small_gicp_relocalization.cpp)
 add_dependencies(small_gicp_relocalization ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(small_gicp_relocalization pointcloud_to_laserscan 
-${catkin_LIBRARIES}
-${OpenMP_CXX_FLAGS}
+target_link_libraries(small_gicp_relocalization  
+  ${PCL_LIBRARIES}
+  ${catkin_LIBRARIES}
+  ${OpenMP_CXX_FLAGS}
 )
 
 add_executable(test_pcl src/test.cpp)
 add_dependencies(test_pcl ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(test_pcl  
-${catkin_LIBRARIES}
+  ${catkin_LIBRARIES}
 )
 
 

@@ -1,23 +1,25 @@
 # <center>***SENTRY SIMULATION FOR ROBOMASTER***<center> 
 
+## TODO
+ - [ ] fix the bug of free space recovery (tf warning of repeated data when processing the recovery plugin)  
+ - [ ] add the scan context helping relocalization when the odometry drifts
+ - [ ] add the stc
+
 ## **How to run**
 
 - run the simulation environment
   ```SHELL
-  roslaunch sentry_simulation view.launch
+  roslaunch sentry_simulation all.launch
   ```
 
 - run the localization algorithm, the lio is fast_lio or point_lio, the relocalization is small_gicp
   ```SHELL
-  roslaunch fast_lio mapping_mid360.launch
-  roslaunch sentry_localization sentry_localization.launch
+  roslaunch sentry_localization all.launch
   ```
 
-- run the navigation (you can use the fast_planner_nmpc or use the move base package)
+- run the navigation
   ```SHELL
-  roslaunch plan_manage 16_lidar.launch
-  roslaunch plan_manage rviz.launch
-  rosrun mpc_tracking mpc_tracking_node
+  roslaunch sentry_navigation all.launch
   ```
 
 ## **Install small gicp**

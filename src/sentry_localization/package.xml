@@ -19,7 +19,6 @@
   <build_depend>livox_ros_driver2</build_depend>
   <build_depend>filters</build_depend>
   <build_depend>message_filters</build_depend>
-  <build_depend>nodelet</build_depend>
 
 
   <build_export_depend>map_server</build_export_depend>
@@ -32,7 +31,6 @@
   <build_export_depend>livox_ros_driver2</build_export_depend>
   <build_export_depend>filters</build_export_depend>
   <build_export_depend>message_filters</build_export_depend>
-  <build_export_depend>nodelet</build_export_depend>
 
 
   <exec_depend>map_server</exec_depend>
@@ -45,12 +43,5 @@
   <exec_depend>livox_ros_driver2</exec_depend>
   <exec_depend>filters</exec_depend>
   <exec_depend>message_filters</exec_depend>
-  <exec_depend>nodelet</exec_depend>
-  
-
-
-  <export>
-    <nodelet plugin="${prefix}/nodelets.xml" />
-  </export>
 
 </package>
