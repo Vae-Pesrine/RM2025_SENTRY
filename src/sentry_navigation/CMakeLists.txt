@@ -1,14 +1,13 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(sentry_navigation)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
+add_compile_options(-std=c++17)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   actionlib
   move_base_msgs
+  mbf_msgs
 
   nav_core
   pluginlib
@@ -24,7 +23,7 @@ find_package(Boost REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
-  # LIBRARIES 
+  LIBRARIES 
   CATKIN_DEPENDS 
     roscpp 
     actionlib 
@@ -45,6 +44,13 @@ add_dependencies(test_goal ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED
 target_link_libraries(test_goal
   ${catkin_LIBRARIES}
 )
+
+add_executable(mbf_bridge src/mbf_bridge.cpp)
+add_dependencies(mbf_bridge ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(mbf_bridge
+  ${catkin_LIBRARIES}
+)
+
 
 add_library(move_towards_free_space src/test_recovery.cpp)
 add_dependencies(move_towards_free_space ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

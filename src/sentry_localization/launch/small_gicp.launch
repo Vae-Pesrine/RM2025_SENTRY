@@ -1,7 +1,7 @@
 <launch>
     <node pkg="sentry_localization" type="small_gicp_relocalization" name="small_gicp_relocalization" output="screen">
         <rosparam>
-            debug: false
+            debug: true
 
             num_threads: 4
             num_neighbors: 10

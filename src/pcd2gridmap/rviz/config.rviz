@@ -27,7 +27,7 @@ Panels:
   - Class: rviz/Time
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: load_point
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -56,14 +56,14 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
+        Max Value: 1.999932050704956
+        Min Value: -0.2000010907649994
         Value: true
       Axis: Z
       Channel Name: intensity
       Class: rviz/PointCloud2
       Color: 49; 23; 21
-      Color Transformer: FlatColor
+      Color Transformer: AxisColor
       Decay Time: 0
       Enabled: true
       Invert Rainbow: false
@@ -127,7 +127,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 186.79669189453125
+      Distance: 4.846044540405273
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -135,17 +135,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 20.163402557373047
-        Y: 37.73076248168945
-        Z: 1.0334148100810125e-05
+        X: -2.863600254058838
+        Y: 4.011229515075684
+        Z: 9.857310942607e-06
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.5647963285446167
+      Pitch: 1.4397964477539062
       Target Frame: <Fixed Frame>
-      Yaw: 2.383105516433716
+      Yaw: 1.4731045961380005
     Saved: ~
 Window Geometry:
   Displays:

@@ -9,18 +9,18 @@
     <link name="base_link">
         <visual>
             <geometry>
-                    <cylinder length="0.05" radius="0.1" />
+                    <cylinder length="0.05" radius="0.25" />
             </geometry>
             <origin rpy="0 0 1.57075" xyz="0 0 0.01" />
             <material name="White" />
         </visual>
         <collision>
             <geometry>
-                    <cylinder length="0.005" radius="0.2" />
+                    <cylinder length="0.005" radius="0.25" />
             </geometry>
             <origin rpy="0 0 1.57075" xyz="0 0 0.01" />
         </collision>
-        <xacro:cylinder_inertial_matrix m="10" r="0.1" h="0.05" />
+        <xacro:cylinder_inertial_matrix m="80" r="0.1" h="0.05" />
     </link>
 
     <gazebo reference="base_link">
@@ -48,8 +48,7 @@
 
             <commandTopic>/cmd_vel</commandTopic>
 
-            <!-- 因为关闭发布odom的tf没有效果，所以此处把parent link改为gazebo_odom,child link改为gazebo_base_link
-            仍可以通过cmd_vel话题来控制小车的运动，同时可以跑其他里程计算法，避免干扰 -->
+            <!-- set the publish rate 0.0 hz to close the odometry -->
             <odometryRate>0.0</odometryRate>
             <odometryTopic>/gazebo_odom</odometryTopic>
             <odometryFrame>gazebo_odom</odometryFrame>

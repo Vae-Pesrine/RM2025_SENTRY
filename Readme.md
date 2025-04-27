@@ -8,24 +8,24 @@
 ## **How to run**
 
 - run the simulation environment
-  ```SHELL
+  ```shell
   roslaunch sentry_simulation all.launch
   ```
 
 - run the localization algorithm, the lio is fast_lio or point_lio, the relocalization is small_gicp
-  ```SHELL
+  ```shell
   roslaunch sentry_localization all.launch
   ```
 
 - run the navigation
-  ```SHELL
+  ```shell
   roslaunch sentry_navigation all.launch
   ```
 
 ## **Install small gicp**
 - Small gicp is a header-only library. You can just download and drop it in your project directory to use it. If you need only basic point cloud registration functions, you can build and install the helper library as follows.
 
-  ```SHELL
+  ```shell
   git clone https://github.com/koide3/small_gicp.git
   sudo apt-get install libeigen3-dev libomp-dev
   cd small_gicp
@@ -39,58 +39,62 @@
 
 - 1.This small gicp library uses C++17 features. The pcl interface is not compatible with pcl older than 1.11 that uses boost::shared_ptr. And the default version of pcl is 1.10 when install ROS. So we install [pcl-1.12.0](https://github.com/PointCloudLibrary/pcl/tree/pcl-1.12.0).
 
-  ```SHELL
-  cd ~/DownLoads
+  ```shell
+  wget -O pcl-1.12.0.zip https://github.com/PointCloudLibrary/pcl/archive/pcl-1.12.0.zip
   unzip pcl-1.12.0.zip
+  sudo mv pcl-pcl-1.12.0 pcl-1.12.0
   sudo mv pcl-1.12.0 /usr/local/include
   cd /usr/local/include
   sudo mkdir build && cd build
-  cmake .. 
-  make -j4   
+  sudo cmake .. 
+  sudo make -j4   
   sudo make install
+
+  cd /opt/ros/noetic/share/pcl_ros/cmake
+  sudo chmod 777 pcl_rosConfig.cmake 
   ```
   The building process is running slow. Code "make -j4" means building with four threads, if your computer cannot afford it, you can run "make". If you can't run the command ,try "sudo *".   
 
 - 2.Change the default path of pcl
 
-  ```SHELL
+  ```shell
   cd /opt/ros/noetic/share/pcl_ros/cmake
   sudo chmod 777 pcl_rosConfig.cmake  
   ```
 
   Find the code below and change the pcl path to newest.If you follow the steps I mentioned above, you should change "/usr/include/pcl-1.10" to "/usr/local/include/pcl-1.12".
-  ```SHELL
+  ```shell
   if(NOT "include;/usr/include;/usr/include/eigen3;/usr/include/pcl-1.10;/usr/include/vtk-7.1;/usr/include/freetype2;/usr/include/x86_64-linux-gnu " STREQUAL " ")
     set(pcl_ros_INCLUDE_DIRS "")
     set(_include_dirs "include;/usr/include;/usr/include/eigen3;/usr/include/pcl-1.10;/usr/include/vtk-7.1;/usr/include/freetype2;/usr/include/x86_64-linux-gnu")
   ```
 
   Just like above.
-  ```SHELL
+  ```shell
   cd /opt/ros/noetic/share/pcl_conversions/cmake
   sudo chmod 777 pcl_conversionsConfig.cmake  
   ```
   
 - **Note**: If you meet with the warning like "/usr/ bin/ld: warning: libpcl_filters.so.1.10, needed by /usr/lib/x86_64-linux-gnu/libpcl_registration.so, may conflict with libpcl_filters.so.1.12", run code below.The same goes for other pcl libraries. 
-  ```SHELL
+  ```shell
   sudo ln -sf /usr/local/lib/libpcl_filters.so.1.12 /usr/lib/x86_64-linux-gnu/libpcl_filters.so 
   ```
 
 ## 3.Install Ipopt and Casadi for mpc solve(it's needless if you use move_base)
 - 1.install some dependencies
 
-  ```SHELL
+  ```shell
   sudo apt-get install gcc g++ gfortran git patch wget pkg-config liblapack-dev libmetis-dev libblas-dev 
   ```
 
-  ```SHELL
+  ```shell
   mkdir ~/Ipopt_pkg
   cd Ipopt_pkg
   ```
 
 - 2.install ASL
 
-  ```SHELL
+  ```shell
   git clone https://github.com/coin-or-tools/ThirdParty-ASL.git
   cd ThirdParty-ASL
   sudo ./get.ASL
@@ -103,7 +107,7 @@
 
   Download the [coinhsl](https://github.com/CHH3213/testCPP/blob/master/coinhsl.zip)
 
-  ```SHELL
+  ```shell
   git clone https://github.com/coin-or-tools/ThirdParty-HSL.git
   cd ~/Downloads
   unzip coinhsl.zip ~/Ipopt_pkg/ThirdParty-HSL
@@ -116,7 +120,7 @@
 
 - 4.install MUMPS
 
-  ```SHELL
+  ```shell
   git clone https://github.com/coin-or-tools/ThirdParty-Mumps.git
   cd ThirdParty-Mumps
   sudo ./get.Mumps
@@ -128,7 +132,7 @@
   
 - 5.install Ipopt
 
-  ```SHELL
+  ```shell
   git clone https://github.com/coin-or/Ipopt.git
   cd Ipopt
   mkdir build
@@ -141,7 +145,7 @@
 
 - 6.prefect the environment
 
-  ```SHELL
+  ```shell
   cd /usr/local/include
   sudo cp coin-or coin -r
   sudo ln -s /usr/local/lib/libcoinmumps.so.3 /usr/lib/libcoinmumps.so.3
@@ -151,7 +155,7 @@
   The Ipopt is installed successfully until now.
 
 - 7.install the casadi, run bash below
-  ```SHELL
+  ```shell
      #!/usr/bin/env bash
   
      set -e

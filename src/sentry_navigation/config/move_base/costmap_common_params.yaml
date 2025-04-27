@@ -1,4 +1,4 @@
-robot_radius:     0.32             # 机器人的半径
+robot_radius:     0.18            # 机器人的半径
 
 obstacle_layer:
   enabled: true                    # 是否使能障碍层
@@ -20,7 +20,7 @@ obstacle_layer:
 
 inflation_layer:
   enabled: true                    # 是否使能膨胀层
-  inflation_radius:    0.8         # 最大有效膨胀半径
+  inflation_radius:    0.01        # 最大有效膨胀半径
   cost_scaling_factor: 5.0         # 膨胀层的指数衰减速度, 值越小衰减越慢
 
 static_layer:

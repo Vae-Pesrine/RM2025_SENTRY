@@ -86,6 +86,8 @@ void SmallGicpRelocalization::loadGlobalMap(const std::string& file_name){
 }
 
 void SmallGicpRelocalization::registerPcdCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
+    std::lock_guard<std::mutex> lock(cloud_mutex_);
+    
     last_scan_time_ = msg->header.stamp;
     
     pcl::toROSMsg(*global_map_, prior_pcd_msg);    
@@ -103,6 +105,8 @@ void SmallGicpRelocalization::registerPcdCallback(const sensor_msgs::PointCloud2
 }
 
 void SmallGicpRelocalization::runRegistration(const ros::WallTimerEvent& event){
+    std::lock_guard<std::mutex> lock(cloud_mutex_);
+
     auto align_time_begin = std::chrono::high_resolution_clock::now();
 
     if(!source_ || !source_tree_){
@@ -122,8 +126,9 @@ void SmallGicpRelocalization::runRegistration(const ros::WallTimerEvent& event){
         ROS_INFO_STREAM(GREEN << "Align time: " << align_duration.count() << " ms." << RESET);
 
     if(!result.converged){
-        if(debug_)
+        if(debug_){
             ROS_WARN_STREAM("The small gicp didn't converge");
+        }
         return;
     }
 

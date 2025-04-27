@@ -2,6 +2,7 @@
 
 #include <string>
 #include <memory>
+#include <mutex>
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 #include <ros/ros.h>
@@ -106,4 +107,6 @@ private:
     std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
     std::unique_ptr<tf2_ros::TransformListener> tf_listener_;
     std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+
+    std::mutex cloud_mutex_;
 };

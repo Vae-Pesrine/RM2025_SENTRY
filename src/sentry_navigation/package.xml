@@ -59,6 +59,8 @@
   <build_depend>tf2_ros</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>visualization_msgs</build_depend>
+  <build_depend>mbf_msgs</build_depend>
+
 
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>actionlib</build_export_depend>
@@ -70,6 +72,8 @@
   <build_export_depend>tf2_ros</build_export_depend>
   <build_export_depend>geometry_msgs</build_export_depend>
   <build_export_depend>visualization_msgs</build_export_depend>
+  <build_export_depend>mbf_msgs</build_export_depend>
+
 
   <exec_depend>roscpp</exec_depend>
   <exec_depend>actionlib</exec_depend>
@@ -81,6 +85,8 @@
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>visualization_msgs</exec_depend>
+  <exec_depend>mbf_msgs</exec_depend>
+
 
   <export>
     <nav_core plugin="${prefix}/recovery_plugin.xml" />

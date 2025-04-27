@@ -31,7 +31,7 @@ class CsvReader {
                         data.push_back(std::stod(value));
                     }
                 } catch (...) {
-                    std::cerr << "cannot convert str:" << line_str << "\n";
+                    // std::cerr << "cannot convert str:" << line_str << "\n";
                     continue;
                 }
                 datas.push_back(data);

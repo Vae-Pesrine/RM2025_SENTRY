@@ -37,7 +37,6 @@ catkin_package(
 
 include_directories(
   include
-  /usr/local/include/teaser
   ${catkin_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
 )
@@ -67,5 +66,3 @@ add_dependencies(test_pcl ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_
 target_link_libraries(test_pcl  
   ${catkin_LIBRARIES}
 )
-
-

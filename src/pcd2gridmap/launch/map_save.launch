@@ -1,4 +1,4 @@
 <launch>
-    <arg name="filename" value="$(find sentry_navigation)/map/rmuc_2025" />
+    <arg name="filename" value="$(find sentry_navigation)/map/test" />
     <node name="map_save" pkg="map_server" type="map_saver" args="-f $(arg filename)" />
 </launch>

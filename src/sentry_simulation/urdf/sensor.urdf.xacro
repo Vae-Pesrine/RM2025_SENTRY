@@ -77,7 +77,7 @@
     <gazebo reference="livox_mid360">
       <sensor type="ray" name="livox_mid360">
         <pose>0 0 0 0 0 0</pose>
-        <visualize>true</visualize>
+        <visualize>True</visualize>
         <update_rate>10</update_rate>
 
         <plugin name="gazebo_ros_laser_controller" filename="liblivox_laser_simulation.so">
@@ -111,13 +111,13 @@
                 </noise>
             </ray>
 
-            <visualize>fasle</visualize>
+            <visualize>Fasle</visualize>
             <samples>20000</samples>
     	    <downsample>1</downsample>
     	    <csv_file_name>mid360.csv</csv_file_name>
     	    <ros_topic>/livox/lidar</ros_topic>
             <publish_pointcloud_type>3</publish_pointcloud_type>
-            <broadcastTF>false</broadcastTF>
+            <!-- <broadcastTF>Fasle</broadcastTF> -->
         </plugin>
       </sensor>
     </gazebo>

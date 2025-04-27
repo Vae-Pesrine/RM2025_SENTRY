@@ -14,8 +14,8 @@ base_local_planner:   teb_local_planner/TebLocalPlannerROS
 
 # 设置恢复行为(自定义流程)
 recovery_behaviors:
-  - name: 'move_recovery'
-    type: 'move_freespace_recovery/MoveFreeSpace'
+  # - name: 'move_recovery'
+  #   type: 'move_freespace_recovery/MoveFreeSpace'
   - name: 'reset_recovery'
     type: 'clear_costmap_recovery/ClearCostmapRecovery'
   - name: 'rotate_recovery'

@@ -1,0 +1,68 @@
+<launch>
+   
+    <arg name="use_sim_time" value="true" />
+
+  <!-- load the 2D grid map -->  
+    <arg name="map" default="test.yaml" />
+    <node pkg="map_server" type="map_server" name="map_server" args="$(find sentry_navigation)/map/$(arg map)" />
+    
+
+    <arg name="local_planner" default="teb" />
+    <arg name="global_planner" default="hybrid_a_star" />
+  <!-- move base flex package -->
+    <node pkg="mbf_costmap_nav" type="mbf_costmap_nav" name="move_base_flex" output="screen" respawn="false">
+      <!-- base params -->
+        <rosparam file="$(find sentry_navigation)/config/mbf/move_base_flex_params.yaml" command="load" />
+
+      <!-- costmap plugins -->
+        <rosparam file="$(find sentry_navigation)/config/mbf/costmap_params.yaml" command="load" />
+        <rosparam file="$(find sentry_navigation)/config/mbf/costmap_converter_params.yaml" command="load" />
+      
+      <!-- recovery plugins -->
+        <rosparam file="$(find sentry_navigation)/config/mbf/recovery_behavior_params.yaml" command="load" />
+
+      <!-- global planner plugin -->
+        <!-- <param name="base_global_planner" value="path_planner/PathPlanner" /> -->
+        <!-- <param name="PathPlanner/planner_name" value="$(arg global_planner)" />
+        <rosparam file="$(find sentry_navigation)/config/planner/graph_planner_params.yaml" command="load" />
+         -->
+
+      <!-- local planner plugin -->
+        <rosparam file="$(find sentry_navigation)/config/mbf/teb_local_planner_params.yaml" command="load" />
+
+        <param name="base_local_planner" value="dwa_controller/DWAController" if="$(eval arg('local_planner')=='dwa')" />
+        <rosparam file="$(find sentry_navigation)/config/planner/dwa_controller_params.yaml" command="load" if="$(eval arg('local_planner')=='dwa')" />
+
+        <param name="base_local_planner" value="pid_controller/PIDController" if="$(eval arg('local_planner')=='pid')" />
+        <rosparam file="$(find sentry_navigation)/config/planner/pid_controller_params.yaml" command="load" if="$(eval arg('local_planner')=='pid')" />
+
+        <param name="base_local_planner" value="apf_controller/APFController" if="$(eval arg('local_planner')=='apf')" />
+        <rosparam file="$(find sentry_navigation)/config/planner/apf_controller_params.yaml" command="load" if="$(eval arg('local_planner')=='apf')" />
+
+        <param name="base_local_planner" value="rpp_controller/RPPController" if="$(eval arg('local_planner')=='rpp')" />
+        <rosparam file="$(find sentry_navigation)/config/planner/rpp_controller_params.yaml" command="load" if="$(eval arg('local_planner')=='rpp')" />
+
+        <param name="base_local_planner" value="lqr_controller/LQRController" if="$(eval arg('local_planner')=='lqr')" />
+        <rosparam file="$(find sentry_navigation)/config/planner/lqr_controller_params.yaml" command="load" if="$(eval arg('local_planner')=='lqr')" />
+
+        <param name="base_local_planner" value="mpc_controller/MPCController" if="$(eval arg('local_planner')=='mpc')" />
+        <rosparam file="$(find sentry_navigation)/config/planner/mpc_controller_params.yaml" command="load" if="$(eval arg('local_planner')=='mpc')" />
+
+
+    </node>
+  <!-- test stc -->
+    <!-- <node pkg="trajectory_optimization" type="test_stc" name="test_stc" output="screen" /> -->
+
+  <!-- test nmpc -->
+    <!-- <include file="$(find plan_manage)/launch/16_lidar.launch" />
+
+    <node pkg="mpc_tracking" type="mpc_tracking_node" name="mpc_tracking_node" output="screen" /> -->
+
+    <node pkg="sentry_navigation" type="mbf_bridge" name="mbf_bridge_node" respawn="true" output="screen" />
+
+
+  <!-- rviz -->
+    <node pkg="rviz" type="rviz" name="sentry_rviz" args="-d $(find sentry_navigation)/rviz/mbf_rviz.rviz" />
+
+
+</launch>
