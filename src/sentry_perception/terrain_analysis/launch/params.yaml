@@ -1,0 +1,30 @@
+  odom_topic: /odom
+  cloud_topic: /cloud_registered  
+  
+  scan_voxel_size: 0.05              # 扫描体素大小
+  decay_time: 2.0                    # 时间阈值
+  no_decay_dis: 1.75                  # 车辆初始距离阈值
+  clearing_dis: 8.0                  # 清除距离
+  use_sorting: True                  # 使用排序
+  quantile_z: 0.5                   # 使用sort分配体素网络的高程时，使用网格中点云高度排序后的百分之几作为该网格的高度
+  consider_drop: False               # 考虑下降
+  limit_ground_lift: False           # 
+  max_ground_lift: 0.3              # 地面最大上升距离
+  clear_dy_obs: True                 # 清除障碍物标志位
+  min_dy_obs_dis: 0.3                # 最小的障碍物距离阈值
+  min_dy_obs_angle: 0.0              # 通过障碍物的最小角度
+  min_dy_obs_rel_z: -0.3             # 通过障碍物最小的z轴相对高度
+  abs_dy_obs_rel_z_thre: 0.2         # 
+  min_dy_obs_vfov: -28.0             # 动态障碍物最小观测角度
+  max_dy_obs_vfov: 33.0              # 动态障碍物最大观测角度
+  min_dy_obs_point_num: 1            # 被认为是障碍物点的最小数
+  no_data_obstacle: False            # 无点云地区是否可通过性
+  no_data_block_skip_num: 0          # 无障碍物阻塞跳过的点数
+  min_block_point_num: 10            # 最小阻塞的点数
+  vehicle_height: 0.6                # 车辆的高度
+  voxel_point_update_thre: 100       # 同一个位置的雷达点阈值
+  voxel_time_update_thre: 2.0        # 同一个位置的雷达点时间阈值
+
+  min_rel_z: -2.5                    # z轴最小的相对距离
+  max_rel_z: 0.5                     # z轴最大的相对距离
+  dis_ratio_z: 0.2                   # 点云处理的高度与距离的比例，与激光雷达性能相关

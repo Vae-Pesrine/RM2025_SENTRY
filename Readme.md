@@ -1,6 +1,7 @@
-# <center>***SENTRY SIMULATION FOR ROBOMASTER***<center> 
+# <center>***SENTRY NAVIGATION FOR ROBOMASTER***<center> 
 
 ## TODO
+ - [ ] fix the bug of ground segmentation when running on the center terrain
  - [ ] fix the bug of free space recovery (tf warning of repeated data when processing the recovery plugin)  
  - [ ] add the scan context helping relocalization when the odometry drifts
  - [ ] add the stc
@@ -9,18 +10,49 @@
 
 - run the simulation environment
   ```shell
-  roslaunch sentry_simulation all.launch
+  roslaunch sentry_brignup 01simu.launch
   ```
 
-- run the localization algorithm, the lio is fast_lio or point_lio, the relocalization is small_gicp
+- run the localization algorithm
   ```shell
-  roslaunch sentry_localization all.launch
+  roslaunch sentry_bringup 02localize.launch
   ```
 
-- run the navigation
+- run the navigation algorithm
   ```shell
-  roslaunch sentry_navigation all.launch
+  roslaunch sentry_bringup 03nav.launch
   ```
+## **Framework**
+```plaintext
+src
+│
+├── sentry_bringup                
+│
+├── sentry_driver           
+│   ├── livox_ros_driver2
+│   └── serial_driver
+│
+├── sentry_localization           
+│   ├── fast_lio        
+│   ├── point_lio(version: gridmap)   
+│   └── small_gicp_registration
+│
+├── sentry_navigation
+│   ├── mbf_nav 
+│   └── move_freespace_recovery
+│
+├── sentry_perception
+│   ├── terrain_analysis
+│   ├── ground_segmentation
+│   └── livox_msgs_convert
+│
+└── sentry_simulation
+    ├── sentry_description
+    └── livox_laser_simulation
+```
+
+
+
 
 ## **Install small gicp**
 - Small gicp is a header-only library. You can just download and drop it in your project directory to use it. If you need only basic point cloud registration functions, you can build and install the helper library as follows.

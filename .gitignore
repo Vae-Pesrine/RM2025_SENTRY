@@ -4,5 +4,5 @@ devel/*
 src/FAST_LIO/PCD/*
 src/Point-LIO/PCD/*
 
-src/sentry_simulation/world/rmuc_2025.stl
+src/sentry_description/world/rmuc_2025.stl
 src/sentry_localization/PCD/Mesh.pcd

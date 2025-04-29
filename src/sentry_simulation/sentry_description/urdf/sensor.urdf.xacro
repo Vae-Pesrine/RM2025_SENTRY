@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:property name="PI" value="3.1415926" /> 
+    <link name="imu_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="0.05 0.05 0.05" />
+            </geometry>
+            <material name="Red" />
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="0.05 0.05 0.05" />
+            </geometry>
+            <material name="Red" />
+        </collision>
+
+        <inertial>
+            <mass value="1e-2" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <inertia ixx="1e-6" ixy="0.0" ixz="0"
+                     iyy="0.0"  iyz="0.0" izz="1e-6" />
+        </inertial>
+    </link>
+
+    <link name="livox_mid360">
+        <visual>
+            <origin xyz="0 0 0" rpy="${PI/2} 0 ${PI}" />
+            <geometry>
+                <mesh filename="package://sentry_description/mesh/mid360.stl" scale="0.0008 0.0008 0.0008">
+                </mesh>
+            </geometry>
+       </visual>
+    </link>
+
+   <joint name="imu_joint" type="fixed">
+        <axis xyz="0 1 0" />
+        <parent link="base_link" />
+        <child link="imu_link" />
+        <origin xyz="0.125  0 0.05" rpy="0 0 0" />
+    </joint>
+
+    <joint name="base_lidar" type="fixed">
+        <parent link="base_link" />
+        <child link="livox_mid360" />
+        <origin xyz="0.135 0 0.08" rpy="0 0 0" />
+    </joint>
+
+    <!-- //////////////////////////////// imu control ////////////////////////////////// -->
+    <gazebo reference="imu_link">
+        <material>Gazebo/Yellow</material>
+        <pose>0 0 0 0 0 0</pose>
+        <gravity>true</gravity>
+        <sensor name="imu_sensor" type="imu">
+            <always_on>true</always_on>
+            <update_rate>100</update_rate>
+            <visualize>true</visualize>
+            <topic>_default_topic_</topic>
+            <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+                <topicName>/livox/imu</topicName>
+                <bodyName>imu_link</bodyName>
+                <updateRateHZ>100.0</updateRateHZ>
+                <gaussianNoise>0.0</gaussianNoise>
+                <frameName>imu_link</frameName>
+                <xyzOffset>0 0 0</xyzOffset>
+                <rpyOffset>0 0 0</rpyOffset>
+                <queueSize>100</queueSize>
+            </plugin>
+            <pose>0 0 0 0 0 0</pose>
+        </sensor>
+    </gazebo>
+
+    <!-- //////////////////////////////// lidar control ////////////////////////////////// -->
+    <gazebo reference="livox_mid360">
+      <sensor type="ray" name="livox_mid360">
+        <pose>0 0 0 0 0 0</pose>
+        <visualize>True</visualize>
+        <update_rate>10</update_rate>
+
+        <plugin name="gazebo_ros_laser_controller" filename="liblivox_laser_simulation.so">
+            <ray>
+                <scan>
+                  <horizontal>
+                    <samples>100</samples>
+                    <resolution>1</resolution>
+                    <min_angle>${-PI}</min_angle>
+                    <max_angle>${PI}</max_angle>
+                  </horizontal>
+
+                  <vertical>
+                    <samples>50</samples>
+                    <resolution>1</resolution>
+                    <min_angle>${-PI}</min_angle>
+                    <max_angle>${PI}</max_angle>
+                  </vertical>
+                </scan>
+
+                <range>
+                  <min>0.1</min>
+                  <max>40.0</max>
+                  <resolution>1</resolution>
+                </range>
+
+                <noise>
+                  <type>gaussian</type>
+                  <mean>0.0</mean>
+                  <stddev>0.0</stddev>
+                </noise>
+            </ray>
+
+            <visualize>Fasle</visualize>
+            <samples>20000</samples>
+    	    <downsample>1</downsample>
+    	    <csv_file_name>mid360.csv</csv_file_name>
+    	    <ros_topic>/livox/lidar</ros_topic>
+            <publish_pointcloud_type>3</publish_pointcloud_type>
+            <!-- <broadcastTF>Fasle</broadcastTF> -->
+        </plugin>
+      </sensor>
+    </gazebo>
+</robot>

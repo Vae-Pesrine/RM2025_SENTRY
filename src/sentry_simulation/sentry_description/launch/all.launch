@@ -1,0 +1,48 @@
+<launch>
+
+  <!-- gazebo -->
+    <arg name="paused"       default="false"/>
+    <arg name="use_sim_time" default="true"/>
+    <arg name="gui"          default="true"/>
+    <arg name="headless"     default="false"/>
+    <arg name="debug"        default="false"/>
+    <arg name="verbose"      default="true"/>
+
+  <!-- the original pose of sentry in the gazebo world-->
+    <arg name="origin_x"     default="8.50" />
+    <arg name="origin_y"     default="4.00" />
+    <arg name="origin_z"     default="0.09" />
+    <arg name="origin_roll"  default="0.000000" />
+    <arg name="origin_pitch" default="0.000000" />
+    <arg name="origin_yaw"   default="1.570796" />
+
+  <!-- 加载机器人模型参数 -->
+    <param name="robot_description" command="$(find xacro)/xacro  $(find sentry_description)/urdf/main.urdf.xacro" />
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_sentry_base" args="-urdf -param /robot_description -model robot 
+          -x $(arg origin_x) -y $(arg origin_y) -z $(arg origin_z) -R $(arg origin_roll) -P $(arg origin_pitch) -Y $(arg origin_yaw)" />
+
+    <env name="GAZEBO_MODEL_PATH"    value="${GAZEBO_MODEL_PATH}:$(find sentry_description)/mesh" />
+    <env name="GAZEBO_RESOURCE_PATH" value="${GAZEBO_RESOURCE_PATH}:$(find sentry_description)/mesh" />
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="gui"          value="$(arg gui)" />
+        <arg name="debug"        value="$(arg debug)" />
+        <arg name="paused"       value="$(arg paused)" />
+        <arg name="verbose"      value="$(arg verbose)"/>
+        <arg name="headless"     value="$(arg headless)"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+        <arg name="world_name"   value="$(find sentry_description)/world/rmuc2025.world" />
+    </include>
+      
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="sentry_joint_publisher" output="screen" />    
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="sentry_tf_publisher" output="screen" />
+
+  <!-- control the robot by keys   -->
+    <node pkg="sentry_description" type="key_control" name="key_control" output="screen">
+        <param name="linear_speed"  value="1.2" />
+        <param name="angular_speed" value="1.2" />
+    </node>
+
+    <!-- <node pkg="rviz" type="rviz" name="sentry_view_rviz" args="-d $(find sentry_description)/rviz/sentry_omni.rviz"/> -->
+
+</launch>

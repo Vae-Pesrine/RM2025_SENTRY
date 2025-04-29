@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="terrain_analysis" type="terrain_analysis_node" name="terrain_analysis_node" output="screen">
+        <rosparam file="$(find terrain_analysis)/launch/params.yaml" />
+    </node>
+</launch>

@@ -1,0 +1,5 @@
+<launch>
+
+    <include file="$(find mbf_nav)/launch/mbf.launch" />
+
+</launch>

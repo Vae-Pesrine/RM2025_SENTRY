@@ -1,7 +1,0 @@
-<library path="lib/libmove_towards_free_space">
-    <class name="move_freespace_recovery/MoveFreeSpace" 
-           type="move_freespace_recovery::MoveFreeSpace" 
-           base_class_type="nav_core::RecoveryBehavior">
-        <description>Move towards free space</description>
-    </class>
-</library>

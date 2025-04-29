@@ -1,0 +1,28 @@
+robot_radius:     0.18            # 机器人的半径
+
+obstacle_layer:
+  enabled: true                    # 是否使能障碍层
+  obstacle_range: 6.0              # 障碍物的检测半径, 小于该值范围内会被识别为障碍物
+  raytrace_range: 6.0              # 障碍物的清除半径, 小于该值范围内会清除动态障碍物残影
+  track_unknown_space: false       # true不会把未知区域参与到路径规划中
+  observation_sources: scan        # 传感器
+  scan: {
+    # topic: /scan,                  # 话题名称
+    # data_type: LaserScan,          # 数据类型
+    sensor_frame: livox_mid360,
+    topic: /,
+    data_type: PointCloud2,
+    marking: true,                 # 是否将扫描到的障碍物添加到地图
+    clearing: true,                # 是否清除动态障碍物残影
+    min_obstacle_height: 0.2,      # 最小障碍物高度
+    max_obstacle_height: 0.8       # 最大障碍物高度
+  }
+
+inflation_layer:
+  enabled: true                    # 是否使能膨胀层
+  inflation_radius:    0.01        # 最大有效膨胀半径
+  cost_scaling_factor: 5.0         # 膨胀层的指数衰减速度, 值越小衰减越慢
+
+static_layer:
+  enabled: true                    # 是否使能静态层
+  map_topic: "/map"                # 静态地图的 topic

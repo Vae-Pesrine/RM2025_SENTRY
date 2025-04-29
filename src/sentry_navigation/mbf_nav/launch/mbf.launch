@@ -1,0 +1,34 @@
+<launch>
+   
+    <arg name="use_sim_time" value="true" />
+
+  <!-- load the 2D grid map -->  
+    <arg name="map" default="rmuc2025.yaml" />
+    <node pkg="map_server" type="map_server" name="map_server" args="$(find mbf_nav)/map/$(arg map)" />
+
+  <!-- move base flex package -->
+    <node pkg="mbf_costmap_nav" type="mbf_costmap_nav" name="move_base_flex" output="screen" respawn="false">
+      <!-- base params -->
+        <rosparam file="$(find mbf_nav)/config/mbf/move_base_flex_params.yaml" command="load" />
+
+      <!-- costmap plugins -->
+        <rosparam file="$(find mbf_nav)/config/mbf/costmap_params.yaml" command="load" />
+        <rosparam file="$(find mbf_nav)/config/mbf/costmap_converter_params.yaml" command="load" />
+      
+      <!-- recovery plugins -->
+        <rosparam file="$(find mbf_nav)/config/mbf/recovery_behavior_params.yaml" command="load" />
+
+      <!-- teb planner plugins -->
+        <rosparam file="$(find mbf_nav)/config/mbf/teb_local_planner_params.yaml" command="load" />
+    </node>
+
+  <!-- mbf bridge package -->
+    <node pkg="mbf_nav" type="mbf_bridge" name="mbf_bridge_node" respawn="true" output="screen" />
+
+  <!-- ground_segmentation package -->
+    <include file="$(find terrain_analysis)/launch/terrain_analysis.launch" />
+
+  <!-- rviz -->
+    <node pkg="rviz" type="rviz" name="sentry_rviz" args="-d $(find mbf_nav)/rviz/mbf_rviz.rviz" />
+
+</launch>

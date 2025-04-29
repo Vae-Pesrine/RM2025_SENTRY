@@ -1,0 +1,25 @@
+recovery_behaviors:
+  # - name: 'move_recovery'
+  #   type: 'move_freespace_recovery/MoveFreeSpace'
+  - name: 'clear_costmap_global'
+    type: 'clear_costmap_recovery/ClearCostmapRecovery'
+  - name: 'clear_costmap_local'
+    type: 'clear_costmap_recovery/ClearCostmapRecovery'
+
+# move towards free space
+move_recovery:
+  max_radius: 0.32
+  robot_radius: 0.32
+  free_threshold: 3
+  visualization: True
+
+clear_costmap_local:
+  invert_area_to_clear: false       # false清除正方形外, true清除正方形内
+  reset_distance: 0.42               # 以机器人为中心, reset_distance为边长设置正方形, 正方形外的障碍物清除
+  layer_names: ['obstacle_layer']  
+
+get_path_recovery_behaviors:
+  - name: 'clear_costmap_global'
+
+exe_path_recovery_behaviors:
+  - name: 'clear_costmap_local'
