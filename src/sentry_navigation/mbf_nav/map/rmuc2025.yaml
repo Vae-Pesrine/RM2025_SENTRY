@@ -1,4 +1,4 @@
-image: /home/jgy/RMUC_simulation/src/sentry_navigation/mbf_nav/map/rmuc2025.pgm
+image: /home/jgy/rm2025_sentry/src/sentry_navigation/mbf_nav/map/rmuc2025.pgm
 resolution: 0.050000
 origin: [-0.45, -0.5, 0.000000]
 negate: 0

@@ -8,7 +8,7 @@ project(livox_msgs_convert)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  roospy
+  rospy
   roscpp
   sensor_msgs
 )

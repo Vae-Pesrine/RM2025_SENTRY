@@ -13,20 +13,15 @@ find_package(PCL 1.12 REQUIRED)
 find_package(Boost REQUIRED)
 
 find_package(OpenMP REQUIRED)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
 if(OpenMP_FOUND)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+  set(OpenMP_LIBRARIES ${OpenMP_CXX_LIBRARIES})
+  set(OpenMP_INCLUDE_DIRS ${OpenMP_CXX_INCLUDE_DIRS})
   message(STATUS "OpenMP found: ${OpenMP_CXX_FLAGS}")
 else()
   message(FATAL_ERROR "OpenMP not found!")
 endif()
-
-catkin_package(
- INCLUDE_DIRS include
- LIBRARIES small_gicp_relocalization
- CATKIN_DEPENDS roscpp rospy pcl_ros
- DEPENDS PCL Boost OpenMP
-)
 
 include_directories(
   include

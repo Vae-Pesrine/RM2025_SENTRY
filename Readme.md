@@ -6,23 +6,7 @@
  - [ ] add the scan context helping relocalization when the odometry drifts
  - [ ] add the stc
 
-## **How to run**
-
-- run the simulation environment
-  ```shell
-  roslaunch sentry_brignup 01simu.launch
-  ```
-
-- run the localization algorithm
-  ```shell
-  roslaunch sentry_bringup 02localize.launch
-  ```
-
-- run the navigation algorithm
-  ```shell
-  roslaunch sentry_bringup 03nav.launch
-  ```
-## **Framework**
+## **1.Framework**
 ```plaintext
 src
 │
@@ -43,6 +27,7 @@ src
 │
 ├── sentry_perception
 │   ├── terrain_analysis
+│   ├── pcd2gridmap
 │   ├── ground_segmentation
 │   └── livox_msgs_convert
 │
@@ -52,11 +37,9 @@ src
 ```
 
 
+## **2.Dependencies**
 
-
-## **Install small gicp**
-- Small gicp is a header-only library. You can just download and drop it in your project directory to use it. If you need only basic point cloud registration functions, you can build and install the helper library as follows.
-
+- **1.[Small Gicp](https://github.com/koide3/small_gicp.git)**
   ```shell
   git clone https://github.com/koide3/small_gicp.git
   sudo apt-get install libeigen3-dev libomp-dev
@@ -64,6 +47,54 @@ src
   mkdir build && cd build
   cmake .. -DCMAKE_BUILD_TYPE=Release && make -j
   sudo make install
+  ```
+- **2.[Teaser-Plusplus](https://github.com/MIT-SPARK/TEASER-plusplus.git)**
+  ```shell
+  git clone https://github.com/MIT-SPARK/TEASER-plusplus.git
+  cd TEASER-plusplus && mkdir build && cd build
+  cmake .. -DENABLE_DIAGNOSTIC_PRINT=OFF
+  sudo make install
+  sudo ldconfig
+  ```
+- **3.[Gtsam](https://github.com/borglab/gtsam)>=4.1.1**
+  ```shell
+  wget -O gtsam.zip https://github.com/borglab/gtsam/archive/refs/tags/4.1.1.zip
+  unzip gtsam.zip
+  cd gtsam-4.1.1/
+  mkdir build && cd build
+  cmake -DGTSAM_BUILD_WITH_MARCH_NATIVE=OFF -DGTSAM_USE_SYSTEM_EIGEN=ON ..
+  sudo make install   
+  ```
+- **4.Tbb(used for faster Quatro)**
+  ```shell
+  sudo apt install libtbb-dev
+  ```
+
+## **5.How to build**
++ use **catkin build** to build the package one by one or use less than four threads
+  ```shell
+  # nano gicp, quatro first
+  catkin build nano_gicp -DCMAKE_BUILD_TYPE=Release
+  catkin build quatro -DCMAKE_BUILD_TYPE=Release -DQUATRO_TBB=ON
+  catkin build -DCMAKE_BUILD_TYPE=Release
+  source ./devel/setup.bash
+  ```
+
+## **6.How to run**
+
+- run the simulation environment
+  ```shell
+  roslaunch sentry_brignup 01simu.launch
+  ```
+
+- run the localization algorithm
+  ```shell
+  roslaunch sentry_bringup 02localize.launch
+  ```
+
+- run the navigation algorithm
+  ```shell
+  roslaunch sentry_bringup 03nav.launch
   ```
 
 
@@ -112,7 +143,7 @@ src
   sudo ln -sf /usr/local/lib/libpcl_filters.so.1.12 /usr/lib/x86_64-linux-gnu/libpcl_filters.so 
   ```
 
-## 3.Install Ipopt and Casadi for mpc solve(it's needless if you use move_base)
+## Install Ipopt and Casadi for mpc solve(it's needless if you use move_base)
 - 1.install some dependencies
 
   ```shell

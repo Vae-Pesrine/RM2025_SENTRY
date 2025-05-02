@@ -6,13 +6,15 @@ SmallGicpRelocalization::SmallGicpRelocalization():
     initial_transform_(Eigen::Isometry3d::Identity()),
     result_t_(Eigen::Isometry3d::Identity()), 
     prior_result_t_(Eigen::Isometry3d::Identity()){    
-    pr_nh_.param<bool>("debug", debug_, true);
+    pr_nh_.param<bool>("debug_en", debug_en_, false);
+    pr_nh_.param<bool>("pub_prior_pcd_en", pub_prior_pcd_en_, false);
 
     pr_nh_.param<int>("num_threads", num_threads_, 4);
     pr_nh_.param<int>("num_neighbors", num_neighbors_, 20);
     pr_nh_.param<float>("global_leaf_size", global_leaf_size_, 0.25);
     pr_nh_.param<float>("registered_leaf_size", registered_leaf_size_, 1.0);
     pr_nh_.param<float>("max_dist_sq", max_dist_sq_, 1.0);
+    pr_nh_.param<int>("max_iterations", max_iterations_, 30);
     
     pr_nh_.param<std::string>("map_frame", map_frame_, "");
     pr_nh_.param<std::string>("odom_frame", odom_frame_, "");
@@ -33,8 +35,8 @@ SmallGicpRelocalization::SmallGicpRelocalization():
     pr_nh_.param<double>("pose_update_frequency", pose_update_frequency_, 2);
     pr_nh_.param<double>("transform_tolerance", transform_tolerance_, 0.18);
 
-    registered_scan_ = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
     global_map_ = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
+    registered_scan_ = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
     register_ = std::make_shared<small_gicp::Registration<small_gicp::GICPFactor, small_gicp::ParallelReductionOMP>>();
 
     tf_buffer_ = std::make_unique<tf2_ros::Buffer>();
@@ -52,9 +54,10 @@ SmallGicpRelocalization::SmallGicpRelocalization():
     loadGlobalMap(prior_pcd_file_);
 
     target_ = small_gicp::voxelgrid_sampling_omp<pcl::PointCloud<pcl::PointXYZ>, pcl::PointCloud<pcl::PointCovariance>>
-              (*global_map_, global_leaf_size_);
+                                                (*global_map_, global_leaf_size_);
     small_gicp::estimate_covariances_omp(*target_, num_neighbors_, num_threads_);
-    target_tree_ = std::make_shared<small_gicp::KdTree<pcl::PointCloud<pcl::PointCovariance>>>(target_, small_gicp::KdTreeBuilderOMP(num_threads_));
+    target_tree_ = std::make_shared<small_gicp::KdTree<pcl::PointCloud<pcl::PointCovariance>>>
+                                   (target_, small_gicp::KdTreeBuilderOMP(num_threads_));
     ROS_INFO_STREAM(GREEN << "global map points size is: " << target_->size() << " frame: " << target_->header.frame_id << RESET);
 }
 
@@ -89,47 +92,53 @@ void SmallGicpRelocalization::loadGlobalMap(const std::string& file_name){
 }
 
 void SmallGicpRelocalization::registerPcdCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
-    std::lock_guard<std::mutex> lock(cloud_mutex_);
-    
+    std::lock_guard<std::mutex> lock(cloud_mutex_); 
     last_scan_time_ = msg->header.stamp;
-    
-    pcl::toROSMsg(*global_map_, prior_pcd_msg);    
-    prior_pcd_msg.header.frame_id = map_frame_;
-    prior_pcd_msg.header.stamp = ros::Time().fromSec(msg->header.stamp.toSec());
-    pub_pcd_.publish(prior_pcd_msg);
+
+    if(debug_en_){
+        if(pub_prior_pcd_en_){
+            pcl::toROSMsg(*global_map_, prior_pcd_msg);    
+            prior_pcd_msg.header.frame_id = map_frame_;
+            prior_pcd_msg.header.stamp = ros::Time().fromSec(msg->header.stamp.toSec());
+            pub_pcd_.publish(prior_pcd_msg);
+        }
+    }
+
     pcl::fromROSMsg(*msg, *registered_scan_);
 
     //downsample registered points and convert them into pcl::PointCloud<pcl::PointCovariance>
-    source_ = small_gicp::voxelgrid_sampling_omp<pcl::PointCloud<pcl::PointXYZ>, pcl::PointCloud<pcl::PointCovariance>>(*registered_scan_, registered_leaf_size_);
-   //estimate covariances of points
+    source_ = small_gicp::voxelgrid_sampling_omp<pcl::PointCloud<pcl::PointXYZ>, pcl::PointCloud<pcl::PointCovariance>>
+                                                (*registered_scan_, registered_leaf_size_);
+    //estimate covariances of points
     small_gicp::estimate_covariances_omp(*source_, num_neighbors_, num_threads_);
     // build the KD-tree
-    source_tree_ = std::make_shared<small_gicp::KdTree<pcl::PointCloud<pcl::PointCovariance>>>(source_, small_gicp::KdTreeBuilderOMP(num_threads_));
+    source_tree_ = std::make_shared<small_gicp::KdTree<pcl::PointCloud<pcl::PointCovariance>>>
+                                   (source_, small_gicp::KdTreeBuilderOMP(num_threads_));
 }
 
 void SmallGicpRelocalization::runRegistration(const ros::WallTimerEvent& event){
-    std::lock_guard<std::mutex> lock(cloud_mutex_);
-
-    auto align_time_begin = std::chrono::high_resolution_clock::now();
+    std::lock_guard<std::mutex> lock(cloud_mutex_); 
 
     if(!source_ || !source_tree_){
         return;
     }
 
+    auto align_time_begin = std::chrono::high_resolution_clock::now();
+
     register_->reduction.num_threads = num_threads_;
     register_->rejector.max_dist_sq = max_dist_sq_;
+    register_->optimizer.max_iterations = max_iterations_;
 
     auto result = register_->align(*target_, *source_, *target_tree_, prior_result_t_);
-
-    auto align_time_end = std::chrono::high_resolution_clock::now();
     
+    auto align_time_end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> align_duration = align_time_end - align_time_begin;
     
-    if(debug_)
+    if(debug_en_)
         ROS_INFO_STREAM(GREEN << "Align time: " << align_duration.count() << " ms." << RESET);
 
     if(!result.converged){
-        if(debug_){
+        if(debug_en_){
             ROS_WARN_STREAM("The small gicp didn't converge");
         }
         return;
@@ -161,7 +170,7 @@ void SmallGicpRelocalization::publishTransform(const ros::WallTimerEvent& event)
     tf_stamped.transform.rotation.w = rotation.w();
     
     /**
-     * @brief 仅当时间戳变化时发布变换,避免时间戳重复，导致tf树异常
+     * @brief publish the transform only when the stamp changes to prevent the error of tf tree
      */
     static ros::Time last_tf_time;
     if(tf_stamped.header.stamp != last_tf_time){
@@ -171,7 +180,7 @@ void SmallGicpRelocalization::publishTransform(const ros::WallTimerEvent& event)
 }
 
 void SmallGicpRelocalization::initialPoseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr & msg){
-    if(debug_){
+    if(debug_en_){
         ROS_INFO_STREAM("Received initialpose: " << "x: " << msg->pose.pose.position.x << " "
             << "y; " << msg->pose.pose.position.y << " "
             << "y; " << msg->pose.pose.position.y << " ");

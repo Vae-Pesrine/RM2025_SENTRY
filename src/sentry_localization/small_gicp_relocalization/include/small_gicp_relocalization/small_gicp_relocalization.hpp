@@ -59,13 +59,10 @@ private:
     ros::Subscriber sub_initialpose_;
     ros::Publisher pub_pcd_;
 
-    bool debug_;
+    bool debug_en_;
+    bool pub_prior_pcd_en_;
     
-    int num_threads_;
-    int num_neighbors_;
-    float global_leaf_size_;
-    float registered_leaf_size_;
-    float max_dist_sq_;
+
 
     double x_, y_, z_;
     double yaw_, pitch_, roll_;
@@ -97,12 +94,20 @@ private:
 
     std::shared_ptr<pcl::PointCloud<pcl::PointXYZ>> global_map_;
     std::shared_ptr<pcl::PointCloud<pcl::PointXYZ>> registered_scan_;
+
+
+    // small gicp
+    int num_threads_;
+    int num_neighbors_;
+    float global_leaf_size_;
+    float registered_leaf_size_;
+    float max_dist_sq_;
+    int max_iterations_;
+
     std::shared_ptr<pcl::PointCloud<pcl::PointCovariance>> target_;
     std::shared_ptr<pcl::PointCloud<pcl::PointCovariance>> source_;
-
     std::shared_ptr<small_gicp::KdTree<pcl::PointCloud<pcl::PointCovariance>>> target_tree_;
     std::shared_ptr<small_gicp::KdTree<pcl::PointCloud<pcl::PointCovariance>>> source_tree_;
-
     std::shared_ptr<small_gicp::Registration<small_gicp::GICPFactor, small_gicp::ParallelReductionOMP>> register_;
 
     std::unique_ptr<tf2_ros::Buffer> tf_buffer_;

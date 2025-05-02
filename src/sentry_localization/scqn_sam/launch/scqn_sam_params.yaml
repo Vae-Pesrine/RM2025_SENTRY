@@ -1,0 +1,57 @@
+basic:
+  map_frame: "odom"
+  base_frame: "base_link"
+  loop_update_hz: 2.0
+  vis_hz: 1.0
+
+sub_topic:
+  odometry: /odom
+  cloud: /cloud_registered
+
+keyframe:
+  keyframe_threshold: 0.3
+  num_submap_frames:  10
+  submap_matching_en: true
+
+quatro_nano_gicp_voxel_resolution: 0.3
+save_voxel_resolution: 0.3
+scancontext_max_correspondence_distance: 35.0
+
+nano_gicp:
+  thread_number: 0
+  icp_score_threshold: 1.5
+  correspondence_number: 15
+  max_correspondence_distance: 18.0
+  max_iter: 32
+  transformation_epsilon: 0.01
+  euclidean_fitness_epsilon: 0.01
+  ransac:
+    max_iter: 5
+    outlier_rejection_threshold: 1.0
+
+
+quatro:
+  en: false
+  optimize_matching_en: true
+  distance_threshold: 18.0
+  max_num_correspondences: 500
+  fpfh_normal_radius: 0.9
+  fpfh_radius: 1.5
+  estimating_scale: false
+  noise_bound: 0.3
+  rotation:
+    num_max_iter: 50
+    gnc_factor: 1.4
+    rot_cost_diff_threshold: 0.0001
+
+result:
+  bag:
+    save_en: true
+    dir: test_bag
+    name: test1.bag
+  pcd:
+    save_en: true
+    dir: test_pcd
+    name: test1.pcd
+
+

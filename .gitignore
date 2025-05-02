@@ -1,8 +1,12 @@
-devel/*
-**/build/** 
+# build temp files
+.catkin_tools/*
 .vscode/*
-src/FAST_LIO/PCD/*
-src/Point-LIO/PCD/*
+build/*
+devel/*
+logs/*
 
-src/sentry_description/world/rmuc_2025.stl
-src/sentry_localization/PCD/Mesh.pcd
+# usr files
+src/sentry_localization/FAST_LIO/PCD/*
+src/sentry_localization/point_lio/PCD/*
+
+

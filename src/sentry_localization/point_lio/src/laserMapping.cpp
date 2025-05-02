@@ -387,7 +387,7 @@ int main(int argc, char** argv)
     ros::Publisher pubLaserCloudMap = nh.advertise<sensor_msgs::PointCloud2>
             ("/Laser_map", 1000);
     ros::Publisher pubOdomAftMapped = nh.advertise<nav_msgs::Odometry> 
-            ("/aft_mapped_to_init", 1000);
+            ("/odom", 1000);
     ros::Publisher pubPath          = nh.advertise<nav_msgs::Path> 
             ("/path", 1000);
     // ros::Publisher plane_pub = nh.advertise<visualization_msgs::Marker>
