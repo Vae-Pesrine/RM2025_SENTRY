@@ -27,7 +27,7 @@ global_costmap:
   # obstacle_layer:
   #   observation_sources: 3dscan 
   #   3dscan: { 
-  #     sensor_frame: livox_mid360, 
+  #     sensor_frame: livox_frame, 
   #     data_type: PointCloud2, 
   #     topic: /terrain_map, 
   #     obstacle_range: 6.0, 
@@ -66,7 +66,7 @@ local_costmap:
   obstacle_layer:
     observation_sources: 3dscan 
     3dscan: { 
-      sensor_frame: livox_mid360, 
+      sensor_frame: livox_frame, 
       data_type: PointCloud2, 
       topic: /terrain_map, 
       obstacle_range: 6.0, 

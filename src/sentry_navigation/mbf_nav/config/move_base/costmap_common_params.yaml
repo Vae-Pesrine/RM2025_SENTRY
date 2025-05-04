@@ -9,7 +9,7 @@ obstacle_layer:
   scan: {
     # topic: /scan,                  # 话题名称
     # data_type: LaserScan,          # 数据类型
-    sensor_frame: livox_mid360,
+    sensor_frame: livox_frame,
     topic: /,
     data_type: PointCloud2,
     marking: true,                 # 是否将扫描到的障碍物添加到地图

@@ -11,7 +11,7 @@ max_iterations: 30
 map_frame: map
 odom_frame: odom
 base_frame: base_link
-lidar_frame: livox_mid360
+lidar_frame: livox_frame
 
 prior_pcd_file: rmuc_2025.pcd
 pcd_in_topic: /cloud_registered

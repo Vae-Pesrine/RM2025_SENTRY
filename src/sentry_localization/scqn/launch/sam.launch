@@ -1,0 +1,17 @@
+<launch>
+
+	<arg name="rviz" default="true" />
+	<arg name="odom_topic" default="/odom" />
+	<arg name="lidar_topic" default="/cloud_registered" />
+
+	<!-- visualize -->
+	<node if="$(arg rviz)" pkg="rviz" type="rviz" name="rviz_sam" args="-d $(find scqn)/rviz/sam_rviz.rviz" launch-prefix="nice"/>
+
+	<!-- run scqn -->
+	<rosparam command="load" file="$(find scqn)/config/sam.yaml" />
+	<node pkg="scqn" type="scqn_sam_node" name="scqn_sam_node" output="screen">
+		<remap from="/Odometry" to="$(arg odom_topic)"/>
+		<remap from="/cloud_registered" to="$(arg lidar_topic)"/>
+	</node>
+
+</launch>

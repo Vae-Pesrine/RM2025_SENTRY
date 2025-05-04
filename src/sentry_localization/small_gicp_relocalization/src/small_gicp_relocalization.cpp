@@ -200,7 +200,8 @@ void SmallGicpRelocalization::initialPoseCallback(const geometry_msgs::PoseWithC
             result_t_ = map_to_odom;
             break;
         }catch (tf2::TransformException & ex){
-            ROS_WARN_STREAM("Could not transform initial pose from" << base_frame_.c_str() << " to " << registered_scan_->header.frame_id.c_str() << ex.what());
+            ROS_WARN_STREAM("Could not transform initial pose from" << base_frame_.c_str() << " to " 
+                            << registered_scan_->header.frame_id.c_str() << ex.what());
             ros::Duration(1.0).sleep();  
         }
     }

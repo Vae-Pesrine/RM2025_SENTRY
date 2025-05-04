@@ -1,0 +1,36 @@
+<launch>
+    <node pkg="small_gicp_relocalization" type="test_pcl" name="test_pcl" output="screen">
+        <rosparam>
+            bbs:
+                max_range: 15.0
+                min_tx: -50.0
+                max_tx: 50.0
+                min_ty: -50.0
+                max_ty: 50.0
+                min_theta: -3.14
+                max_theta: 3.14
+                map_min_z: -4.2
+                map_max_z: 4.2
+                map_width: 512
+                map_height: 512
+                map_resolution: 0.5
+                max_points_pre_cell: 5
+                map_pyramid_level: 6
+                scan_min_z: -0.2
+                scan_max_z: 1.2
+                map_filter_resolution: 0.25
+                scan_filter_resolution: 0.1
+
+            global_map_width: 100.0
+            global_map_height: 100.0
+            ndt:
+                resolution: 0.8
+                step_size: 0.2
+                epsilon: 0.01
+                max_iterations: 30.0
+                frame_resolution: 0.5
+
+        </rosparam>
+    </node>
+
+</launch>
