@@ -214,7 +214,8 @@ void publish_frame_world(const ros::Publisher & pubLaserCloudFullRes)
         if (pcl_wait_save->size() > 0 && scan_wait_num >= pcd_save_interval && pcd_save_frame_en)
         {
             pcd_index ++;
-            string all_points_dir(string(string(ROOT_DIR) + "PCD/scans_") + to_string(pcd_index) + string(".pcd"));
+            std::string path_name = ros::package::getPath("point_lio");
+            string all_points_dir(path_name + "/PCD_FRAME/scans_" + to_string(pcd_index) + string(".pcd"));
             pcl::PCDWriter pcd_writer;
             cout << "current scan saved to /PCD/" << all_points_dir << endl;
             pcd_writer.writeBinary(all_points_dir, *pcl_wait_save);

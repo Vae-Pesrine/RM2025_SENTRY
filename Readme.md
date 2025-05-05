@@ -3,7 +3,7 @@
 ## TODO
  - [ ] fix the bug of ground segmentation when running on the center terrain
  - [ ] fix the bug of free space recovery (tf warning of repeated data when processing the recovery plugin)  
- - [ ] add the scan context helping relocalization when the odometry drifts
+ - [ ] add the scan context helping relocalization when the odometry drifts(waiting for optimization)
  - [ ] add the stc
 
 ## **1.Framework**
@@ -68,6 +68,38 @@ src
 - **4.Tbb(used for faster Quatro)**
   ```shell
   sudo apt install libtbb-dev
+  ```
+- **4.[3Dbbs](https://github.com/KOKIAOKI/3d_bbs)**
+  ```shell
+  # Note: If you are using Eigen3 below 3.4.0, git clone with --recursive
+  # check the version of eigen on your device: pkg-config --modversion eigen3
+  git clone https://github.com/KOKIAOKI/3d_bbs.git
+  cd 3d_bbs
+  mkdir build && cd build
+
+  # cpu&&gpu version
+  cmake .. -DCMAKE_BUILD_TYPE=Release
+  make -j
+  sudo make install
+
+  # cpu version only
+  cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_CUDA=OFF
+  make -j
+  sudo make install
+  ```
+  **NOTE: You may encounter certain warnings during the build process of both the CPU and GPU versions; however, these warnings are not meaningful. If you wish to address them, you can replace the original CMake commands for CUDA with the following commands in the CMakeLists.txt file.**
+  ```shell
+  ## find CUDA
+  option(BUILD_CUDA "Build GPU ver" ON)
+  if (BUILD_CUDA)
+  find_package(CUDA REQUIRED)
+  include_directories(${CUDA_INCLUDE_DIRS})
+  link_directories(${CUDA_LIBRARY_DIRS})
+  # Add the --expt-relaxed-constexpr flag to CUDA_NVCC_FLAGS
+  set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} --expt-relaxed-constexpr")
+  # Suppress specific warnings
+  set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -diag-suppress=20208")
+  endif()
   ```
 
 ## **5.How to build**

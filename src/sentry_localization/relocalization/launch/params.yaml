@@ -1,0 +1,46 @@
+basic:
+  debug_en: true
+  pub_prior_pcd_en: true
+  map_frame: map
+  odom_frame: odom
+  base_frame: base_link
+  lidar_frame: livox_frame
+  pcd_in_topic: /cloud_registered
+  imu_in_topic: /livox/imu
+  initialpose_in_topic: /initialpose
+
+gicp:
+  num_threads: 4
+  num_neighbors: 10
+  max_dist_sq: 1.0
+  max_iterations: 30
+  global_leaf_size: 0.25
+  registered_leaf_size: 0.1
+  align_time_threshold: 300
+
+pcd:
+  x:     8.50396
+  y:     4.052823
+  z:     0.140688
+  roll:  0.000000
+  pitch: 0.000000
+  yaw:   1.570796327
+  prior_pcd_file: rmuc_2025.pcd
+
+timer:
+  registration_frequency: 4
+  pose_update_frequency: 2
+  transform_tolerance: 0.5      
+
+gpu_bbs:
+  max_level: 6
+  min_level_resolution: 0.5 
+  map_leaf_size: 0.25  
+  source_leaf_size: 0.1 
+  min_scan_range: 0.0 
+  max_scan_range: 100.0 
+  min_rpy: [-0.02,-0.02,-1.2] # [roll, pitch, yaw]
+  max_rpy: [0.02,0.02,1.4] # [roll, pitch, yaw]
+  score_percentage_threshold: 0.4
+  timeout_msec: 0
+ 

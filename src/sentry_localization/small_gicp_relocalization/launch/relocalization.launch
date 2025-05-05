@@ -1,8 +1,0 @@
-<launch>
-    <node pkg="small_gicp_relocalization" 
-          type="small_gicp_relocalization_node" 
-          name="small_gicp_relocalization_node"
-          output="screen">
-        <rosparam file="$(find small_gicp_relocalization)/launch/params.yaml" />
-    </node>
-</launch>

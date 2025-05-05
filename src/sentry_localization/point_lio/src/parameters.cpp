@@ -102,7 +102,7 @@ void readParameters(ros::NodeHandle &nh)
   nh.param<std::string>("pcd_save/pcd_file_name", pcd_file_name, "");
   nh.param<bool>("pcd_save/pcd_save_en", pcd_save_en, false);
   nh.param<int>("pcd_save/interval", pcd_save_interval, -1);
-  nh.param<bool>("pcd/pcd_save_frame_en", pcd_save_frame_en, false);
+  nh.param<bool>("pcd_save/pcd_save_frame_en", pcd_save_frame_en, false);
 
   nh.param<double>("mapping/lidar_time_inte",lidar_time_inte,0.1);
   nh.param<double>("mapping/lidar_meas_cov",laser_point_cov,0.1);

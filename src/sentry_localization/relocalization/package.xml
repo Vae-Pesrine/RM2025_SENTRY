@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>small_gicp_relocalization</name>
+  <name>relocalization</name>
   <version>0.0.0</version>
-  <description>The small_gicp_relocalization package</description>
+  <description>The relocalization package</description>
   <maintainer email="jgy@todo.todo">jgy</maintainer>
   <license>TODO</license>
 
@@ -10,14 +10,17 @@
   <build_depend>roscpp</build_depend>
   <build_depend>rospy</build_depend>
   <build_depend>pcl_ros</build_depend>
+  <build_depend>roslib</build_depend>
 
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>rospy</build_export_depend>
   <build_export_depend>pcl_ros</build_export_depend>
+  <build_export_depend>roslib</build_export_depend>
   
   <exec_depend>roscpp</exec_depend>
   <exec_depend>rospy</exec_depend>
   <exec_depend>pcl_ros</exec_depend>
+  <exec_depend>roslib</exec_depend>
 
 
   <export>

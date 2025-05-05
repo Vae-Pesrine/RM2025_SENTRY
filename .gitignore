@@ -8,5 +8,7 @@ logs/*
 # usr files
 src/sentry_localization/FAST_LIO/PCD/*
 src/sentry_localization/point_lio/PCD/*
+src/sentry_localization/point_lio/PCD_FRAME/*
+
 
 
