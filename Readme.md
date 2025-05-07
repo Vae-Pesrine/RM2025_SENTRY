@@ -39,7 +39,25 @@ src
 
 ## **2.Dependencies**
 
-- **1.[Small Gicp](https://github.com/koide3/small_gicp.git)**
+- **1.[Livox_ros_driver2](https://github.com/Livox-SDK/livox_ros_driver2)**
+  ```shell
+  git clone https://github.com/Livox-SDK/livox_ros_driver2.git ws_livox/src/livox_ros_driver2
+  source /opt/ros/noetic/setup.sh
+  ./build.sh ROS1
+  ```
+  **NOTE:Build it directly in our respo**
+
+- **2.[Livox-SDK2](https://github.com/Livox-SDK/Livox-SDK2.git)**
+  ```shell
+  git clone https://github.com/Livox-SDK/Livox-SDK2.git
+  cd ./Livox-SDK2/
+  mkdir build
+  cd build
+  cmake .. && make -j
+  sudo make install
+  ```
+
+- **3.[Small Gicp](https://github.com/koide3/small_gicp.git)**
   ```shell
   git clone https://github.com/koide3/small_gicp.git
   sudo apt-get install libeigen3-dev libomp-dev
@@ -48,7 +66,7 @@ src
   cmake .. -DCMAKE_BUILD_TYPE=Release && make -j
   sudo make install
   ```
-- **2.[Teaser-Plusplus](https://github.com/MIT-SPARK/TEASER-plusplus.git)**
+- **4.[Teaser-Plusplus](https://github.com/MIT-SPARK/TEASER-plusplus.git)**
   ```shell
   git clone https://github.com/MIT-SPARK/TEASER-plusplus.git
   cd TEASER-plusplus && mkdir build && cd build
@@ -56,7 +74,7 @@ src
   sudo make install
   sudo ldconfig
   ```
-- **3.[Gtsam](https://github.com/borglab/gtsam)>=4.1.1**
+- **5.[Gtsam](https://github.com/borglab/gtsam)>=4.1.1**
   ```shell
   wget -O gtsam.zip https://github.com/borglab/gtsam/archive/refs/tags/4.1.1.zip
   unzip gtsam.zip
@@ -65,11 +83,11 @@ src
   cmake -DGTSAM_BUILD_WITH_MARCH_NATIVE=OFF -DGTSAM_USE_SYSTEM_EIGEN=ON ..
   sudo make install   
   ```
-- **4.Tbb(used for faster Quatro)**
+- **6.Tbb(used for faster Quatro)**
   ```shell
   sudo apt install libtbb-dev
   ```
-- **4.[3Dbbs](https://github.com/KOKIAOKI/3d_bbs)**
+- **7.[3Dbbs](https://github.com/KOKIAOKI/3d_bbs)**
   ```shell
   # Note: If you are using Eigen3 below 3.4.0, git clone with --recursive
   # check the version of eigen on your device: pkg-config --modversion eigen3
@@ -102,7 +120,12 @@ src
   endif()
   ```
 
-## **5.How to build**
+- **8.Pcl(higher than 1.11)**
+  ```
+  ./pcl.sh
+  ```
+
+## **5.Build**
 + use **catkin build** to build the package one by one or use less than four threads
   ```shell
   # nano gicp, quatro first
@@ -112,68 +135,27 @@ src
   source ./devel/setup.bash
   ```
 
-## **6.How to run**
+## **6.Run**
+  - 1.Debug mode(set the rviz true)
+    - run the simulation environment
+      ```shell
+      roslaunch sentry_brignup 01simu.launch
+      ```
+    
+    - run the localization algorithm
+      ```shell
+      roslaunch sentry_bringup 02localize.launch
+      ```
+    
+    - run the navigation algorithm
+      ```shell
+      roslaunch sentry_bringup 03nav.launch
+      ```
+  - 2.Boot-up mode(set the rviz false)
+    ```shell
+    ./run.sh
+    ```
 
-- run the simulation environment
-  ```shell
-  roslaunch sentry_brignup 01simu.launch
-  ```
-
-- run the localization algorithm
-  ```shell
-  roslaunch sentry_bringup 02localize.launch
-  ```
-
-- run the navigation algorithm
-  ```shell
-  roslaunch sentry_bringup 03nav.launch
-  ```
-
-
-## **Change the version of pcl to build the small_gicp_localization**
-
-- 1.This small gicp library uses C++17 features. The pcl interface is not compatible with pcl older than 1.11 that uses boost::shared_ptr. And the default version of pcl is 1.10 when install ROS. So we install [pcl-1.12.0](https://github.com/PointCloudLibrary/pcl/tree/pcl-1.12.0).
-
-  ```shell
-  wget -O pcl-1.12.0.zip https://github.com/PointCloudLibrary/pcl/archive/pcl-1.12.0.zip
-  unzip pcl-1.12.0.zip
-  sudo mv pcl-pcl-1.12.0 pcl-1.12.0
-  sudo mv pcl-1.12.0 /usr/local/include
-  cd /usr/local/include
-  sudo mkdir build && cd build
-  sudo cmake .. 
-  sudo make -j4   
-  sudo make install
-
-  cd /opt/ros/noetic/share/pcl_ros/cmake
-  sudo chmod 777 pcl_rosConfig.cmake 
-  ```
-  The building process is running slow. Code "make -j4" means building with four threads, if your computer cannot afford it, you can run "make". If you can't run the command ,try "sudo *".   
-
-- 2.Change the default path of pcl
-
-  ```shell
-  cd /opt/ros/noetic/share/pcl_ros/cmake
-  sudo chmod 777 pcl_rosConfig.cmake  
-  ```
-
-  Find the code below and change the pcl path to newest.If you follow the steps I mentioned above, you should change "/usr/include/pcl-1.10" to "/usr/local/include/pcl-1.12".
-  ```shell
-  if(NOT "include;/usr/include;/usr/include/eigen3;/usr/include/pcl-1.10;/usr/include/vtk-7.1;/usr/include/freetype2;/usr/include/x86_64-linux-gnu " STREQUAL " ")
-    set(pcl_ros_INCLUDE_DIRS "")
-    set(_include_dirs "include;/usr/include;/usr/include/eigen3;/usr/include/pcl-1.10;/usr/include/vtk-7.1;/usr/include/freetype2;/usr/include/x86_64-linux-gnu")
-  ```
-
-  Just like above.
-  ```shell
-  cd /opt/ros/noetic/share/pcl_conversions/cmake
-  sudo chmod 777 pcl_conversionsConfig.cmake  
-  ```
-  
-- **Note**: If you meet with the warning like "/usr/ bin/ld: warning: libpcl_filters.so.1.10, needed by /usr/lib/x86_64-linux-gnu/libpcl_registration.so, may conflict with libpcl_filters.so.1.12", run code below.The same goes for other pcl libraries. 
-  ```shell
-  sudo ln -sf /usr/local/lib/libpcl_filters.so.1.12 /usr/lib/x86_64-linux-gnu/libpcl_filters.so 
-  ```
 
 ## Install Ipopt and Casadi for mpc solve(it's needless if you use move_base)
 - 1.install some dependencies

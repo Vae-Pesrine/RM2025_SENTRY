@@ -1,0 +1,6 @@
+<launch>
+
+	<node launch-prefix="nice" pkg="rviz" type="rviz" name="scqn_rviz" args="-d $(find point_lio)/rviz_cfg/loam_livox.rviz" />
+    <node pkg="rviz" type="rviz" name="sentry_rviz" args="-d $(find mbf_nav)/rviz/mbf_rviz.rviz" />
+
+</launch>

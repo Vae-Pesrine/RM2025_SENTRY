@@ -1,5 +1,7 @@
 <launch>
-
+  <!-- nav  -->
     <include file="$(find mbf_nav)/launch/mbf.launch" />
 
+  <!-- ground_segmentation package -->
+    <include file="$(find terrain_analysis)/launch/terrain_analysis.launch" />
 </launch>

@@ -1,5 +1,5 @@
 basic:
-  debug_en: true
+  debug_en: false
   pub_prior_pcd_en: false
   map_frame: map
   odom_frame: odom

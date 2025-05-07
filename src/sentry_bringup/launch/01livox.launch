@@ -1,0 +1,8 @@
+<launch>
+    <include file="$(find sentry_description)/launch/all.launch" />
+
+    <!-- <arg name="mode" default="simu" />
+    <include file="$(find sentry_description)/launch/all.launch" if="$(arg mode)==simu"/>
+
+    <include file="$(find livox_ros_driver2)/launch/msg_MID360.launch" if="$(arg mode)==real" /> -->
+</launch>

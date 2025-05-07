@@ -1,5 +1,6 @@
 <launch>
    
+	  <arg name="rviz" default="false" />
     <arg name="use_sim_time" value="true" />
 
   <!-- load the 2D grid map -->  
@@ -25,10 +26,8 @@
   <!-- mbf bridge package -->
     <node pkg="mbf_nav" type="mbf_bridge" name="mbf_bridge_node" respawn="true" output="screen" />
 
-  <!-- ground_segmentation package -->
-    <include file="$(find terrain_analysis)/launch/terrain_analysis.launch" />
-
   <!-- rviz -->
-    <node pkg="rviz" type="rviz" name="sentry_rviz" args="-d $(find mbf_nav)/rviz/mbf_rviz.rviz" />
-
+	  <group if="$(arg rviz)">
+      <node pkg="rviz" type="rviz" name="sentry_rviz" args="-d $(find mbf_nav)/rviz/mbf_rviz.rviz" />
+    </group>
 </launch>

@@ -535,14 +535,14 @@ void TerrainAnalysisNode::processLaserCloud()
 
   clearing_cloud_ = false;
 
-  Eigen::Quaterniond rotation(odom_.pose.pose.orientation.w, odom_.pose.pose.orientation.x,
-    odom_.pose.pose.orientation.y, odom_.pose.pose.orientation.z);
+  // Eigen::Quaterniond rotation(odom_.pose.pose.orientation.w, odom_.pose.pose.orientation.x,
+  //   odom_.pose.pose.orientation.y, odom_.pose.pose.orientation.z);
 
-  Eigen::Affine3d transform;
-  transform.translation() = Eigen::Vector3d(odom_.pose.pose.position.x, odom_.pose.pose.position.y, odom_.pose.pose.position.z);
-  transform.linear() = rotation.normalized().toRotationMatrix();
+  // Eigen::Affine3d transform;
+  // transform.translation() = Eigen::Vector3d(odom_.pose.pose.position.x, odom_.pose.pose.position.y, odom_.pose.pose.position.z);
+  // transform.linear() = rotation.normalized().toRotationMatrix();
 
-  pcl::transformPointCloud(*terrain_cloud_elev_, *terrain_cloud_elev_, transform);
+  // pcl::transformPointCloud(*terrain_cloud_elev_, *terrain_cloud_elev_, transform);
 
   // Publish points with elevation
   sensor_msgs::PointCloud2 terrain_cloud;

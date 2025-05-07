@@ -7,8 +7,6 @@
 #include <pcl/filters/voxel_grid.h>
 #include <relocalization/relocalization.hpp>
 
-
-
 Relocalization::Relocalization(): 
     pr_nh_("~"),
     first_reconfigure_call_(true),
@@ -256,9 +254,9 @@ void Relocalization::initialPoseCallback(
 
     Eigen::Isometry3d map_to_base = Eigen::Isometry3d::Identity();
     map_to_base.translation() << msg->pose.pose.position.x, msg->pose.pose.position.y, msg->pose.pose.position.z;
-    map_to_base.linear() = Eigen::Quaterniond(msg->pose.pose.orientation.w, msg->pose.pose.orientation.x,
-                                               msg->pose.pose.orientation.y, msg->pose.pose.orientation.z)
-                                               .toRotationMatrix();
+    map_to_base.linear() = Eigen::Quaterniond(
+        msg->pose.pose.orientation.w, msg->pose.pose.orientation.x,
+        msg->pose.pose.orientation.y, msg->pose.pose.orientation.z).toRotationMatrix();
     while(true){
         try{
             auto transform = tf_buffer_->lookupTransform(base_frame_, registered_scan_->header.frame_id, ros::Time(0), ros::Duration(1.0));

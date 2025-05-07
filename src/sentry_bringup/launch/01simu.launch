@@ -1,3 +1,0 @@
-<launch>
-    <include file="$(find sentry_description)/launch/all.launch" command="load" />
-</launch>
