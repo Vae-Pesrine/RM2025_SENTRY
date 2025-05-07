@@ -16,7 +16,6 @@ gicp:
   max_iterations: 30
   global_leaf_size: 0.25
   registered_leaf_size: 0.1
-  align_time_threshold: 300
 
 pcd:
   x:     8.635810

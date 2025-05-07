@@ -32,7 +32,6 @@ Relocalization::Relocalization():
     pr_nh_.param<int>("gicp/num_neighbors", num_neighbors_, 20);
     pr_nh_.param<float>("gicp/max_dist_sq", max_dist_sq_, 1.0);
     pr_nh_.param<int>("gicp/max_iterations", max_iterations_, 30);
-    pr_nh_.param<int>("gicp/align_time_threshold", align_time_thre_, 10);
     pr_nh_.param<float>("gicp/global_leaf_size", global_leaf_size_, 0.25);
     pr_nh_.param<float>("gicp/registered_leaf_size", registered_leaf_size_, 1.0);
 
@@ -382,7 +381,33 @@ void Relocalization::dynamicReconfigCallback(
       config.restore_defaults = false;
     }
     debug_en_ = config.debug_en;
-
+    pub_prior_pcd_en_ = config.pub_prior_pcd_en;
+    map_frame_ = config.map_frame;
+    odom_frame_ = config.odom_frame;
+    base_frame_ = config.base_frame;
+    lidar_frame_ = config.lidar_frame;
+    pcd_in_topic_ = config.pcd_in_topic;
+    imu_in_topic_ = config.imu_in_topic;
+    initialpose_in_topic_ = config.initialpose_in_topic;
+    num_threads_ = config.num_threads;
+    num_neighbors_ = config.num_neighbors;
+    max_dist_sq_ = config.max_dist_sq;
+    max_iterations_ = config.max_iterations;
+    global_leaf_size_ = config.global_leaf_size;
+    registered_leaf_size_ = config.registered_leaf_size;
+    x_ = config.x;  y_ = config.y;  z_ = config.z;
+    roll_ = config.roll;    pitch_ = config.pitch;  yaw_ = config.yaw;
+    registration_frequency_ = config.registration_frequency;
+    pose_update_frequency_ = config.pose_update_frequency;
+    transform_tolerance_ = config.transform_tolerance;
+    max_level_ = config.max_level;
+    min_level_res_ = config.min_level_resolution;
+    map_leaf_size_ = config.map_leaf_size;
+    source_leaf_size_ = config.source_leaf_size;
+    min_scan_range_ = config.min_scan_range;
+    max_scan_range_ = config.max_scan_range;
+    score_percentage_thre_ = config.score_percentage_threshold;
+    timeout_msec_ = config.timeout_sec;
 }
 
 int main(int argc, char *argv[])
