@@ -1,7 +1,7 @@
 <launch>
     <node pkg="relocalization" 
-          type="relocalization_node" 
-          name="relocalization_node"
+          type="relocalization_bbs" 
+          name="relocalization_bbs"
           output="screen">
         <rosparam file="$(find relocalization)/launch/params.yaml" />
     </node>

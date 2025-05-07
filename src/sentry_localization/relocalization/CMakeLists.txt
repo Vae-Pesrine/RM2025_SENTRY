@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   roslib
   pcl_ros
+  dynamic_reconfigure
 )
 
 find_package(PCL 1.12 REQUIRED)
@@ -41,10 +42,17 @@ if(CUDA_FOUND)
   link_directories(${CUDA_LIBRARY_DIRS})
 endif()
 
+find_package(teaserpp REQUIRED)
+
+
+generate_dynamic_reconfigure_options(
+  cfg/RelocalizationCfg.cfg
+)
+
 catkin_package(
   INCLUDE_DIRS include 
   LIBRARIES relocalization
-  CATKIN_DEPENDS roscpp  pcl_ros rospy 
+  CATKIN_DEPENDS roscpp  pcl_ros rospy dynamic_reconfigure
   DEPENDS 
 )
 
@@ -58,12 +66,23 @@ include_directories(
   ${gpu_bbs3d_INCLUDE_DIR}
 )
 
-add_executable(relocalization_node src/relocalization.cpp)
-add_dependencies(relocalization_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(relocalization_node  
+add_executable(relocalization_bbs src/relocalization_bbs.cpp)
+add_dependencies(relocalization_bbs ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(relocalization_bbs  
   ${PCL_LIBRARIES}
   ${catkin_LIBRARIES}
   ${OpenMP_CXX_FLAGS}
   ${gpu_bbs3d_LIBRARY}
   ${CUDA_LIBRARIES}
+)
+
+add_executable(relocalization_teaser src/relocalization_teaser.cpp)
+add_dependencies(relocalization_teaser ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(relocalization_teaser  
+  ${PCL_LIBRARIES}
+  ${catkin_LIBRARIES}
+  ${OpenMP_CXX_FLAGS}
+  ${gpu_bbs3d_LIBRARY}
+  ${CUDA_LIBRARIES}
+  teaserpp::teaser_registration teaserpp::teaser_features teaserpp::teaser_io
 )

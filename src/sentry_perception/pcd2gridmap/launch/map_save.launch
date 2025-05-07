@@ -1,4 +1,4 @@
 <launch>
-    <arg name="filename" value="$(find mbf_nav)/map/scqn" />
+    <arg name="filename" value="$(find mbf_nav)/map/rmuc2025" />
     <node name="map_save" pkg="map_server" type="map_saver" args="-f $(arg filename)" />
 </launch>

@@ -3,7 +3,7 @@
     <arg name="use_sim_time" value="true" />
 
   <!-- load the 2D grid map -->  
-    <arg name="map" default="scqn.yaml" />
+    <arg name="map" default="rmuc2025.yaml" />
     <node pkg="map_server" type="map_server" name="map_server" args="$(find mbf_nav)/map/$(arg map)" />
 
   <!-- move base flex package -->

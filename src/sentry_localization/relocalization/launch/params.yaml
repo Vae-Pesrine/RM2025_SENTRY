@@ -1,6 +1,6 @@
 basic:
   debug_en: true
-  pub_prior_pcd_en: true
+  pub_prior_pcd_en: false
   map_frame: map
   odom_frame: odom
   base_frame: base_link
@@ -19,28 +19,28 @@ gicp:
   align_time_threshold: 300
 
 pcd:
-  x:     8.50396
-  y:     4.052823
+  x:     8.635810
+  y:     4.690780
   z:     0.140688
   roll:  0.000000
   pitch: 0.000000
-  yaw:   1.570796327
+  yaw:   1.570796
   prior_pcd_file: rmuc_2025.pcd
 
 timer:
   registration_frequency: 4
-  pose_update_frequency: 2
+  pose_update_frequency: 4
   transform_tolerance: 0.5      
 
 gpu_bbs:
   max_level: 6
   min_level_resolution: 0.5 
-  map_leaf_size: 0.25  
-  source_leaf_size: 0.1 
+  map_leaf_size: 0.4  
+  source_leaf_size: 0.2 
   min_scan_range: 0.0 
   max_scan_range: 100.0 
-  min_rpy: [-0.02,-0.02,-1.2] # [roll, pitch, yaw]
-  max_rpy: [0.02,0.02,1.4] # [roll, pitch, yaw]
+  min_rpy: [-0.02,-0.02,-1.57] # [roll, pitch, yaw]
+  max_rpy: [0.02,0.02,1.57] # [roll, pitch, yaw]
   score_percentage_threshold: 0.4
   timeout_msec: 0
  

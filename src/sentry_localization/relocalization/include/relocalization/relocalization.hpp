@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include <mutex>
+#include <deque>
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
@@ -12,6 +13,8 @@
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include <dynamic_reconfigure/server.h>
+#include "relocalization/RelocalizationCfgConfig.h"
 
 //tf
 #include <tf2_ros/buffer.h>
@@ -38,6 +41,11 @@
 // gpu bbs3d
 #include <gpu_bbs3d/bbs3d.cuh>
 
+// teaser++
+#include <teaser/fpfh.h>
+#include <teaser/matcher.h>
+#include <teaser/registration.h>
+
 
 class Relocalization: ros::NodeHandle
 {
@@ -54,6 +62,8 @@ private:
     void runRegistration(const ros::WallTimerEvent& event);
 
     void publishTransform(const ros::WallTimerEvent& event);
+    
+    void dynamicReconfigCallback(relocalization::RelocalizationCfgConfig &config, uint32_t level);
 
     void imuCallback(const sensor_msgs::Imu::ConstPtr &msg);
 
@@ -105,7 +115,10 @@ private:
     sensor_msgs::PointCloud2 prior_pcd_msg;
     std::shared_ptr<pcl::PointCloud<pcl::PointXYZ>> global_map_;
     std::shared_ptr<pcl::PointCloud<pcl::PointXYZ>> registered_scan_;
-    std::vector<sensor_msgs::Imu> imu_buffer_;
+
+    int lost_num_ = 0;
+    bool if_global_localization_;
+
 
     // small gicp
     int num_threads_;
@@ -120,20 +133,25 @@ private:
     std::shared_ptr<pcl::PointCloud<pcl::PointCovariance>> source_;
     std::shared_ptr<small_gicp::KdTree<pcl::PointCloud<pcl::PointCovariance>>> target_tree_;
     std::shared_ptr<small_gicp::KdTree<pcl::PointCloud<pcl::PointCovariance>>> source_tree_;
-    std::unique_ptr<small_gicp::Registration<small_gicp::GICPFactor, small_gicp::ParallelReductionOMP>> register_;
+    std::unique_ptr<small_gicp::Registration<small_gicp::GICPFactor, small_gicp::ParallelReductionOMP>> gicp_register_;
+
+    // reconfigure
+    std::unique_ptr<dynamic_reconfigure::Server<relocalization::RelocalizationCfgConfig>> cfg_server_;
+    bool first_reconfigure_call_;
+    relocalization::RelocalizationCfgConfig relo_config_;
 
     std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
     std::unique_ptr<tf2_ros::TransformListener> tf_listener_;
     std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
 
     // gpu bbs
-    bool if_bbs_localize_ = true;
     std::unique_ptr<gpu::BBS3D> gpu_bbs3d_;
     
     std::shared_ptr<pcl::PointCloud<pcl::PointXYZ>> filtered_map_cloud_;
     std::shared_ptr<pcl::PointCloud<pcl::PointXYZ>> filtered_scan_cloud_;
     
-    double current_yaw_;
+    std::vector<sensor_msgs::Imu> imu_buffer_;
+    std::deque<Eigen::Vector2d> base_pose_history_;
 
     Eigen::Vector3d min_rpy_;
     Eigen::Vector3d max_rpy_;
@@ -151,9 +169,30 @@ private:
     std::vector<Eigen::Vector3f> map_points;
     std::vector<Eigen::Vector3f> source_points;
 
+    // teaser++
+    std::unique_ptr<teaser::RobustRegistrationSolver> quatro_;
+    std::unique_ptr<teaser::RobustRegistrationSolver::Params> quatro_params_;
+    std::shared_ptr<teaser::FPFHEstimation> quatro_fpfh_;
+    std::shared_ptr<teaser::PointCloud> quatro_source_;
+    std::shared_ptr<teaser::PointCloud> quatro_target_;
+    teaser::FPFHCloudPtr quatro_source_feature_;
+    teaser::FPFHCloudPtr quatro_target_feature_;
+
+    double noise_bound_;
+    double cbar2_;
+    bool estimate_scaling_;
+    int teaser_iterations_;
+    double rotation_gnc_factor_;
+    double rotation_cost_thre_;
+    double source_normal_search_radius_;
+    double source_fpfh_search_radius_;
+    double target_normal_search_radius_;
+    double target_fpfh_search_radius_;
+    double tuple_scale_;
     // mutex
     std::mutex cloud_mutex_;
     std::mutex gpu_bbs3d_mutex_;
+    std::mutex reconfigure_mutex_;
 };
 
 const std::string RESET = "\033[0m\n";

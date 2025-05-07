@@ -9,31 +9,31 @@
 ## **1.Framework**
 ```plaintext
 src
-│
-├── sentry_bringup                
-│
-├── sentry_driver           
+├── sentry_bringup
+├── sentry_driver
 │   ├── livox_ros_driver2
 │   └── serial_driver
-│
-├── sentry_localization           
-│   ├── fast_lio        
-│   ├── point_lio(version: gridmap)   
-│   └── small_gicp_registration
-│
+├── sentry_localization
+│   ├── FAST_LIO
+│   ├── point_lio(version: grid-map)
+│   ├── relocalization
+│   └── scqn
 ├── sentry_navigation
-│   ├── mbf_nav 
-│   └── move_freespace_recovery
-│
+│   ├── mbf_nav
+│   └── move_freespace_recovery
 ├── sentry_perception
-│   ├── terrain_analysis
+│   ├── ground_segmentation
+│   ├── livox_msgs_convert
 │   ├── pcd2gridmap
-│   ├── ground_segmentation
-│   └── livox_msgs_convert
-│
-└── sentry_simulation
-    ├── sentry_description
-    └── livox_laser_simulation
+│   └── terrain_analysis
+├── sentry_simulation
+│   ├── livox_laser_simulation
+│   └── sentry_description
+└── thirdparty
+    ├── 3d_bbs
+    ├── nano_gicp
+    ├── Quatro
+    └── scancontext_tro
 ```
 
 
@@ -52,7 +52,7 @@ src
   ```shell
   git clone https://github.com/MIT-SPARK/TEASER-plusplus.git
   cd TEASER-plusplus && mkdir build && cd build
-  cmake .. -DENABLE_DIAGNOSTIC_PRINT=OFF
+  cmake .. -DBUILD_TEASER_FPFH=ON
   sudo make install
   sudo ldconfig
   ```
