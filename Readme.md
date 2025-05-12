@@ -1,10 +1,10 @@
 # <center>***SENTRY NAVIGATION FOR ROBOMASTER***<center> 
 
 ## TODO
- - [ ] fix the bug of ground segmentation when running on the center terrain
+ - [x] fix the bug of ground segmentation when running on the center terrain
  - [ ] fix the bug of free space recovery (tf warning of repeated data when processing the recovery plugin)  
- - [ ] add the scan context helping relocalization when the odometry drifts(waiting for optimization)
- - [ ] add the stc
+ - [x] add the scan context helping relocalization when the odometry drifts(waiting for optimization)
+ - [ ] fix the bug of BBS localization
 
 ## **1.Framework**
 ```plaintext
@@ -45,7 +45,7 @@ src
   source /opt/ros/noetic/setup.sh
   ./build.sh ROS1
   ```
-  **NOTE:Build it directly in our respo**
+  **NOTE:Build it directly in our repo**
 
 - **2.[Livox-SDK2](https://github.com/Livox-SDK/Livox-SDK2.git)**
   ```shell
@@ -83,11 +83,11 @@ src
   cmake -DGTSAM_BUILD_WITH_MARCH_NATIVE=OFF -DGTSAM_USE_SYSTEM_EIGEN=ON ..
   sudo make install   
   ```
-- **6.Tbb(used for faster Quatro)**
+- **6.TBB(used for faster Quatro)**
   ```shell
   sudo apt install libtbb-dev
   ```
-- **7.[3Dbbs](https://github.com/KOKIAOKI/3d_bbs)**
+- **7.[3D-BBS](https://github.com/KOKIAOKI/3d_bbs)**
   ```shell
   # Note: If you are using Eigen3 below 3.4.0, git clone with --recursive
   # check the version of eigen on your device: pkg-config --modversion eigen3
@@ -125,7 +125,7 @@ src
   ./pcl.sh
   ```
 
-## **5.Build**
+## **3.Build**
 + use **catkin build** to build the package one by one or use less than four threads
   ```shell
   # nano gicp, quatro first
@@ -135,7 +135,7 @@ src
   source ./devel/setup.bash
   ```
 
-## **6.Run**
+## **4.Run**
   - 1.Debug mode(set the rviz true)
     - run the simulation environment
       ```shell

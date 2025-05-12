@@ -366,8 +366,7 @@ void Relocalization::dynamicReconfigCallback(
     relocalization::RelocalizationCfgConfig &config, uint32_t level
 ) {
     std::lock_guard<std::mutex> lock(reconfigure_mutex_);
-    if(first_reconfigure_call_)
-    {
+    if(first_reconfigure_call_){
       first_reconfigure_call_ = false;
       relo_config_ = config;
       return;
